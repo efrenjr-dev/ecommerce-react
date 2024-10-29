@@ -30,7 +30,7 @@ export default function Root() {
             .then((response) => response.json())
             .then((serializedData) => json.deserialize(serializedData))
             .then((data) => {
-                console.log(data);
+                console.log(data.id, data.role);
                 setUser({
                     id: data.id,
                     role: data.role,
