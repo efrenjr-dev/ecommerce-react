@@ -5,6 +5,8 @@ import { Toaster, toast } from "react-hot-toast";
 import AppNavBar from "../components/AppNavBar";
 import { Outlet } from "react-router-dom";
 import json from "superjson";
+import Cookies from "universal-cookie";
+const cookies = new Cookies();
 
 export default function Root() {
     const [user, setUser] = useState({
@@ -13,7 +15,8 @@ export default function Root() {
     });
 
     const unsetUser = () => {
-        localStorage.removeItem("ecommercetoken");
+        cookies.remove("accessToken");
+        cookies.remove("refreshToken");
     };
 
     useEffect(() => {
@@ -21,10 +24,7 @@ export default function Root() {
             method: "GET",
             mode: "cors",
             headers: {
-                // Authorization: `Bearer ${localStorage.getItem(
-                //     "ecommercetoken"
-                // )}`,
-                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzNjU2N2E4Zi1jMmMwLTQxY2EtYTA0My1lYTQ5NTlmOTRkYmQiLCJpYXQiOjE3MzAwMDcxMTgsImV4cCI6MTczMDAxMDcxOCwidHlwZSI6ImFjY2VzcyJ9.s7uZl2WDKH2PhAvn4HAVeUYofMfW2eLGJd_fpuNGQjc`,
+                Authorization: `Bearer ${cookies.get("accessToken")}`,
             },
         })
             .then((response) => response.json())
@@ -34,8 +34,6 @@ export default function Root() {
                 setUser({
                     id: data.id,
                     role: data.role,
-                    isActive: data.isActive,
-                    isEmailVerified: data.isEmailVerified,
                 });
             })
             .catch((err) => {

@@ -15,7 +15,7 @@ export default function Login() {
     const [password, setPassword] = useState("");
 
     const navigate = useNavigate();
-    
+
     useEffect(() => {
         if (email !== "" && password !== "") {
             setIsFilled(true);
@@ -32,9 +32,10 @@ export default function Login() {
                 {
                     method: "POST",
                     mode: "cors",
+                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
-                        "Accept": "application/json",
+                        Accept: "application/json",
                     },
                     body: json.stringify({
                         email: email,
@@ -42,32 +43,13 @@ export default function Login() {
                     }),
                 }
             );
-            const serializedData = await loginResponse.json();
-            const data = json.deserialize(serializedData);
+            const data = json.deserialize(await loginResponse.json());
 
             console.log(data);
-            if (data.accessToken) {
-                localStorage.setItem("ecommercetoken", data.accessToken);
-                const userResponse = await fetch(
-                    `${import.meta.env.VITE_API_URL}/users`,
-                    {
-                        method: "GET",
-                        mode: "cors",
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem(
-                                "ecommercetoken"
-                            )}`,
-                        },
-                    }
-                );
-                const userData = await userResponse.json();
-                // console.log(localStorage.getItem("ecommercetoken"));
-                console.log(userData);
+            if (data.user) {
                 setUser({
-                    id: data.id,
-                    role: data.role,
-                    isActive: data.isActive,
-                    isEmailVerified: data.isEmailVerified,
+                    id: data.user.id,
+                    role: data.user.role,
                 });
                 toast.success(`You have been logged in as ${email}`, {
                     id: loadingToast,
