@@ -3,42 +3,42 @@ import { Col, Image, Row } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
 
-export default function OrderList({ productProp }) {
+export default function OrderList({ orderProp }) {
     const [orderList, setOrderList] = useState([]);
-
+    
     useEffect(() => {
-        if (productProp) {
+        if (orderProp) {
             setOrderList(
-                productProp.map((p) => {
+                orderProp.map((order) => {
                     return (
-                        <Row key={p.productId}>
+                        <Row key={order.Product.id}>
                             <Col xs={3} md={2}>
                                 <Image
-                                    src="https://via.placeholder.com/100x100/222222/FFFFFF?text=Image"
+                                    src="https://prd.place/200"
                                     rounded
                                     fluid
                                 ></Image>
                             </Col>
                             <Col className="">
                                 <Card className="mb-5 text-link">
-                                    {/* <Card.Header>ID: {productProp.productId}</Card.Header> */}
+                                    {/* <Card.Header>ID: {orderProp.productId}</Card.Header> */}
                                     {/* <Card.Img
                 variant="top"
                 src="https://via.placeholder.com/100x50/222222/FFFFFF?text=Image"
             /> */}
                                     <Card.Body>
-                                        <Card.Title>{p.productName}</Card.Title>
+                                        <Card.Title>{order.Product.name}</Card.Title>
                                         <Card.Text>
-                                            Quantity: {p.quantity}
+                                            Quantity: {order.quantity}
                                         </Card.Text>
                                         <Card.Text>
                                             Php{" "}
-                                            {p.priceSold.toFixed(2).toString()}
+                                            {order.Product.price.toFixed(2).toString()}
                                         </Card.Text>
                                     </Card.Body>
                                     <Card.Footer>
                                         Subtotal:{" "}
-                                        {(p.quantity * p.priceSold).toFixed(2)}
+                                        {(order.quantity * order.Product.price).toFixed(2)}
                                     </Card.Footer>
                                 </Card>
                             </Col>
@@ -47,7 +47,7 @@ export default function OrderList({ productProp }) {
                 })
             );
         }
-    }, [productProp]);
+    }, [orderProp]);
 
     return <>{orderList}</>;
 }

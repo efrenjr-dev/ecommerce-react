@@ -2,21 +2,23 @@ import "./App.scss";
 
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { QueryClient,QueryClientProvider } from "@tanstack/react-query";
+const queryClient = new QueryClient();
 
 // routes
 import Root from "./pages/Root";
 import ErrorPage from "./pages/ErrorPage";
 import Home from "./pages/Home";
-import ViewProduct from "./pages/ViewProduct";
-import Cart from "./pages/Cart";
+import ViewProduct, { loader as productLoader } from "./pages/ViewProduct";
+import Cart, { loader as cartLoader } from "./pages/Cart";
 import AddProduct from "./pages/AddProduct";
 import Login from "./pages/Login";
 import Logout from "./pages/Logout";
 import Orders from "./pages/Orders";
-import Products, { loader as productsLoader } from "./pages/Products";
+import Products from "./pages/Products";
 import Register from "./pages/Register";
 import UpdateProduct from "./pages/UpdateProduct";
-import ViewOrder from "./pages/ViewOrder";
+import ViewOrder, { loader as orderLoader } from "./pages/ViewOrder";
 
 const router = createBrowserRouter([
     {
@@ -29,12 +31,9 @@ const router = createBrowserRouter([
                 element: <Home />,
             },
             {
-                path: "/product/:productId",
-                element: <ViewProduct />,
-            },
-            {
                 path: "/cart",
                 element: <Cart />,
+                loader: cartLoader
             },
             {
                 path: "/addproduct",
@@ -55,7 +54,14 @@ const router = createBrowserRouter([
             {
                 path: "/products",
                 element: <Products />,
-                loader: productsLoader,
+                // loader: productsLoader,
+                children: [
+                    {
+                        path: "/products/:productId",
+                        element: <ViewProduct />,
+                        loader: productLoader,
+                    },
+                ],
             },
             {
                 path: "/register",
@@ -68,6 +74,7 @@ const router = createBrowserRouter([
             {
                 path: "/order/:orderId",
                 element: <ViewOrder />,
+                loader: orderLoader
             },
         ],
     },
@@ -75,5 +82,9 @@ const router = createBrowserRouter([
 
 export default function App() {
     console.log("API URL", import.meta.env.VITE_API_URL);
-    return <RouterProvider router={router} />;
+    return (
+        <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router} />
+        </QueryClientProvider>
+    );
 }

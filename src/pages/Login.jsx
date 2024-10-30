@@ -44,8 +44,9 @@ export default function Login() {
                 }
             );
             const data = json.deserialize(await loginResponse.json());
-            console.log(data.user.id, data.user.role);
+
             if (data.user) {
+                console.log(data.user.id, data.user.role);
                 setUser({
                     id: data.user.id,
                     role: data.user.role,

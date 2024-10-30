@@ -2,18 +2,17 @@ import { useEffect, useState } from "react";
 import { Button, Col, Form, Image, Row } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 
-export default function CartList({ products, onChangeQuantity }) {
+export default function CartList({ cartItems, onChangeQuantity, isLoading }) {
     const [cartList, setCartList] = useState([]);
 
     useEffect(() => {
-        // console.log(products);
         setCartList(
-            products.map((p) => {
+            cartItems.map((cartItem) => {
                 return (
-                    <Row key={p.productId}>
+                    <Row key={cartItem.id}>
                         <Col xs={3} md={2}>
                             <Image
-                                src="https://via.placeholder.com/100x100/222222/FFFFFF?text=Image"
+                                src="https://prd.place/200"
                                 rounded
                                 fluid
                             ></Image>
@@ -22,11 +21,13 @@ export default function CartList({ products, onChangeQuantity }) {
                             <Card className="mb-5 text-link">
                                 {/* <Card.Header>ID: {productProp.productId}</Card.Header> */}
                                 {/* <Card.Img
-                variant="top"
-                src="https://via.placeholder.com/100x50/222222/FFFFFF?text=Image"
-            /> */}
+            variant="top"
+            src="https://via.placeholder.com/100x50/222222/FFFFFF?text=Image"
+        /> */}
                                 <Card.Body>
-                                    <Card.Title>{p.productName}</Card.Title>
+                                    <Card.Title>
+                                        {cartItem.Product.name}
+                                    </Card.Title>
 
                                     <Form>
                                         <Form.Group className="mb-3 flex-row d-flex align-items-center justify-content-center">
@@ -34,11 +35,12 @@ export default function CartList({ products, onChangeQuantity }) {
                                                 Quantity
                                             </Form.Label>
                                             <Button
+                                                disabled={isLoading}
                                                 onClick={(e) =>
                                                     onChangeQuantity(
                                                         e,
-                                                        p.productId,
-                                                        "-"
+                                                        cartItem.id,
+                                                        cartItem.quantity - 1
                                                     )
                                                 }
                                             >
@@ -46,12 +48,12 @@ export default function CartList({ products, onChangeQuantity }) {
                                             </Button>
                                             <Form.Control
                                                 type="number"
-                                                value={p.quantity}
+                                                value={cartItem.quantity}
                                                 onChange={(e) =>
                                                     onChangeQuantity(
                                                         e,
-                                                        p.productId,
-                                                        "input"
+                                                        cartItem.id,
+                                                        cartItem.quantity
                                                     )
                                                 }
                                                 className="mx-2 number-input"
@@ -61,8 +63,8 @@ export default function CartList({ products, onChangeQuantity }) {
                                                 onClick={(e) =>
                                                     onChangeQuantity(
                                                         e,
-                                                        p.productId,
-                                                        "+"
+                                                        cartItem.id,
+                                                        cartItem.quantity + 1
                                                     )
                                                 }
                                             >
@@ -72,14 +74,18 @@ export default function CartList({ products, onChangeQuantity }) {
                                     </Form>
                                     <Card.Text>
                                         {" "}
-                                        PHP {p.priceSold
+                                        PHP{" "}
+                                        {cartItem.Product.price
                                             .toFixed(2)
                                             .toString()}{" "}
                                     </Card.Text>
                                 </Card.Body>
                                 <Card.Footer>
                                     Subtotal:{" "}
-                                    {(p.quantity * p.priceSold).toFixed(2)}
+                                    {(
+                                        cartItem.quantity *
+                                        cartItem.Product.price
+                                    ).toFixed(2)}
                                 </Card.Footer>
                             </Card>
                         </Col>
@@ -87,7 +93,7 @@ export default function CartList({ products, onChangeQuantity }) {
                 );
             })
         );
-    }, [products]);
+    }, [cartItems,isLoading]);
 
-    return <>{cartList}</>;
+    return <>{ cartList }</>;
 }

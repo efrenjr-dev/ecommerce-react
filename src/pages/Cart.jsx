@@ -3,80 +3,57 @@ import { UserContext } from "../userContext";
 import CartList from "../components/CartList";
 import { toast } from "react-hot-toast";
 import { Button, Card, Col, Row, Table } from "react-bootstrap";
+import Cookies from "universal-cookie";
+const cookies = new Cookies();
+import json from "superjson";
+import { useNavigate, useLoaderData } from "react-router-dom";
 
 export default function Cart() {
-    const { user } = useContext(UserContext);
-    const [products, setProducts] = useState([]);
-    const [cartList, setCartList] = useState([]);
+    const shoppingCart = useLoaderData();
+    const [isLoading, setIsLoading] = useState(false);
+    const [cart, setCart] = useState(shoppingCart);
     const [total, setTotal] = useState(0);
-
-    useEffect(() => {
-        let cart = localStorage.getItem("ecommercecarts");
-        if (cart) {
-            JSON.parse(cart).forEach((item) => {
-                if (item.id === user.id) {
-                    setProducts(item.products);
-                }
-            });
-        }
-    }, [user]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         let totalAmount = 0;
-        let cart = localStorage.getItem("ecommercecarts");
-        if (cart && products.length > 0) {
-            cart = JSON.parse(cart).map((item) => {
-                if (item.id === user.id) {
-                    return { ...item, products: products };
-                }
-                return item;
-            });
-            localStorage.setItem("ecommercecarts", JSON.stringify(cart));
-            products.forEach(
-                (p) => (totalAmount = totalAmount + p.priceSold * p.quantity)
+        if (cart && cart.Cart_Item.length > 0) {
+            cart.Cart_Item.forEach(
+                (cartItem) =>
+                    (totalAmount =
+                        totalAmount +
+                        cartItem.Product.price * cartItem.quantity)
             );
             setTotal(totalAmount);
         }
-    }, [products]);
+    }, [cart]);
 
     const handleOrder = async (e) => {
+        setIsLoading(true);
         let loadingToast = toast.loading("Adding order");
         let totalAmount = 0;
-        let localCart = JSON.parse(localStorage.getItem("ecommercecarts"));
-        products.forEach(
-            (p) => (totalAmount = totalAmount + p.priceSold * p.quantity)
-        );
-        let order = { products: products, totalAmount: totalAmount };
+
         // console.log(order);
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/users/createOrder`,
+                `${import.meta.env.VITE_API_URL}/carts/checkout`,
                 {
-                    method: "PUT",
+                    method: "POST",
                     mode: "cors",
+                    credentials: "include",
                     headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${localStorage.getItem(
-                            "ecommercetoken"
-                        )}`,
+                        Authorization: `Bearer ${cookies.get("accessToken")}`,
                     },
-                    body: JSON.stringify(order),
                 }
             );
-            const data = await response.json();
+            const serializedData = await response.json();
+            const data = json.deserialize(serializedData);
             // console.log(data);
+            setIsLoading(false);
             toast.success(data.message, {
                 id: loadingToast,
             });
-            // console.log(localCart);
-            localCart = JSON.stringify(
-                localCart.filter((item) => {
-                    return item.id !== user.id;
-                })
-            );
-            // console.log(localCart);
-            localStorage.setItem("ecommercecarts", localCart);
-            setProducts([]);
+            navigate(`/order/${data.order.id}`);
         } catch (err) {
             toast.error(err.toString(), {
                 id: loadingToast,
@@ -84,72 +61,49 @@ export default function Cart() {
         }
     };
 
-    const onChangeQuantity = (e, productId, type) => {
+    const onChangeQuantity = (e, cartItemId, quantity) => {
+        e.preventDefault;
+        setIsLoading(true);
         let totalAmount = 0;
-        setProducts(
-            products.map((p) => {
-                // console.log(p);
-                if (p.productId === productId) {
-                    if (type === "input") {
-                        if (e.target.value === 1) {
-                            toast.error("Quantity cannot be less than 1", {
-                                id: "quantityToast",
-                            });
-                            return { ...p };
-                        } else if (e.target.value > 40) {
-                            toast.error("Quantity cannot be more than 40", {
-                                id: "quantityToast",
-                            });
-                            return { ...p };
-                        } else {
-                            totalAmount =
-                                totalAmount + p.priceSold * e.target.value;
-                            return { ...p, quantity: e.target.value };
-                        }
-                    } else if (type === "+") {
-                        // console.log(productQuantity);
-                        if (p.quantity >= 40) {
-                            toast.error("Quantity cannot be more than 40", {
-                                id: "quantityToast",
-                            });
-                            totalAmount = totalAmount + p.priceSold * 40;
-                            return { ...p, quantity: 40 };
-                        }
-                        totalAmount =
-                            totalAmount + p.priceSold * (p.quantity + 1);
-                        return { ...p, quantity: Number(p.quantity) + 1 };
-                    } else if (type === "-") {
-                        // console.log(productQuantity);
-                        if (p.quantity <= 1) {
-                            toast.error("Quantity cannot be less than 1", {
-                                id: "quantityToast",
-                            });
-                            totalAmount = totalAmount + p.priceSold * 1;
-                            return { ...p, quantity: 1 };
-                        }
-                        totalAmount =
-                            totalAmount + p.priceSold * (p.quantity - 1);
-                        return { ...p, quantity: p.quantity - 1 };
-                    }
-                    totalAmount = totalAmount + p.priceSold * p.quantity;
-                    // return p;
-                }
-                totalAmount = totalAmount + p.priceSold * p.quantity;
-                return p;
-            })
-        );
-        setTotal(totalAmount);
+        const updateBody = {
+            quantity: quantity,
+        };
+
+        // setProductQuantity(1);
+
+        fetch(`${import.meta.env.VITE_API_URL}/carts/item/${cartItemId}`, {
+            method: "PATCH",
+            mode: "cors",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${cookies.get("accessToken")}`,
+            },
+            body: json.stringify(updateBody),
+        })
+            .then((result) => result.json())
+            .then((serializedData) => json.deserialize(serializedData))
+            .then((data) => {
+                setCart(data.updatedCart);
+                data.updatedCart.Cart_Item.forEach((cartItem) => {
+                    totalAmount += cartItem.quantity * cartItem.Product.price;
+                });
+                setTotal(totalAmount);
+            });
+
+        setIsLoading(false);
     };
 
     return (
         <>
             <h1 className="text-center my-5">Your Cart</h1>
-            {products.length > 0 ? (
+            {cart.Cart_Item.length > 0 ? (
                 <Row xs={1} md={2}>
                     <Col md={8}>
                         <CartList
-                            products={products}
+                            cartItems={cart.Cart_Item}
                             onChangeQuantity={onChangeQuantity}
+                            isLoading={isLoading}
                         />
                     </Col>
                     <Col md={4} className="justify-content-center">
@@ -185,3 +139,16 @@ export default function Cart() {
         </>
     );
 }
+
+export const loader = async () => {
+    return await fetch(`${import.meta.env.VITE_API_URL}/carts`, {
+        method: "GET",
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookies.get("accessToken")}`,
+        },
+    })
+        .then((response) => response.json())
+        .then((serializedData) => json.deserialize(serializedData));
+};
