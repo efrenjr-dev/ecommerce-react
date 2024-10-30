@@ -10,15 +10,15 @@ export default function AppNavBar() {
     const { user } = useContext(UserContext);
     return (
         <>
-            <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
+            <Navbar collapseOnSelect expand="sm" className="bg-body-tertiary">
                 <Container>
-                    <Navbar.Brand as={Link} to="/">
+                    <Navbar.Brand as={Link}  to="/" href="/">
                         BRAND
                     </Navbar.Brand>
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Navbar.Collapse id="responsive-navbar-nav">
                         <Nav className="me-auto">
-                            <Nav.Link as={Link} to="/">
+                            <Nav.Link as={Link} to="/"  href="/">
                                 Home
                             </Nav.Link>
                             {user.role==='admin' ? (
@@ -26,23 +26,24 @@ export default function AppNavBar() {
                                     title="Products"
                                     id="collapsible-nav-dropdown-products"
                                 >
-                                    <NavDropdown.Item as={Link} to="/products">
+                                    <NavDropdown.Item as={Link} to="/products" href="/products">
                                         View Products
                                     </NavDropdown.Item>
                                     <NavDropdown.Item
                                         as={Link}
                                         to="/addproduct"
+                                         href="/addproduct"
                                     >
                                         Add Products
                                     </NavDropdown.Item>
                                 </NavDropdown>
                             ) : (
-                                <Nav.Link as={Link} to="/products">
+                                <Nav.Link as={Link} to="/products"  href="/products">
                                     Products
                                 </Nav.Link>
                             )}
                             {user.id && (
-                                <Nav.Link as={Link} to="/orders">
+                                <Nav.Link as={Link} to="/orders" href="/orders">
                                     Orders
                                 </Nav.Link>
                             )}
@@ -50,16 +51,16 @@ export default function AppNavBar() {
 
                         <Nav>
                             {user.id && user.role === "user" && (
-                                <Nav.Link as={Link} to="/cart">
+                                <Nav.Link as={Link} to="/cart"  href="/cart">
                                     Cart
                                 </Nav.Link>
                             )}
                             {user.id ? (
-                                <Nav.Link as={Link} to="/logout">
+                                <Nav.Link as={Link} to="/logout"  href="/logout">
                                     Logout
                                 </Nav.Link>
                             ) : (
-                                <Nav.Link as={Link} to="/login">
+                                <Nav.Link as={Link} to="/login"  href="/login">
                                     Login
                                 </Nav.Link>
                             )}
