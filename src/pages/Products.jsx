@@ -7,8 +7,8 @@ import { UserContext } from "../userContext";
 import json from "superjson";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Spinner } from "react-bootstrap";
-import Cookies from "universal-cookie";
-const cookies = new Cookies();
+import { getCookie } from "../utils/cookieService";
+import fetchWrapper from "../utils/fetchWrapper";
 
 export default function Products() {
     // const products = useLoaderData();
@@ -17,7 +17,7 @@ export default function Products() {
     const { isPending, isError, data, error } = useQuery({
         queryKey: ["products"],
         queryFn: async () =>
-            fetch(
+            fetchWrapper(
                 `${
                     import.meta.env.VITE_API_URL
                 }/products/?searchString=&skip=0&take=50`,
@@ -26,7 +26,7 @@ export default function Products() {
                     mode: "cors",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${cookies.get("accessToken")}`,
+                        Authorization: `Bearer ${getCookie("accessToken")}`,
                     },
                 }
             )

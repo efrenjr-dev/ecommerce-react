@@ -1,6 +1,10 @@
 import "./App.scss";
 
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import {
+    RouterProvider,
+    createBrowserRouter,
+    redirect,
+} from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const queryClient = new QueryClient();
@@ -30,6 +34,9 @@ const router = createBrowserRouter([
             {
                 path: "/",
                 element: <Home />,
+                loader: () => {
+                    return redirect("/products");
+                },
             },
             {
                 path: "/cart",
@@ -78,7 +85,7 @@ const router = createBrowserRouter([
                 loader: orderLoader,
             },
             {
-                path: "/verify-email/:token",
+                path: "/verify-email",
                 element: <VerifyEmail />,
                 loader: verifyEmailLoader,
             },

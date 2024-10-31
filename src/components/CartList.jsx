@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Col, Form, Image, Row } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 
-export default function CartList({ cartItems, onChangeQuantity, isLoading }) {
+export default function CartList({ cartItems, onChangeQuantity }) {
     const [cartList, setCartList] = useState([]);
 
     useEffect(() => {
@@ -35,7 +35,6 @@ export default function CartList({ cartItems, onChangeQuantity, isLoading }) {
                                                 Quantity
                                             </Form.Label>
                                             <Button
-                                                disabled={isLoading}
                                                 onClick={(e) =>
                                                     onChangeQuantity(
                                                         e,
@@ -93,7 +92,7 @@ export default function CartList({ cartItems, onChangeQuantity, isLoading }) {
                 );
             })
         );
-    }, [cartItems,isLoading]);
+    }, [cartItems]);
 
-    return <>{ cartList }</>;
+    return <>{cartList}</>;
 }

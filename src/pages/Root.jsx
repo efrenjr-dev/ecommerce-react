@@ -5,8 +5,7 @@ import { Toaster, toast } from "react-hot-toast";
 import AppNavBar from "../components/AppNavBar";
 import { Outlet } from "react-router-dom";
 import json from "superjson";
-import Cookies from "universal-cookie";
-const cookies = new Cookies();
+import { getCookie, removeCookie } from "../utils/cookieService";
 
 export default function Root() {
     const [user, setUser] = useState({
@@ -15,8 +14,8 @@ export default function Root() {
     });
 
     const unsetUser = () => {
-        cookies.remove("accessToken");
-        cookies.remove("refreshToken");
+        removeCookie("accessToken");
+        removeCookie("refreshToken");
     };
 
     useEffect(() => {
@@ -24,7 +23,7 @@ export default function Root() {
             method: "GET",
             mode: "cors",
             headers: {
-                Authorization: `Bearer ${cookies.get("accessToken")}`,
+                Authorization: `Bearer ${getCookie("accessToken")}`,
             },
         })
             .then((response) => response.json())

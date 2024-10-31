@@ -18,7 +18,7 @@ export default function AppNavBar() {
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Navbar.Collapse id="responsive-navbar-nav">
                         <Nav className="me-auto">
-                            <Nav.Link as={Link} to="/"  href="/">
+                            <Nav.Link hidden as={Link} to="/"  href="/">
                                 Home
                             </Nav.Link>
                             {user.role==='admin' ? (

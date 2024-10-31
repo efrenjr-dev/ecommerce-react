@@ -123,6 +123,7 @@ export default function ViewProduct() {
                                                     Quantity
                                                 </Form.Label>
                                                 <Button
+                                                    disabled={isPending}
                                                     onClick={(e) =>
                                                         handleProductQuantity(
                                                             e,
@@ -144,6 +145,7 @@ export default function ViewProduct() {
                                                     className="mx-2 number-input"
                                                 />
                                                 <Button
+                                                    disabled={isPending}
                                                     onClick={(e) =>
                                                         handleProductQuantity(
                                                             e,
