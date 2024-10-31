@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast";
 import { UserContext } from "../userContext";
 import { Link, useNavigate } from "react-router-dom";
 import json from "superjson";
+import fetchWrapper from "../utils/fetchWrapper";
 
 export default function Login() {
     const { setUser } = useContext(UserContext);
@@ -27,12 +28,11 @@ export default function Login() {
     async function loginUser() {
         const loadingToast = toast.loading("Logging in");
         try {
-            const loginResponse = await fetch(
+            const loginResponse = await fetchWrapper(
                 `${import.meta.env.VITE_API_URL}/auth/login`,
                 {
                     method: "POST",
                     mode: "cors",
-                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                         Accept: "application/json",
