@@ -73,7 +73,7 @@ export default function Login() {
         <>
             <Row className="d-flex flex-column align-items-center">
                 <Col xs md="6">
-                    <h1 className="my-5 text-center">Login Page</h1>
+                    <h5 className="mt-5 mb-3 text-start">Enter your email and password to sign in.</h5>
                     <Form
                         onSubmit={(e) => {
                             handleSubmit(e);

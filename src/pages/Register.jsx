@@ -5,25 +5,24 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import toast from "react-hot-toast";
+import json from "superjson";
 
 export default function Register() {
     const navigate = useNavigate();
 
     // const [status, setStatus] = useState("typing"); // typing || submitting || success || error
     const [isFilled, setIsFilled] = useState(false);
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
+    const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
-    const [mobileNo, setMobileNo] = useState("");
+    // const [mobileNo, setMobileNo] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
     useEffect(() => {
         if (
-            firstName !== "" &&
-            lastName !== "" &&
+            fullName !== "" &&
             email !== "" &&
-            mobileNo !== "" &&
+            // mobileNo !== "" &&
             password !== "" &&
             confirmPassword !== ""
         ) {
@@ -31,36 +30,36 @@ export default function Register() {
         } else {
             setIsFilled(false);
         }
-    }, [firstName, lastName, email, mobileNo, password, confirmPassword]);
+    }, [fullName, email, password, confirmPassword]);
 
     async function registerUser() {
         const loadingToast = toast.loading("Registering new user details");
         try {
+            const body = {
+                email: email,
+                password: password,
+                name: fullName,
+            };
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/users/register`,
+                `${import.meta.env.VITE_API_URL}/auth/register`,
                 {
                     method: "POST",
                     mode: "cors",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({
-                        email: email,
-                        password: password,
-                        firstName: firstName,
-                        lastName: lastName,
-                        mobileNo: mobileNo,
-                    }),
+                    body: json.stringify(body),
                 }
             );
-            const data = await response.json();
+            const serializedData = await response.json();
+            const data = json.deserialize(serializedData);
             console.log(data);
-            if (data.status) {
+            if (data.user) {
                 toast.success(data.message, {
                     id: loadingToast,
                 });
                 navigate("/login");
-                toast("Please log in with user credentials");
+                toast("Please check your email to verify.");
             } else {
                 toast.error(data.message, {
                     id: loadingToast,
@@ -91,35 +90,25 @@ export default function Register() {
 
     return (
         <>
-            <Row className="justify-content-center">
+            <Row className="pb-5 mb-5 justify-content-center">
                 <Col xs md="6">
-                    <h1 className="my-5 text-center">Registration</h1>
+                    <h5 className="mt-5 mb-4 text-start">
+                        Enter details to create an account.
+                    </h5>
                     <Form
                         onSubmit={(e) => {
                             handleSubmit(e);
                         }}
                     >
                         <Form.Group className="mb-3">
-                            <Form.Label>First Name:</Form.Label>
+                            <Form.Label>Full Name:</Form.Label>
                             <Form.Control
                                 type="text"
-                                value={firstName}
+                                value={fullName}
                                 onChange={(e) => {
-                                    setFirstName(e.target.value);
+                                    setFullName(e.target.value);
                                 }}
-                                placeholder="Enter First Name"
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Last Name:</Form.Label>
-                            <Form.Control
-                                type="text"
-                                value={lastName}
-                                onChange={(e) => {
-                                    setLastName(e.target.value);
-                                }}
-                                placeholder="Enter Last Name"
+                                placeholder="Enter Full Name"
                                 required
                             />
                         </Form.Group>
@@ -135,7 +124,7 @@ export default function Register() {
                                 required
                             />
                         </Form.Group>
-                        <Form.Group className="mb-3">
+                        {/* <Form.Group className="mb-3">
                             <Form.Label>Mobile Number:</Form.Label>
                             <Form.Control
                                 type="number"
@@ -146,7 +135,7 @@ export default function Register() {
                                 placeholder="Enter Mobile Number"
                                 required
                             />
-                        </Form.Group>
+                        </Form.Group> */}
                         <Form.Group className="mb-3">
                             <Form.Label>Password:</Form.Label>
                             <Form.Control

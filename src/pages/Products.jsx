@@ -45,7 +45,7 @@ export default function Products() {
             ) : (
                 <>
                     <Outlet />
-                    <h1 className="my-5 text-center">Products Page</h1>
+                    <h3 className="my-5 text-center">Fashion</h3>
                     <Row xs={1} sm={2} lg={3}>
                         {/* {activeProducts} */}
                         {data.map((product) => {

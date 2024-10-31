@@ -2,7 +2,7 @@ import "./App.scss";
 
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { QueryClient,QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const queryClient = new QueryClient();
 
 // routes
@@ -19,6 +19,7 @@ import Products from "./pages/Products";
 import Register from "./pages/Register";
 import UpdateProduct from "./pages/UpdateProduct";
 import ViewOrder, { loader as orderLoader } from "./pages/ViewOrder";
+import VerifyEmail, { loader as verifyEmailLoader } from "./pages/VerifyEmail";
 
 const router = createBrowserRouter([
     {
@@ -33,7 +34,7 @@ const router = createBrowserRouter([
             {
                 path: "/cart",
                 element: <Cart />,
-                loader: cartLoader
+                loader: cartLoader,
             },
             {
                 path: "/addproduct",
@@ -74,7 +75,12 @@ const router = createBrowserRouter([
             {
                 path: "/order/:orderId",
                 element: <ViewOrder />,
-                loader: orderLoader
+                loader: orderLoader,
+            },
+            {
+                path: "/verify-email/:token",
+                element: <VerifyEmail />,
+                loader: verifyEmailLoader,
             },
         ],
     },

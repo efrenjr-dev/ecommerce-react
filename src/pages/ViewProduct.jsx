@@ -116,7 +116,7 @@ export default function ViewProduct() {
                                     <Card.Text>
                                         {productDetails.description}
                                     </Card.Text>
-                                    {user.role !== "admin" && (
+                                    {user.role === "user" && (
                                         <Form>
                                             <Form.Group className="mb-3 flex-row d-flex align-items-center justify-content-center">
                                                 <Form.Label className="me-3">
