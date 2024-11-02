@@ -5,9 +5,12 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import json from "superjson";
 import { getCookie } from "../utils/cookieService";
+import { useContext } from "react";
+import { UserContext } from "../userContext";
 
 export default function ViewOrder() {
     const order = useLoaderData();
+    const { user } = useContext(UserContext);
     const date = order.createdAt;
     let strDate =
         date.getMonth() +
@@ -25,7 +28,9 @@ export default function ViewOrder() {
             <Row className="d-flex flex-column align-items-center">
                 <Col>
                     <h4 className="text-center my-5">
-                        Your order details are as below.
+                        {user.role === "user"
+                            ? `Your order details are as below.`
+                            : `Order details`}
                     </h4>
                 </Col>
                 <Col md={10} className="mb-5">

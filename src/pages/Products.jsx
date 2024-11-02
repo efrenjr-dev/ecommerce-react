@@ -25,7 +25,6 @@ export default function Products() {
                     method: "GET",
                     mode: "cors",
                     headers: {
-                        "Content-Type": "application/json",
                         Authorization: `Bearer ${getCookie("accessToken")}`,
                     },
                 }

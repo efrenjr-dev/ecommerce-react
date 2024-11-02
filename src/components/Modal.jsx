@@ -12,12 +12,10 @@ function Modal({ children }) {
     return (
         <>
             <div className="backdrop" onClick={closeHandler} />
-            <dialog open className="modalDialog">
+            <dialog open className="modalDialog modalFullMobile">
                 {children}
             </dialog>
         </>
-
-        
     );
 }
 

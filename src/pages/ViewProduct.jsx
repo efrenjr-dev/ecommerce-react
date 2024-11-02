@@ -23,6 +23,7 @@ export default function ViewProduct() {
     const [isPending, setIsPending] = useState(false);
     const [productQuantity, setProductQuantity] = useState(1);
     const [subtotal, setSubtotal] = useState(0);
+
     useEffect(() => {
         if (productQuantity < 1) {
             toast.error("Quantity cannot be less than 1", {
@@ -83,7 +84,7 @@ export default function ViewProduct() {
     return (
         <>
             <Modal>
-                <main className="details">
+                <main className="details detailsFullMobile">
                     <Row className="justify-content-center align-items-center d-flex px-2 pb-3">
                         <Col>
                             {/* <h1 className="my-5 text-center">
@@ -162,12 +163,25 @@ export default function ViewProduct() {
                                             <Card.Text>
                                                 {subtotal.toFixed(2)}
                                             </Card.Text>
-                                            <Button
-                                                onClick={addToCart}
-                                                disabled={isPending}
-                                            >
-                                                Add to Cart
-                                            </Button>
+                                            <div className="text-center">
+                                                <Button
+                                                    variant="outline-primary"
+                                                    className="mx-1 mb-2"
+                                                    onClick={() => {
+                                                        navigate("/products");
+                                                    }}
+                                                    disabled={isPending}
+                                                >
+                                                    Back
+                                                </Button>
+                                                <Button
+                                                    className="mx-1 mb-2"
+                                                    onClick={addToCart}
+                                                    disabled={isPending}
+                                                >
+                                                    Add to Cart
+                                                </Button>
+                                            </div>
                                         </Form>
                                     )}
                                     {user.role === "admin" && (
