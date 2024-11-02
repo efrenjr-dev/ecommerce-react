@@ -3,90 +3,62 @@ import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/esm/Button";
 import { toast } from "react-hot-toast";
-import { useParams } from "react-router-dom";
+import { useLoaderData, useParams } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { UserContext } from "../userContext";
+import fetchWrapper from "../utils/fetchWrapper";
+import json from "superjson";
+import { getCookie } from "../utils/cookieService";
 
 export default function UpdateProduct() {
-    const { productId } = useParams();
+    const product = useLoaderData();
     const { user } = useContext(UserContext);
     const [isLoading, setIsLoading] = useState(false);
     const [isFilled, setIsFilled] = useState(false);
-    const [productName, setProductName] = useState("");
-    const [description, setDescription] = useState("");
-    const [price, setPrice] = useState(0);
+    const [name, setName] = useState(product.name);
+    const [description, setDescription] = useState(product.description);
+    const [price, setPrice] = useState(product.price);
     const [isActive, setIsActive] = useState(false);
 
     useEffect(() => {
-        if (productName !== "" && description !== "" && price !== 0) {
+        if (name !== "" && description !== "" && price !== 0) {
             setIsFilled(true);
         } else setIsFilled(false);
-    }, [productName, description, price]);
-    const [initialDetails, setInitialDetails] = useState({
-        productName: null,
-        description: null,
-        price: 0,
-        isActive: false,
-    });
-
-    useEffect(() => {
-        // console.log(productId);
-        setIsLoading(true);
-        fetch(`${import.meta.env.VITE_API_URL}/products/${productId}`)
-            .then((result) => result.json())
-            .then((data) => {
-                // console.log(data);
-                setInitialDetails({
-                    productName: data.productName,
-                    description: data.description,
-                    price: data.price,
-                    isActive: data.isActive,
-                });
-                setProductName(data.productName);
-                setDescription(data.description);
-                setPrice(data.price);
-                setIsActive(data.isActive);
-
-                setIsLoading(false);
-            })
-            .catch((error) => error);
-    }, []);
+    }, [name, description, price]);
 
     async function updateProduct() {
+        setIsLoading(true);
         const loadingToast = toast.loading("Updating product details");
         try {
-            console.log(productName, description, price, isActive);
-            const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/products/${productId}`,
+            console.log(name, description, price);
+            const response = await fetchWrapper(
+                `${import.meta.env.VITE_API_URL}/products/product/${
+                    product.id
+                }`,
                 {
-                    method: "PUT",
+                    method: "PATCH",
                     mode: "cors",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${localStorage.getItem(
-                            "ecommercetoken"
-                        )}`,
+                        Authorization: `Bearer ${getCookie("accessToken")}`,
                     },
-                    body: JSON.stringify({
-                        productName: productName,
+                    body: json.stringify({
+                        name: name,
                         description: description,
-                        price: price,
-                        isActive: isActive,
+                        price: parseFloat(price),
                     }),
                 }
             );
-            const data = await response.json();
+            const serializedData = await response.json();
+            const data = json.deserialize(serializedData);
             console.log(data);
-            if (data._id) {
+            if (data.id) {
                 toast.success("Product has been updated successfully.", {
                     id: loadingToast,
                 });
-                setInitialDetails({
-                    productName: productName,
-                    description: description,
-                    price: price,
-                    isActive: isActive,
-                });
+                product.name = name;
+                product.description = description;
+                product.price = price;
             } else {
                 toast.error(data.message, {
                     id: loadingToast,
@@ -97,13 +69,13 @@ export default function UpdateProduct() {
                 id: loadingToast,
             });
         }
+        setIsLoading(false);
     }
 
     const handleReset = () => {
-        setProductName(initialDetails.productName);
-        setDescription(initialDetails.description);
-        setPrice(initialDetails.price);
-        setIsActive(initialDetails.isActive);
+        setName(product.name);
+        setDescription(product.description);
+        setPrice(product.price);
     };
 
     const handleSubmit = (e) => {
@@ -115,7 +87,7 @@ export default function UpdateProduct() {
         <>
             <Row className="justify-content-center">
                 <Col xs md="6">
-                    <h1 className="my-5 text-center">Update Product Page</h1>
+                    <h5 className="my-5 text-center">Update Product Details</h5>
                     <Form
                         onSubmit={(e) => {
                             handleSubmit(e);
@@ -125,7 +97,7 @@ export default function UpdateProduct() {
                             <Form.Label>Product ID:</Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder={productId}
+                                placeholder={product.id}
                                 required
                                 disabled
                             />
@@ -134,9 +106,9 @@ export default function UpdateProduct() {
                             <Form.Label>Product Name:</Form.Label>
                             <Form.Control
                                 type="text"
-                                value={productName}
+                                value={name}
                                 onChange={(e) => {
-                                    setProductName(e.target.value);
+                                    setName(e.target.value);
                                 }}
                                 placeholder="Enter Product Name"
                                 required
@@ -166,7 +138,7 @@ export default function UpdateProduct() {
                                 required
                             />
                         </Form.Group>
-                        <Form.Group className="mb-3">
+                        {/* <Form.Group className="mb-3">
                             <Form.Label>Active:</Form.Label>
                             <Form.Check
                                 type="switch"
@@ -175,18 +147,29 @@ export default function UpdateProduct() {
                                     setIsActive(!isActive);
                                 }}
                             />
-                        </Form.Group>
+                        </Form.Group> */}
                         <Button
                             type="submit"
-                            disabled={!isFilled}
+                            disabled={!isFilled || isLoading}
                             className="me-3"
                         >
                             Confirm Update
                         </Button>
-                        <Button onClick={handleReset}>Reset</Button>
+                        <Button disabled={isLoading} onClick={handleReset}>
+                            Reset
+                        </Button>
                     </Form>
                 </Col>
             </Row>
         </>
     );
 }
+
+export const loader = async ({ params }) => {
+    return fetchWrapper(
+        `${import.meta.env.VITE_API_URL}/products/product/${params.productId}`
+    )
+        .then((result) => result.json())
+        .then((serializedData) => json.deserialize(serializedData))
+        .catch((error) => error);
+};

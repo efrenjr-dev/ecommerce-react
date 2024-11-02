@@ -21,7 +21,9 @@ import Logout from "./pages/Logout";
 import Orders from "./pages/Orders";
 import Products from "./pages/Products";
 import Register from "./pages/Register";
-import UpdateProduct from "./pages/UpdateProduct";
+import UpdateProduct, {
+    loader as updateProductLoader,
+} from "./pages/UpdateProduct";
 import ViewOrder, { loader as orderLoader } from "./pages/ViewOrder";
 import VerifyEmail, { loader as verifyEmailLoader } from "./pages/VerifyEmail";
 
@@ -76,8 +78,9 @@ const router = createBrowserRouter([
                 element: <Register />,
             },
             {
-                path: "/updateproduct/:productId",
+                path: "/update-product/:productId",
                 element: <UpdateProduct />,
+                loader: updateProductLoader,
             },
             {
                 path: "/order/:orderId",
