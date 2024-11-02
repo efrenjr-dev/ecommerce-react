@@ -7,7 +7,12 @@ export default function Product({ productProp, userRole }) {
         ? (productURL = `/update-product/${productProp.id}`)
         : (productURL = `/products/${productProp.id}`);
     return (
-        <Card bg="light" as={Link} to={productURL} className="mb-5 text-link border-0 shadow-sm">
+        <Card
+            bg="light"
+            as={Link}
+            to={productURL}
+            className=" text-link border-0 shadow-sm m-2"
+        >
             {/* {userRole === "admin" && (
                 <Card.Header>ID: {productProp.id}</Card.Header>
             )} */}

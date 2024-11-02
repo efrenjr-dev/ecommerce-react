@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 import OrderList from "../components/OrderList";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
@@ -7,6 +7,7 @@ import json from "superjson";
 import { getCookie } from "../utils/cookieService";
 import { useContext } from "react";
 import { UserContext } from "../userContext";
+import { Button } from "react-bootstrap";
 
 export default function ViewOrder() {
     const order = useLoaderData();
@@ -44,6 +45,11 @@ export default function ViewOrder() {
                 </Col>
                 <Col md={10}>
                     <OrderList orderProp={order.Order_Item} />
+                </Col>
+                <Col className="text-center mb-5">
+                    <Link to="/orders">
+                        <Button variant="dark">Back</Button>
+                    </Link>
                 </Col>
             </Row>
         </>

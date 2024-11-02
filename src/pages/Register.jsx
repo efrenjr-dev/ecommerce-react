@@ -92,7 +92,7 @@ export default function Register() {
         <>
             <Row className="pb-5 mb-5 justify-content-center">
                 <Col xs md="6">
-                    <h5 className="mt-5 mb-4 text-start">
+                    <h5 className="mt-5 mb-4 text-center">
                         Enter details to create an account.
                     </h5>
                     <Form
@@ -160,9 +160,10 @@ export default function Register() {
                                 required
                             />
                         </Form.Group>
-                        <Button type="submit" disabled={!isFilled}>
+                        <div className="text-center">
+                        <Button variant="dark" type="submit" disabled={!isFilled}>
                             Submit
-                        </Button>
+                        </Button></div>
                     </Form>
                 </Col>
             </Row>

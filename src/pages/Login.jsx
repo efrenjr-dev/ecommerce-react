@@ -73,7 +73,9 @@ export default function Login() {
         <>
             <Row className="d-flex flex-column align-items-center">
                 <Col xs md="6">
-                    <h5 className="mt-5 mb-3 text-start">Enter your email and password to sign in.</h5>
+                    <h5 className="mt-5 mb-3 text-center">
+                        Enter your email and password to sign in.
+                    </h5>
                     <Form
                         onSubmit={(e) => {
                             handleSubmit(e);
@@ -103,9 +105,15 @@ export default function Login() {
                                 placeholder="Enter password"
                             />
                         </Form.Group>
-                        <Button type="submit" disabled={!isFilled}>
-                            Submit
-                        </Button>
+                        <div className="text-center">
+                            <Button
+                                variant="dark"
+                                type="submit"
+                                disabled={!isFilled}
+                            >
+                                Submit
+                            </Button>
+                        </div>
                     </Form>
                 </Col>
                 <Col className="text-center my-3">

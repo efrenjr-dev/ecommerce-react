@@ -124,6 +124,7 @@ export default function ViewProduct() {
                                                     Quantity
                                                 </Form.Label>
                                                 <Button
+                                                    variant="secondary"
                                                     disabled={isPending}
                                                     onClick={(e) =>
                                                         handleProductQuantity(
@@ -146,6 +147,7 @@ export default function ViewProduct() {
                                                     className="mx-2 number-input"
                                                 />
                                                 <Button
+                                                    variant="secondary"
                                                     disabled={isPending}
                                                     onClick={(e) =>
                                                         handleProductQuantity(
@@ -165,7 +167,7 @@ export default function ViewProduct() {
                                             </Card.Text>
                                             <div className="text-center">
                                                 <Button
-                                                    variant="outline-primary"
+                                                    variant="outline-dark"
                                                     className="mx-1 mb-2"
                                                     onClick={() => {
                                                         navigate("/products");
@@ -175,6 +177,7 @@ export default function ViewProduct() {
                                                     Back
                                                 </Button>
                                                 <Button
+                                                    variant="dark"
                                                     className="mx-1 mb-2"
                                                     onClick={addToCart}
                                                     disabled={isPending}

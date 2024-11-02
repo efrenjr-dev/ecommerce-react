@@ -88,7 +88,7 @@ const router = createBrowserRouter([
                 loader: orderLoader,
             },
             {
-                path: "/verify-email",
+                path: "/verify-email/:token",
                 element: <VerifyEmail />,
                 loader: verifyEmailLoader,
             },

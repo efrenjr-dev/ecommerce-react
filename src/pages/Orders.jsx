@@ -26,7 +26,13 @@ export default function Orders() {
     });
 
     if (isPending) {
-        return <Spinner animation="grow" role="status" />;
+        return (
+            <div className="text-center">
+                <Spinner role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </Spinner>
+            </div>
+        );
     }
 
     if (isError) {
@@ -51,15 +57,16 @@ export default function Orders() {
             return (
                 <tr key={order.id}>
                     <td>{strDate}</td>
-                    <td className="text-end pe-5">{order.total}</td>
+                    <td className="text-end px-3">{order.total}</td>
                     {/* <td>{order.orderStatus}</td> */}
                     <td className="text-center">
                         <Button
+                            variant="dark"
                             as={Link}
                             to={`/order/${order.id}`}
                             className="btn-sm"
                         >
-                            View
+                            View Details
                         </Button>
                     </td>
                 </tr>
@@ -67,11 +74,12 @@ export default function Orders() {
         });
         return (
             <>
-                <Row className="d-flex flex-column justify-content-center">
+                <Row className="d-flex flex-column align-items-center">
+                    <Col xs md="2"></Col>
                     <Col>
                         <h3 className="text-center my-5">Orders</h3>
                     </Col>
-                    <Col>
+                    <Col md="8">
                         {data.length < 1 ? (
                             <h5 className="text-center">
                                 You do not have any orders.
@@ -81,7 +89,7 @@ export default function Orders() {
                                 <thead>
                                     <tr>
                                         <th>Date Ordered</th>
-                                        <th>Total Amount</th>
+                                        <th className="text-end px-3">Total Amount</th>
                                         <th className="text-center">Actions</th>
                                     </tr>
                                 </thead>
@@ -89,6 +97,7 @@ export default function Orders() {
                             </Table>
                         )}
                     </Col>
+                    <Col xs md="2"></Col>
                 </Row>
             </>
         );

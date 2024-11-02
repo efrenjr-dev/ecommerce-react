@@ -35,6 +35,7 @@ export default function CartList({ cartItems, onChangeQuantity }) {
                                                 Quantity
                                             </Form.Label>
                                             <Button
+                                                variant="outline-dark"
                                                 onClick={(e) =>
                                                     onChangeQuantity(
                                                         e,
@@ -59,6 +60,7 @@ export default function CartList({ cartItems, onChangeQuantity }) {
                                                 disabled
                                             />
                                             <Button
+                                                variant="outline-dark"
                                                 onClick={(e) =>
                                                     onChangeQuantity(
                                                         e,

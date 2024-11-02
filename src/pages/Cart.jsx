@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../userContext";
 import CartList from "../components/CartList";
 import { toast } from "react-hot-toast";
-import { Button, Card, Col, Row, Table } from "react-bootstrap";
+import { Button, Card, Col, Row, Table, Modal, Spinner } from "react-bootstrap";
 import json from "superjson";
 import { useNavigate, useLoaderData, Link } from "react-router-dom";
 import { getCookie } from "../utils/cookieService";
@@ -10,7 +10,7 @@ import fetchWrapper from "../utils/fetchWrapper";
 
 export default function Cart() {
     const shoppingCart = useLoaderData();
-
+    const [isLoading, setIsLoading] = useState(false);
     const [cart, setCart] = useState(shoppingCart);
     const [cartItems, setCartItems] = useState();
     const [total, setTotal] = useState(shoppingCart.total);
@@ -49,6 +49,7 @@ export default function Cart() {
 
     const onChangeQuantity = (e, cartItemId, quantity) => {
         e.preventDefault;
+
         let totalAmount = 0;
         if (quantity < 1) {
             fetchWrapper(
@@ -110,19 +111,26 @@ export default function Cart() {
                             <Card.Body>
                                 <Table>
                                     <tr>
-                                        <td>Total Amount</td>
+                                        <td>Gross Amount</td>
                                         <td className="text-end">
-                                            PHP {total.toFixed(2)}
+                                            {(total * 0.88).toFixed(2)}
                                         </td>
                                     </tr>
-                                    {/* <tr>
-                                    <td>VAT (12%)</td>
-                                    <td className="text-end">
-                                        {(total * 0.05).toFixed(2)}
-                                    </td>
-                                </tr> */}
+                                    <tr>
+                                        <td>VAT (12%)</td>
+                                        <td className="text-end">
+                                            {(total * 0.12).toFixed(2)}
+                                        </td>
+                                    </tr>
+                                    <tr className="fw-bold">
+                                        <td>Total Amount</td>
+                                        <td className="text-end">
+                                            Php {total.toFixed(2)}
+                                        </td>
+                                    </tr>
                                 </Table>
                                 <Button
+                                    variant="warning"
                                     onClick={handleOrder}
                                     className="d-flex ms-auto"
                                 >
@@ -133,7 +141,10 @@ export default function Cart() {
                     </Col>
                 </Row>
             ) : (
-                <h6 className="text-center">Your cart is empty. Please browse our <Link to="/products">products</Link>.</h6>
+                <h6 className="text-center">
+                    Your cart is empty. Please browse our{" "}
+                    <Link to="/products">products</Link>.
+                </h6>
             )
         );
     }, [cart]);

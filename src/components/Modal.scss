@@ -11,7 +11,7 @@
 .modalDialog {
     justify-self: center;
     position: fixed;
-    top:3rem;
+    top: 3rem;
     border: none;
     width: 33vw;
     // max-height:90vh;
@@ -22,20 +22,15 @@
     z-index: 1;
 }
 
-@media (max-width: 575px) {
+
+
+@media (min-width: 1441px) {
     .modalDialog {
         margin: 0;
+        width:25vw
     }
-    .modalFullMobile {
-        position: fixed;
-        top: 0;
-        left:0;
-        max-height: 100vh;
-        overflow-y: auto;
-        width: 100vw;
-    }
-}
 
+}
 @media (max-width: 1016px) and (min-width: 576px) {
     .modalDialog {
         margin: 0;
@@ -44,5 +39,18 @@
         width: 50vw;
         max-height: 100vh;
         overflow-y: auto;
+    }
+}
+
+@media (max-width: 575px) {
+    .modalDialog {
+        margin: 0;
+    }
+    .modalFullMobile {
+        top: 0;
+        left: 0;
+        height: 100vh;
+        overflow-y: auto;
+        width: 100vw;
     }
 }

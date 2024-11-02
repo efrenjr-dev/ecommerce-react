@@ -6,9 +6,11 @@ import Product from "../components/Product";
 import { UserContext } from "../userContext";
 import json from "superjson";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Spinner } from "react-bootstrap";
+import Card from "react-bootstrap/Card";
+import Placeholder from "react-bootstrap/Placeholder";
 import { getCookie } from "../utils/cookieService";
 import fetchWrapper from "../utils/fetchWrapper";
+import ProductLoading from "../components/ProductLoading";
 
 export default function Products() {
     // const products = useLoaderData();
@@ -35,25 +37,20 @@ export default function Products() {
 
     return (
         <>
-            {isPending ? (
-                <Spinner animation="border" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </Spinner>
-            ) : isError ? (
+            {isError ? (
                 <span>Error: {error.message}</span>
+            ) : isPending ? (
+                <ProductLoading />
             ) : (
                 <>
                     <Outlet />
                     <h3 className="my-5 text-center">Fashion</h3>
-                    <Row xs={1} sm={2} lg={3}>
+                    <Row xs={1} sm={2} lg={3} className="">
                         {/* {activeProducts} */}
                         {data.map((product) => {
                             // console.log(product);
                             return (
-                                <Col
-                                    className="d-flex justify-content-center align-items-stretch"
-                                    key={product.id}
-                                >
+                                <Col className="mb-4" key={product.id}>
                                     <Product
                                         productProp={product}
                                         userRole={user.role}
