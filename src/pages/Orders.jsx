@@ -40,6 +40,7 @@ export default function Orders() {
     }
 
     if (data) {
+        console.log("order data: ", data);
         const orders = data.map((order) => {
             // console.log("order");
             let date = new Date(order.createdAt);
@@ -89,7 +90,9 @@ export default function Orders() {
                                 <thead>
                                     <tr>
                                         <th>Date Ordered</th>
-                                        <th className="text-end px-3">Total Amount</th>
+                                        <th className="text-end px-3">
+                                            Total Amount
+                                        </th>
                                         <th className="text-center">Actions</th>
                                     </tr>
                                 </thead>

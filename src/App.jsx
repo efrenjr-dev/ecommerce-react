@@ -1,10 +1,6 @@
 import "./App.scss";
 
-import {
-    RouterProvider,
-    createBrowserRouter,
-    redirect,
-} from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const queryClient = new QueryClient();
@@ -32,13 +28,11 @@ const router = createBrowserRouter([
         path: "/",
         element: <Root />,
         errorElement: <ErrorPage />,
+        // loader: rootLoader,
         children: [
             {
                 path: "/",
                 element: <Home />,
-                loader: () => {
-                    return redirect("/products");
-                },
             },
             {
                 path: "/cart",
@@ -97,7 +91,7 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-    console.log("API URL", import.meta.env.VITE_API_URL);
+    // console.log("API URL", import.meta.env.VITE_API_URL);
     return (
         <QueryClientProvider client={queryClient}>
             <RouterProvider router={router} />

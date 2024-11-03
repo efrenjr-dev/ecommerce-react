@@ -28,11 +28,12 @@ export default function Login() {
     async function loginUser() {
         const loadingToast = toast.loading("Logging in");
         try {
-            const loginResponse = await fetchWrapper(
+            const loginResponse = await fetch(
                 `${import.meta.env.VITE_API_URL}/auth/login`,
                 {
                     method: "POST",
                     mode: "cors",
+                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                         Accept: "application/json",
@@ -56,7 +57,7 @@ export default function Login() {
                 });
                 navigate("/");
             } else {
-                toast.error(data.message, { id: loadingToast });
+                throw new Error(data.message);
             }
         } catch (err) {
             console.log(err);
@@ -107,6 +108,7 @@ export default function Login() {
                         </Form.Group>
                         <div className="text-center">
                             <Button
+                                className="w-100"
                                 variant="dark"
                                 type="submit"
                                 disabled={!isFilled}

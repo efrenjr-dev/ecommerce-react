@@ -91,15 +91,16 @@ export default function Register() {
     return (
         <>
             <Row className="pb-5 mb-5 justify-content-center">
-                <Col xs md="6">
-                    <h5 className="mt-5 mb-4 text-center">
-                        Enter details to create an account.
-                    </h5>
-                    <Form
-                        onSubmit={(e) => {
-                            handleSubmit(e);
-                        }}
-                    >
+                <Form
+                    onSubmit={(e) => {
+                        handleSubmit(e);
+                    }}
+                >
+                    <Col xs md="6">
+                        <h5 className="mt-5 mb-4 text-center">
+                            Enter details to create an account.
+                        </h5>
+
                         <Form.Group className="mb-3">
                             <Form.Label>Full Name:</Form.Label>
                             <Form.Control
@@ -160,12 +161,18 @@ export default function Register() {
                                 required
                             />
                         </Form.Group>
-                        <div className="text-center">
-                        <Button variant="dark" type="submit" disabled={!isFilled}>
+                    </Col>
+                    <Col xs md="6" className="text-center ">
+                        <Button
+                        className="w-100"
+                            variant="dark"
+                            type="submit"
+                            disabled={!isFilled}
+                        >
                             Submit
-                        </Button></div>
-                    </Form>
-                </Col>
+                        </Button>
+                    </Col>
+                </Form>
             </Row>
         </>
     );

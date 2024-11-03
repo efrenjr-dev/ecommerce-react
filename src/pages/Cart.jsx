@@ -109,25 +109,27 @@ export default function Cart() {
                     <Col md={4} className="justify-content-center">
                         <Card>
                             <Card.Body>
-                                <Table>
-                                    <tr>
-                                        <td>Gross Amount</td>
-                                        <td className="text-end">
-                                            {(total * 0.88).toFixed(2)}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>VAT (12%)</td>
-                                        <td className="text-end">
-                                            {(total * 0.12).toFixed(2)}
-                                        </td>
-                                    </tr>
-                                    <tr className="fw-bold">
-                                        <td>Total Amount</td>
-                                        <td className="text-end">
-                                            Php {total.toFixed(2)}
-                                        </td>
-                                    </tr>
+                                <Table  borderless>
+                                    <tbody>
+                                        <tr>
+                                            <td>Gross Amount</td>
+                                            <td className="text-end">
+                                                {(total * 0.88).toFixed(2)}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>VAT (12%)</td>
+                                            <td className="text-end">
+                                                {(total * 0.12).toFixed(2)}
+                                            </td>
+                                        </tr>
+                                        <tr className="fw-bold border-top">
+                                            <td>Total Amount</td>
+                                            <td className="text-end">
+                                                Php {total.toFixed(2)}
+                                            </td>
+                                        </tr>
+                                    </tbody>
                                 </Table>
                                 <Button
                                     variant="warning"

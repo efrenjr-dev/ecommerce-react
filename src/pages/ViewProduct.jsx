@@ -2,19 +2,17 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
-import Spinner from "react-bootstrap/Spinner";
 import Button from "react-bootstrap/esm/Button";
 import Carousel from "react-bootstrap/Carousel";
 import { toast } from "react-hot-toast";
 
-import { useParams, Link, useNavigate, useLoaderData } from "react-router-dom";
+import { Link, useNavigate, useLoaderData } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../userContext";
 import json from "superjson";
-import Cookies from "universal-cookie";
 import Modal from "../components/Modal";
-const cookies = new Cookies();
 import "./viewProduct.scss";
+import { getCookie } from "../utils/cookieService";
 
 export default function ViewProduct() {
     const productDetails = useLoaderData();
@@ -66,7 +64,7 @@ export default function ViewProduct() {
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${cookies.get("accessToken")}`,
+                Authorization: `Bearer ${getCookie("accessToken")}`,
             },
             body: json.stringify(updateBody),
         });

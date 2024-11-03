@@ -50,7 +50,7 @@ export default function Products() {
                         {data.map((product) => {
                             // console.log(product);
                             return (
-                                <Col className="mb-4" key={product.id}>
+                                <Col className="mb-4 d-flex justify-content-center align-items-stretch" key={product.id}>
                                     <Product
                                         productProp={product}
                                         userRole={user.role}
