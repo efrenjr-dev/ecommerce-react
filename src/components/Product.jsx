@@ -2,16 +2,16 @@ import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
 
 export default function Product({ productProp, userRole }) {
-    let productURL = "";
-    userRole === "admin"
-        ? (productURL = `/update-product/${productProp.id}`)
-        : (productURL = `/products/${productProp.id}`);
+    let productURL = `/products/${productProp.id}`;
+    // userRole === "admin"
+    //     ? (productURL = `/update-product/${productProp.id}`)
+    //     : (productURL = `/products/${productProp.id}`);
     return (
         <Card
             bg="light"
             as={Link}
             to={productURL}
-            className=" text-link border-0 shadow-sm m-2"
+            className=" text-link border-0 shadow-sm m-2 w-100"
         >
             {/* {userRole === "admin" && (
                 <Card.Header>ID: {productProp.id}</Card.Header>

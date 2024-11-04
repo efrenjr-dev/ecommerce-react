@@ -76,7 +76,7 @@ export default function ViewProduct() {
 
     const handleUpdate = (e) => {
         e.preventDefault;
-        navigate(`/updateproduct/${productId}`);
+        navigate(`/update-product/${productDetails.id}`);
     };
 
     return (
@@ -123,6 +123,7 @@ export default function ViewProduct() {
                                                 </Form.Label>
                                                 <Button
                                                     variant="secondary"
+                                                    className="btn-sm"
                                                     disabled={isPending}
                                                     onClick={(e) =>
                                                         handleProductQuantity(
@@ -146,6 +147,7 @@ export default function ViewProduct() {
                                                 />
                                                 <Button
                                                     variant="secondary"
+                                                    className="btn-sm"
                                                     disabled={isPending}
                                                     onClick={(e) =>
                                                         handleProductQuantity(
@@ -166,7 +168,7 @@ export default function ViewProduct() {
                                             <div className="text-center">
                                                 <Button
                                                     variant="outline-dark"
-                                                    className="mx-1 mb-2"
+                                                    className="mx-1 mb-2 btn-sm"
                                                     onClick={() => {
                                                         navigate("/products");
                                                     }}
@@ -176,7 +178,7 @@ export default function ViewProduct() {
                                                 </Button>
                                                 <Button
                                                     variant="dark"
-                                                    className="mx-1 mb-2"
+                                                    className="mx-1 mb-2 btn-sm"
                                                     onClick={addToCart}
                                                     disabled={isPending}
                                                 >
@@ -186,14 +188,49 @@ export default function ViewProduct() {
                                         </Form>
                                     )}
                                     {user.role === "admin" && (
-                                        <Button onClick={handleUpdate}>
-                                            Update
-                                        </Button>
+                                        <div className="text-center">
+                                            <Button
+                                                variant="outline-dark"
+                                                className="mx-1 mb-2 btn-sm"
+                                                onClick={() => {
+                                                    navigate("/products");
+                                                }}
+                                                disabled={isPending}
+                                            >
+                                                Back
+                                            </Button>
+                                            <Button
+                                                variant="dark"
+                                                className="mx-1 mb-2 btn-sm"
+                                                onClick={handleUpdate}
+                                            >
+                                                Edit product details
+                                            </Button>
+                                        </div>
                                     )}
                                     {!user.id && (
-                                        <Card.Link as={Link} to="/login">
-                                            Sign in and add to cart
-                                        </Card.Link>
+                                        <div className="text-center">
+                                            <Button
+                                                variant="outline-dark"
+                                                className="mx-1 mb-2 btn-sm"
+                                                onClick={() => {
+                                                    navigate("/products");
+                                                }}
+                                                disabled={isPending}
+                                            >
+                                                Back
+                                            </Button>
+                                            <Button
+                                                variant="dark"
+                                                className="mx-1 mb-2 btn-sm"
+                                                onClick={() => {
+                                                    navigate("/login");
+                                                }}
+                                                disabled={isPending}
+                                            >
+                                                Sign in and add to cart
+                                            </Button>
+                                        </div>
                                     )}
                                 </Card.Body>
                             </Card>

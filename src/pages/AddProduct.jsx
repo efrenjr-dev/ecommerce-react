@@ -4,21 +4,24 @@ import Col from "react-bootstrap/esm/Col";
 import Row from "react-bootstrap/esm/Row";
 import { Form } from "react-bootstrap";
 import { toast } from "react-hot-toast";
+import { getCookie } from "../utils/cookieService";
+import json from "superjson";
+import fetchWrapper from "../utils/fetchWrapper";
 
 export default function AddProduct() {
     const [isFilled, setIsFilled] = useState(false);
-    const [productName, setProductName] = useState("");
+    const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState(0);
 
     useEffect(() => {
-        if (productName !== "" && description !== "" && price !== 0) {
+        if (name !== "" && description !== "" && price !== 0) {
             setIsFilled(true);
         } else setIsFilled(false);
-    }, [productName, description, price]);
+    }, [name, description, price]);
 
     function resetForm() {
-        setProductName("");
+        setName("");
         setDescription("");
         setPrice(0);
     }
@@ -26,29 +29,34 @@ export default function AddProduct() {
     async function createProduct() {
         const loadingToast = toast.loading("Adding new product");
         try {
-            console.log(productName, description, price);
-            const productResponse = await fetch(
+            console.log(name, description, price);
+            const productResponse = await fetchWrapper(
                 `${import.meta.env.VITE_API_URL}/products/`,
                 {
                     method: "POST",
                     mode: "cors",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${localStorage.getItem(
-                            "ecommercetoken"
-                        )}`,
+                        Authorization: `Bearer ${getCookie("accessToken")}`,
                     },
-                    body: JSON.stringify({
-                        productName: productName,
+                    body: json.stringify({
+                        name: name,
                         description: description,
-                        price: price,
+                        price: parseFloat(price),
                     }),
                 }
             );
-            const productData = await productResponse.json();
-            toast.success(`Item ${productData.productName} has been added`, {
-                id: loadingToast,
-            });
+            if (productResponse.ok) {
+                const productData = await productResponse.json();
+                toast.success(
+                    `Item ${productData.productName} has been added`,
+                    {
+                        id: loadingToast,
+                    }
+                );
+            } else {
+                toast.error("Adding product has failed.", { id: loadingToast });
+            }
         } catch (err) {
             toast.error(err.toString(), { id: loadingToast });
         }
@@ -64,7 +72,7 @@ export default function AddProduct() {
         <>
             <Row className="justify-content-center">
                 <Col xs md="6">
-                    <h1 className="my-5 text-center">Add Product</h1>
+                    <h4 className="my-5 text-center">Add Product</h4>
                     <Form
                         onSubmit={(e) => {
                             handleSubmit(e);
@@ -74,9 +82,9 @@ export default function AddProduct() {
                             <Form.Label>Product Name:</Form.Label>
                             <Form.Control
                                 type="text"
-                                value={productName}
+                                value={name}
                                 onChange={(e) => {
-                                    setProductName(e.target.value);
+                                    setName(e.target.value);
                                 }}
                                 placeholder="Enter Product Name"
                                 required
@@ -106,7 +114,7 @@ export default function AddProduct() {
                                 required
                             />
                         </Form.Group>
-                        <Button type="submit" disabled={!isFilled}>
+                        <Button variant="dark" type="submit" disabled={!isFilled}>
                             Submit
                         </Button>
                     </Form>

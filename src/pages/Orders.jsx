@@ -10,100 +10,210 @@ import json from "superjson";
 export default function Orders() {
     const { user } = useContext(UserContext);
     // const [orders, setOrders] = useState([]);
+    console.log("User Role: ", user.role);
 
-    const { isPending, isError, data, error } = useQuery({
-        queryKey: ["orders"],
-        queryFn: async () =>
-            fetchWrapper(`${import.meta.env.VITE_API_URL}/orders`, {
-                method: "GET",
-                mode: "cors",
-                headers: {
-                    Authorization: `Bearer ${getCookie("accessToken")}`,
-                },
-            })
-                .then((response) => response.json())
-                .then((serializedData) => json.deserialize(serializedData)),
-    });
-
-    if (isPending) {
-        return (
-            <div className="text-center">
-                <Spinner role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </Spinner>
-            </div>
-        );
-    }
-
-    if (isError) {
-        return <span> ERROR! {error}</span>;
-    }
-
-    if (data) {
-        console.log("order data: ", data);
-        const orders = data.map((order) => {
-            // console.log("order");
-            let date = new Date(order.createdAt);
-            let strDate =
-                date.getMonth() +
-                1 +
-                "/" +
-                date.getDate() +
-                "/" +
-                date.getFullYear() +
-                " " +
-                date.getHours() +
-                ":" +
-                date.getMinutes();
-            return (
-                <tr key={order.id}>
-                    <td>{strDate}</td>
-                    <td className="text-end px-3">{order.total}</td>
-                    {/* <td>{order.orderStatus}</td> */}
-                    <td className="text-center">
-                        <Button
-                            variant="dark"
-                            as={Link}
-                            to={`/order/${order.id}`}
-                            className="btn-sm"
-                        >
-                            View Details
-                        </Button>
-                    </td>
-                </tr>
-            );
+    if (user.role === "admin") {
+        const { isPending, isError, data, error } = useQuery({
+            queryKey: ["orders"],
+            queryFn: async () =>
+                fetchWrapper(
+                    `${import.meta.env.VITE_API_URL}/orders/all?skip=0&take=10`,
+                    {
+                        method: "GET",
+                        mode: "cors",
+                        headers: {
+                            Authorization: `Bearer ${getCookie("accessToken")}`,
+                        },
+                    }
+                )
+                    .then((response) => response.json())
+                    .then((serializedData) => json.deserialize(serializedData)),
         });
-        return (
-            <>
-                <Row className="d-flex flex-column align-items-center">
-                    <Col xs md="2"></Col>
-                    <Col>
-                        <h3 className="text-center my-5">Orders</h3>
-                    </Col>
-                    <Col md="8">
-                        {data.length < 1 ? (
-                            <h5 className="text-center">
-                                You do not have any orders.
-                            </h5>
-                        ) : (
-                            <Table>
-                                <thead>
-                                    <tr>
-                                        <th>Date Ordered</th>
-                                        <th className="text-end px-3">
-                                            Total Amount
-                                        </th>
-                                        <th className="text-center">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>{orders.length > 0 && orders}</tbody>
-                            </Table>
-                        )}
-                    </Col>
-                    <Col xs md="2"></Col>
-                </Row>
-            </>
-        );
+
+        if (isPending) {
+            return (
+                <div className="text-center">
+                    <Spinner role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                </div>
+            );
+        }
+
+        if (isError) {
+            return <span> ERROR! {error}</span>;
+        }
+
+        if (data) {
+            console.log("order data: ", data);
+            const orders = data.map((order) => {
+                // console.log("order");
+                let date = new Date(order.createdAt);
+                let strDate =
+                    date.getMonth() +
+                    1 +
+                    "/" +
+                    date.getDate() +
+                    "/" +
+                    date.getFullYear() +
+                    " " +
+                    date.getHours() +
+                    ":" +
+                    date.getMinutes();
+                return (
+                    <tr key={order.id}>
+                        <td>{strDate}</td>
+                        <td className="text-end px-3">{order.total}</td>
+                        {/* <td>{order.orderStatus}</td> */}
+                        <td className="text-center">
+                            <Button
+                                variant="outline-dark"
+                                as={Link}
+                                to={`/order/${order.id}`}
+                                className="btn-sm"
+                            >
+                                View details
+                            </Button>
+                        </td>
+                    </tr>
+                );
+            });
+            return (
+                <>
+                    <Row className="d-flex flex-column align-items-center">
+                        <Col xs md="2"></Col>
+                        <Col>
+                            <h3 className="text-center my-5">Orders</h3>
+                        </Col>
+                        <Col md="8">
+                            {data.length < 1 ? (
+                                <h5 className="text-center">
+                                    No orders found.
+                                </h5>
+                            ) : (
+                                <Table>
+                                    <thead>
+                                        <tr>
+                                            <th>Date Ordered</th>
+                                            <th className="text-end px-3">
+                                                Total Amount
+                                            </th>
+                                            <th className="text-center">
+                                                Actions
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>{orders.length > 0 && orders}</tbody>
+                                </Table>
+                            )}
+                        </Col>
+                        <Col xs md="2"></Col>
+                    </Row>
+                </>
+            );
+        }
+    }
+
+    if (user.role === "user") {
+        const { isPending, isError, data, error } = useQuery({
+            queryKey: ["orders"],
+            queryFn: async () =>
+                fetchWrapper(
+                    `${import.meta.env.VITE_API_URL}/orders/?skip=0&take=10`,
+                    {
+                        method: "GET",
+                        mode: "cors",
+                        headers: {
+                            Authorization: `Bearer ${getCookie("accessToken")}`,
+                        },
+                    }
+                )
+                    .then((response) => response.json())
+                    .then((serializedData) => json.deserialize(serializedData)),
+        });
+
+        if (isPending) {
+            return (
+                <div className="text-center">
+                    <Spinner role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                </div>
+            );
+        }
+
+        if (isError) {
+            return <span> ERROR! {error}</span>;
+        }
+
+        if (data) {
+            console.log("order data: ", data);
+            const orders = data.map((order) => {
+                // console.log("order");
+                let date = new Date(order.createdAt);
+                let strDate =
+                    date.getMonth() +
+                    1 +
+                    "/" +
+                    date.getDate() +
+                    "/" +
+                    date.getFullYear() +
+                    " " +
+                    date.getHours() +
+                    ":" +
+                    date.getMinutes();
+                return (
+                    <tr key={order.id}>
+                        <td>{strDate}</td>
+                        <td className="text-end px-3">{order.total}</td>
+                        {/* <td>{order.orderStatus}</td> */}
+                        <td className="text-center">
+                            <Button
+                                variant="outline-dark"
+                                as={Link}
+                                to={`/order/${order.id}`}
+                                className="btn-sm"
+                            >
+                                View details
+                            </Button>
+                        </td>
+                    </tr>
+                );
+            });
+            return (
+                <>
+                    <Row className="d-flex flex-column align-items-center">
+                        <Col xs md="2"></Col>
+                        <Col>
+                            <h3 className="text-center my-5">Orders</h3>
+                        </Col>
+                        <Col md="8">
+                            {data.length < 1 ? (
+                                <h5 className="text-center">
+                                    You do not have any orders.
+                                </h5>
+                            ) : (
+                                <Table>
+                                    <thead>
+                                        <tr>
+                                            <th>Date Ordered</th>
+                                            <th className="text-end px-3">
+                                                Total Amount
+                                            </th>
+                                            <th className="text-center">
+                                                Actions
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>{orders.length > 0 && orders}</tbody>
+                                </Table>
+                            )}
+                        </Col>
+                        <Col xs md="2"></Col>
+                    </Row>
+                </>
+            );
+        }
     }
 }
 

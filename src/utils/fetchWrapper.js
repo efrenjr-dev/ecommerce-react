@@ -1,5 +1,5 @@
 import json from "superjson";
-import { getCookie, setCookie } from "./cookieService";
+import { getCookie } from "./cookieService";
 
 const fetchWrapper = async (url, options = {}, navigate) => {
     const response = await fetch(url, { ...options, credentials: "include" });
@@ -34,7 +34,7 @@ const fetchWrapper = async (url, options = {}, navigate) => {
                 credentials: "include",
             });
         } else {
-            console.log("Refresh token invalid. Redirect to login");
+            console.log("Refresh token invalid. Redirect to home page");
             navigate("/"); // Redirect to home if refresh fails
         }
     }

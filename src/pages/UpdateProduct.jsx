@@ -3,7 +3,7 @@ import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/esm/Button";
 import { toast } from "react-hot-toast";
-import { useLoaderData, useParams } from "react-router-dom";
+import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { UserContext } from "../userContext";
 import fetchWrapper from "../utils/fetchWrapper";
@@ -12,16 +12,15 @@ import { getCookie } from "../utils/cookieService";
 
 export default function UpdateProduct() {
     const product = useLoaderData();
-    const { user } = useContext(UserContext);
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [isFilled, setIsFilled] = useState(false);
     const [name, setName] = useState(product.name);
     const [description, setDescription] = useState(product.description);
     const [price, setPrice] = useState(product.price);
-    const [isActive, setIsActive] = useState(false);
 
     useEffect(() => {
-        if (name !== "" && description !== "" && price !== 0) {
+        if (name !== "" && description !== "" && price != 0) {
             setIsFilled(true);
         } else setIsFilled(false);
     }, [name, description, price]);
@@ -83,11 +82,16 @@ export default function UpdateProduct() {
         updateProduct();
     };
 
+    const handleCancel = () => {
+        setIsLoading(true)
+        navigate(-1);
+    };
+
     return (
         <>
             <Row className="justify-content-center">
                 <Col xs md="6">
-                    <h5 className="my-5 text-center">Update Product Details</h5>
+                    <h4 className="my-5 text-center">Edit Product Details</h4>
                     <Form
                         onSubmit={(e) => {
                             handleSubmit(e);
@@ -149,14 +153,29 @@ export default function UpdateProduct() {
                             />
                         </Form.Group> */}
                         <Button
+                            variant="outline-dark"
+                            className="mx-1 mb-2"
+                            onClick={handleCancel}
+                            disabled={isLoading}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="outline-dark"
+                            className="mx-1 mb-2"
+                            type="reset"
+                            disabled={isLoading}
+                            onClick={handleReset}
+                        >
+                            Reset
+                        </Button>
+                        <Button
+                            variant="dark"
+                            className="mx-1 mb-2"
                             type="submit"
                             disabled={!isFilled || isLoading}
-                            className="me-3"
                         >
                             Confirm Update
-                        </Button>
-                        <Button disabled={isLoading} onClick={handleReset}>
-                            Reset
                         </Button>
                     </Form>
                 </Col>

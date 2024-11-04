@@ -38,6 +38,9 @@ export default function ViewOrder() {
                     <Card>
                         <Card.Body>
                             <Card.Title>Order Details</Card.Title>
+                            <Card.Text>
+                                Customer Name: {order.User.name}
+                            </Card.Text>
                             <Card.Text>Date Ordered: {strDate}</Card.Text>
                             <Card.Text>Total Amount: {order.total}</Card.Text>
                         </Card.Body>
@@ -57,13 +60,16 @@ export default function ViewOrder() {
 }
 
 export const loader = async ({ params }) => {
-    return fetch(`${import.meta.env.VITE_API_URL}/orders/${params.orderId}`, {
-        method: "GET",
-        mode: "cors",
-        headers: {
-            Authorization: `Bearer ${getCookie("accessToken")}`,
-        },
-    })
+    return fetch(
+        `${import.meta.env.VITE_API_URL}/orders/order/${params.orderId}`,
+        {
+            method: "GET",
+            mode: "cors",
+            headers: {
+                Authorization: `Bearer ${getCookie("accessToken")}`,
+            },
+        }
+    )
         .then((result) => result.json())
         .then((serializedData) => json.deserialize(serializedData));
 };

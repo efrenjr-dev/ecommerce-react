@@ -10,7 +10,6 @@ import fetchWrapper from "../utils/fetchWrapper";
 
 export default function Cart() {
     const shoppingCart = useLoaderData();
-    const [isLoading, setIsLoading] = useState(false);
     const [cart, setCart] = useState(shoppingCart);
     const [cartItems, setCartItems] = useState();
     const [total, setTotal] = useState(shoppingCart.total);
@@ -109,7 +108,7 @@ export default function Cart() {
                     <Col md={4} className="justify-content-center">
                         <Card>
                             <Card.Body>
-                                <Table  borderless>
+                                <Table borderless>
                                     <tbody>
                                         <tr>
                                             <td>Gross Amount</td>
@@ -134,7 +133,7 @@ export default function Cart() {
                                 <Button
                                     variant="warning"
                                     onClick={handleOrder}
-                                    className="d-flex ms-auto"
+                                    className="d-flex ms-auto btn-sm"
                                 >
                                     Checkout
                                 </Button>

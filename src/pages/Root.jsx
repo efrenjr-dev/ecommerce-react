@@ -37,7 +37,7 @@ export default function Root() {
             .then((response) => response.json())
             .then((serializedData) => json.deserialize(serializedData))
             .then((data) => {
-                console.log(data.id, data.role);
+                console.log("user role: ", data.role);
                 setUser({
                     id: data.id,
                     role: data.role,
@@ -60,7 +60,7 @@ export default function Root() {
                     }}
                 />
                 <AppNavBar />
-                <Container>
+                <Container className="mb-5">
                     <Outlet />
                 </Container>
             </UserContext.Provider>

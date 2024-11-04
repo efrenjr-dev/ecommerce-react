@@ -9,13 +9,13 @@ import { getCookie } from "../utils/cookieService";
 export default function Logout() {
     const { setUser, unsetUser } = useContext(UserContext);
     const navigate = useNavigate();
-    setUser({
-        id: null,
-        isAdmin: null,
-    });
+
     useEffect(() => {
         toast.success("You have been logged out.");
-
+        setUser({
+            id: null,
+            isAdmin: null,
+        });
         fetch(
             `${import.meta.env.VITE_API_URL}/auth/logout?token=${getCookie(
                 "refreshToken"
