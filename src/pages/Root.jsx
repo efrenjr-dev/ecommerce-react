@@ -3,14 +3,15 @@ import { UserContext } from "../userContext";
 import Container from "react-bootstrap/Container";
 import { Toaster, toast } from "react-hot-toast";
 import AppNavBar from "../components/AppNavBar";
-import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
+import { Outlet, useLoaderData, useLocation, useNavigate } from "react-router-dom";
 import json from "superjson";
 import { getCookie, removeCookie } from "../utils/cookieService";
 import fetchWrapper from "../utils/fetchWrapper";
 
 export default function Root() {
-    const data = useLoaderData();
+    // const data = useLoaderData();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [user, setUser] = useState({
         id: null,
@@ -32,7 +33,7 @@ export default function Root() {
                     Authorization: `Bearer ${getCookie("accessToken")}`,
                 },
             },
-            navigate
+            navigate,location
         )
             .then((response) => response.json())
             .then((serializedData) => json.deserialize(serializedData))

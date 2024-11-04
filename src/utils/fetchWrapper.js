@@ -35,7 +35,9 @@ const fetchWrapper = async (url, options = {}, navigate) => {
             });
         } else {
             console.log("Refresh token invalid. Redirect to home page");
-            navigate("/"); // Redirect to home if refresh fails
+            console.log("Pathname", window.location.href.split("/")[3]);
+            if (window.location.href.split("/")[3] !== "reset-password")
+                navigate("/"); // Redirect to home if refresh fails
         }
     }
 

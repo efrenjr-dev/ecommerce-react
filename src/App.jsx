@@ -22,6 +22,8 @@ import UpdateProduct, {
 } from "./pages/UpdateProduct";
 import ViewOrder, { loader as orderLoader } from "./pages/ViewOrder";
 import VerifyEmail, { loader as verifyEmailLoader } from "./pages/VerifyEmail";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const router = createBrowserRouter([
     {
@@ -38,6 +40,14 @@ const router = createBrowserRouter([
                 path: "/cart",
                 element: <Cart />,
                 loader: cartLoader,
+            },
+            {
+                path: "/forgot-password",
+                element: <ForgotPassword />,
+            },
+            {
+                path: "/reset-password/:token",
+                element: <ResetPassword />,
             },
             {
                 path: "/addproduct",

@@ -7,7 +7,6 @@ import { toast } from "react-hot-toast";
 import { UserContext } from "../userContext";
 import { Link, useNavigate } from "react-router-dom";
 import json from "superjson";
-import fetchWrapper from "../utils/fetchWrapper";
 
 export default function Login() {
     const { setUser } = useContext(UserContext);
@@ -119,9 +118,10 @@ export default function Login() {
                     </Form>
                 </Col>
                 <Col className="text-center my-3">
-                    <Link to={"/register"}>
-                        Do not have an account? Sign up
+                    <Link to={"/register"} className="me-4">
+                        Sign up
                     </Link>
+                    <Link to={"/forgot-password"}>Forgot password</Link>
                 </Col>
             </Row>
         </>
