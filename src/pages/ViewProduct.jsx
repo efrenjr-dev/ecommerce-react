@@ -13,9 +13,13 @@ import json from "superjson";
 import Modal from "../components/Modal";
 import "./viewProduct.scss";
 import { getCookie } from "../utils/cookieService";
+import { debounce } from "../utils/debounce";
 
 export default function ViewProduct() {
     const productDetails = useLoaderData();
+    const productInventory = productDetails.Product_Inventory.quantity;
+    // console.log("productDetails: ", productDetails);
+    // console.log(productDetails.Product_Inventory.quantity);
     const navigate = useNavigate();
     const { user } = useContext(UserContext);
     const [isPending, setIsPending] = useState(false);
@@ -33,6 +37,14 @@ export default function ViewProduct() {
                 id: "quantityToast",
             });
             setProductQuantity(40);
+        } else if (productQuantity > productInventory) {
+            toast.error(
+                `Quantity cannot be more than (${productInventory}) for this product`,
+                {
+                    id: "quantityToast",
+                }
+            );
+            setProductQuantity(productInventory);
         } else {
             setSubtotal(productDetails.price * productQuantity);
         }
@@ -77,6 +89,10 @@ export default function ViewProduct() {
     const handleUpdate = (e) => {
         e.preventDefault;
         navigate(`/update-product/${productDetails.id}`);
+    };
+    const handleInventory = (e) => {
+        e.preventDefault;
+        navigate(`/product-inventory/${productDetails.id}`);
     };
 
     return (
@@ -145,6 +161,7 @@ export default function ViewProduct() {
                                                     }
                                                     className="mx-2 number-input"
                                                 />
+
                                                 <Button
                                                     variant="secondary"
                                                     className="btn-sm"
@@ -188,24 +205,37 @@ export default function ViewProduct() {
                                         </Form>
                                     )}
                                     {user.role === "admin" && (
-                                        <div className="text-center">
-                                            <Button
-                                                variant="outline-dark"
-                                                className="mx-1 mb-2 btn-sm"
-                                                onClick={() => {
-                                                    navigate("/products");
-                                                }}
-                                                disabled={isPending}
-                                            >
-                                                Back
-                                            </Button>
-                                            <Button
-                                                variant="dark"
-                                                className="mx-1 mb-2 btn-sm"
-                                                onClick={handleUpdate}
-                                            >
-                                                Edit product details
-                                            </Button>
+                                        <div>
+                                            <Card.Text>
+                                                Stock available:{" "}
+                                                {productInventory}
+                                            </Card.Text>
+                                            <div className="text-center">
+                                                <Button
+                                                    variant="outline-dark"
+                                                    className="mx-1 mb-2 btn-sm"
+                                                    onClick={handleInventory}
+                                                >
+                                                    Update Inventory
+                                                </Button>
+                                                <Button
+                                                    variant="outline-dark"
+                                                    className="mx-1 mb-2 btn-sm"
+                                                    onClick={handleUpdate}
+                                                >
+                                                    Edit details
+                                                </Button>
+                                                <Button
+                                                    variant="dark"
+                                                    className="mx-1 mb-2 btn-sm"
+                                                    onClick={() => {
+                                                        navigate("/products");
+                                                    }}
+                                                    disabled={isPending}
+                                                >
+                                                    Back
+                                                </Button>
+                                            </div>
                                         </div>
                                     )}
                                     {!user.id && (

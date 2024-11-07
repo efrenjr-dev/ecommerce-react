@@ -10,7 +10,7 @@ import fetchWrapper from "../utils/fetchWrapper";
 import json from "superjson";
 import { getCookie } from "../utils/cookieService";
 
-export default function UpdateProduct() {
+export default function ProductInventory() {
     const product = useLoaderData();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
@@ -91,7 +91,7 @@ export default function UpdateProduct() {
         <>
             <Row className="justify-content-center">
                 <Col xs md="6">
-                    <h4 className="my-5 text-center">Edit Product Details</h4>
+                    <h4 className="my-5 text-center">Update Product Inventory</h4>
                     <Form
                         onSubmit={(e) => {
                             handleSubmit(e);

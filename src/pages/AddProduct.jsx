@@ -94,6 +94,8 @@ export default function AddProduct() {
                             <Form.Label>Product Description:</Form.Label>
                             <Form.Control
                                 type="text"
+                                as="textarea"
+                                rows={3}
                                 value={description}
                                 onChange={(e) => {
                                     setDescription(e.target.value);
@@ -114,7 +116,7 @@ export default function AddProduct() {
                                 required
                             />
                         </Form.Group>
-                        <Button variant="dark" type="submit" disabled={!isFilled}>
+                        <Button className="w-100" variant="dark" type="submit" disabled={!isFilled}>
                             Submit
                         </Button>
                     </Form>

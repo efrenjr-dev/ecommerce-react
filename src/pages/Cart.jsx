@@ -1,8 +1,7 @@
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../userContext";
+import { useEffect, useState } from "react";
 import CartList from "../components/CartList";
 import { toast } from "react-hot-toast";
-import { Button, Card, Col, Row, Table, Modal, Spinner } from "react-bootstrap";
+import { Button, Card, Col, Row, Table } from "react-bootstrap";
 import json from "superjson";
 import { useNavigate, useLoaderData, Link } from "react-router-dom";
 import { getCookie } from "../utils/cookieService";
@@ -18,7 +17,6 @@ export default function Cart() {
     const handleOrder = async (e) => {
         e.preventDefault;
         let loadingToast = toast.loading("Adding order");
-        let totalAmount = 0;
 
         // console.log(order);
         try {
@@ -35,10 +33,16 @@ export default function Cart() {
             );
             const serializedData = await response.json();
             const data = json.deserialize(serializedData);
-            toast.success(data.message, {
-                id: loadingToast,
-            });
-            navigate(`/order/${data.order.id}`);
+            if (data.code === 406) {
+                toast.error(data.message, {
+                    id: loadingToast,
+                });
+            } else {
+                toast.success(data.message, {
+                    id: loadingToast,
+                });
+                navigate(`/order/${data.order.id}`);
+            }
         } catch (err) {
             toast.error(err.toString(), {
                 id: loadingToast,
@@ -48,8 +52,7 @@ export default function Cart() {
 
     const onChangeQuantity = (e, cartItemId, quantity) => {
         e.preventDefault;
-
-        let totalAmount = 0;
+        let loadingToast = toast.loading("Updating cart...");
         if (quantity < 1) {
             fetchWrapper(
                 `${import.meta.env.VITE_API_URL}/carts/item/${cartItemId}`,
@@ -59,6 +62,7 @@ export default function Cart() {
                     headers: {
                         Authorization: `Bearer ${getCookie("accessToken")}`,
                     },
+                    navigate,
                 }
             )
                 .then((result) => result.json())
@@ -66,6 +70,7 @@ export default function Cart() {
                 .then((data) => {
                     setCart(data.updatedCart);
                     setTotal(data.cartTotal);
+                    toast.dismiss(loadingToast);
                 });
         } else {
             const updateBody = {
@@ -91,6 +96,7 @@ export default function Cart() {
                 .then((data) => {
                     setCart(data.updatedCart);
                     setTotal(data.cartTotal);
+                    toast.dismiss(loadingToast);
                 });
         }
     };

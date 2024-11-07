@@ -24,6 +24,7 @@ import ViewOrder, { loader as orderLoader } from "./pages/ViewOrder";
 import VerifyEmail, { loader as verifyEmailLoader } from "./pages/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import ProductInventory, { loader as productInventoryLoader } from "./pages/ProductInventory";
 
 const router = createBrowserRouter([
     {
@@ -85,6 +86,11 @@ const router = createBrowserRouter([
                 path: "/update-product/:productId",
                 element: <UpdateProduct />,
                 loader: updateProductLoader,
+            },
+            {
+                path: "/product-inventory/:productId",
+                element: <ProductInventory />,
+                loader: productInventoryLoader,
             },
             {
                 path: "/order/:orderId",

@@ -34,7 +34,7 @@ export default function AppNavBar() {
                                         to="/addproduct"
                                          href="/addproduct"
                                     >
-                                        Add Products
+                                        Add Product
                                     </NavDropdown.Item>
                                 </NavDropdown>
                             ) : (

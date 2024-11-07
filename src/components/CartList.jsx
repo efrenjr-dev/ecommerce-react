@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Form, Image, Row } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
+import { debounce_leading } from "../utils/debounce";
 
 export default function CartList({ cartItems, onChangeQuantity }) {
     const [cartList, setCartList] = useState([]);
@@ -37,13 +38,13 @@ export default function CartList({ cartItems, onChangeQuantity }) {
                                             <Button
                                                 variant="outline-dark"
                                                 className="btn-sm"
-                                                onClick={(e) =>
+                                                onClick={debounce_leading((e) =>
                                                     onChangeQuantity(
                                                         e,
                                                         cartItem.id,
                                                         cartItem.quantity - 1
                                                     )
-                                                }
+                                                )}
                                             >
                                                 -
                                             </Button>
@@ -63,13 +64,13 @@ export default function CartList({ cartItems, onChangeQuantity }) {
                                             <Button
                                                 variant="outline-dark"
                                                 className="btn-sm"
-                                                onClick={(e) =>
+                                                onClick={debounce_leading((e) =>
                                                     onChangeQuantity(
                                                         e,
                                                         cartItem.id,
                                                         cartItem.quantity + 1
                                                     )
-                                                }
+                                                )}
                                             >
                                                 +
                                             </Button>

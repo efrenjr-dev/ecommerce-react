@@ -108,6 +108,9 @@ export default function ResetPassword() {
                                 placeholder="Enter Password"
                                 required
                             />
+                            <Form.Text id="passwordHelpBlock" muted>
+                                Your password must be 8-20 characters long.
+                            </Form.Text>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Confirm Password:</Form.Label>
