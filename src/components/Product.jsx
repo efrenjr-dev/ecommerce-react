@@ -1,8 +1,11 @@
+import { Badge } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
 
 export default function Product({ productProp, userRole }) {
     let productURL = `/products/${productProp.id}`;
+    const stock = productProp.Product_Inventory.quantity;
+
     // userRole === "admin"
     //     ? (productURL = `/update-product/${productProp.id}`)
     //     : (productURL = `/products/${productProp.id}`);
@@ -26,12 +29,16 @@ export default function Product({ productProp, userRole }) {
 
                 <Card.Text>{productProp.description}</Card.Text>
             </Card.Body>
-            {/* {userRole === "admin" &&
-                (productProp.isActive ? (
-                    <Card.Footer className="text-success">Active</Card.Footer>
+            {userRole === "admin" &&
+                (stock > 10 ? (
+                    <Card.Footer className="">
+                        Available stock: {stock}
+                    </Card.Footer>
                 ) : (
-                    <Card.Footer className="text-warning">Inactive</Card.Footer>
-                ))} */}
+                    <Card.Footer className="text">
+                        Available stock: <Badge pill bg="danger">{stock}</Badge>
+                    </Card.Footer>
+                ))}
         </Card>
     );
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Button from "react-bootstrap/esm/Button";
 import Col from "react-bootstrap/esm/Col";
 import Row from "react-bootstrap/esm/Row";
@@ -6,12 +6,16 @@ import Form from "react-bootstrap/Form";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import json from "superjson";
+import { UserContext } from "../userContext";
+import { removeCookie } from "../utils/cookieService";
 
 export default function ResetPassword() {
+    const { unsetUser, setUser } = useContext(UserContext);
     const { token } = useParams();
     const [isFilled, setIsFilled] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState("");
     const [password, setPassword] = useState("");
+
 
     const navigate = useNavigate();
 
@@ -57,6 +61,7 @@ export default function ResetPassword() {
                         id: loadingToast,
                     }
                 );
+                unsetUser();
                 navigate("/login");
             } else {
                 toast.error(

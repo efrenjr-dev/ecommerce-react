@@ -27,26 +27,28 @@ export default function ViewProduct() {
     const [subtotal, setSubtotal] = useState(0);
 
     useEffect(() => {
-        if (productQuantity < 1) {
-            toast.error("Quantity cannot be less than 1", {
-                id: "quantityToast",
-            });
-            setProductQuantity(1);
-        } else if (productQuantity > 40) {
-            toast.error("Quantity cannot be more than 40", {
-                id: "quantityToast",
-            });
-            setProductQuantity(40);
-        } else if (productQuantity > productInventory) {
-            toast.error(
-                `Quantity cannot be more than (${productInventory}) for this product`,
-                {
+        if (user.role === "user") {
+            if (productQuantity < 1) {
+                toast.error("Quantity cannot be less than 1", {
                     id: "quantityToast",
-                }
-            );
-            setProductQuantity(productInventory);
-        } else {
-            setSubtotal(productDetails.price * productQuantity);
+                });
+                setProductQuantity(1);
+            } else if (productQuantity > 40) {
+                toast.error("Quantity cannot be more than 40", {
+                    id: "quantityToast",
+                });
+                setProductQuantity(40);
+            } else if (productQuantity > productInventory) {
+                toast.error(
+                    `Quantity cannot be more than (${productInventory}) for this product`,
+                    {
+                        id: "quantityToast",
+                    }
+                );
+                setProductQuantity(productInventory);
+            } else {
+                setSubtotal(productDetails.price * productQuantity);
+            }
         }
     }, [productQuantity]);
 
@@ -81,7 +83,7 @@ export default function ViewProduct() {
             body: json.stringify(updateBody),
         });
         toast.success(
-            `${productDetails.name} has been added to your cart successfully`
+            `(${productDetails.name}) has been added to your cart successfully`
         );
         setIsPending(false);
     };
@@ -194,7 +196,7 @@ export default function ViewProduct() {
                                                     Back
                                                 </Button>
                                                 <Button
-                                                    variant="dark"
+                                                    variant="warning"
                                                     className="mx-1 mb-2 btn-sm"
                                                     onClick={addToCart}
                                                     disabled={isPending}
@@ -207,26 +209,12 @@ export default function ViewProduct() {
                                     {user.role === "admin" && (
                                         <div>
                                             <Card.Text>
-                                                Stock available:{" "}
+                                                Available stock:{" "}
                                                 {productInventory}
                                             </Card.Text>
                                             <div className="text-center">
                                                 <Button
                                                     variant="outline-dark"
-                                                    className="mx-1 mb-2 btn-sm"
-                                                    onClick={handleInventory}
-                                                >
-                                                    Update Inventory
-                                                </Button>
-                                                <Button
-                                                    variant="outline-dark"
-                                                    className="mx-1 mb-2 btn-sm"
-                                                    onClick={handleUpdate}
-                                                >
-                                                    Edit details
-                                                </Button>
-                                                <Button
-                                                    variant="dark"
                                                     className="mx-1 mb-2 btn-sm"
                                                     onClick={() => {
                                                         navigate("/products");
@@ -234,6 +222,20 @@ export default function ViewProduct() {
                                                     disabled={isPending}
                                                 >
                                                     Back
+                                                </Button>
+                                                <Button
+                                                    variant="dark"
+                                                    className="mx-1 mb-2 btn-sm"
+                                                    onClick={handleInventory}
+                                                >
+                                                    Inventory
+                                                </Button>
+                                                <Button
+                                                    variant="dark"
+                                                    className="mx-1 mb-2 btn-sm"
+                                                    onClick={handleUpdate}
+                                                >
+                                                    Edit details
                                                 </Button>
                                             </div>
                                         </div>
@@ -251,7 +253,7 @@ export default function ViewProduct() {
                                                 Back
                                             </Button>
                                             <Button
-                                                variant="dark"
+                                                variant="warning"
                                                 className="mx-1 mb-2 btn-sm"
                                                 onClick={() => {
                                                     navigate("/login");

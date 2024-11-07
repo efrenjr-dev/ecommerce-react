@@ -10,7 +10,7 @@ import Root from "./pages/Root";
 import ErrorPage from "./pages/ErrorPage";
 import Home from "./pages/Home";
 import ViewProduct, { loader as productLoader } from "./pages/ViewProduct";
-import Cart, { loader as cartLoader } from "./pages/Cart";
+import Cart from "./pages/Cart";
 import AddProduct from "./pages/AddProduct";
 import Login from "./pages/Login";
 import Logout from "./pages/Logout";
@@ -24,7 +24,9 @@ import ViewOrder, { loader as orderLoader } from "./pages/ViewOrder";
 import VerifyEmail, { loader as verifyEmailLoader } from "./pages/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import ProductInventory, { loader as productInventoryLoader } from "./pages/ProductInventory";
+import ProductInventory, {
+    loader as productInventoryLoader,
+} from "./pages/ProductInventory";
 
 const router = createBrowserRouter([
     {
@@ -40,7 +42,7 @@ const router = createBrowserRouter([
             {
                 path: "/cart",
                 element: <Cart />,
-                loader: cartLoader,
+                // loader: cartLoader,
             },
             {
                 path: "/forgot-password",
@@ -64,11 +66,11 @@ const router = createBrowserRouter([
             },
             {
                 path: "/orders",
-                element: <Orders />,
+                element: <Orders take={20} title="Orders" />,
             },
             {
                 path: "/products",
-                element: <Products />,
+                element: <Products take={20} />,
                 // loader: productsLoader,
                 children: [
                     {

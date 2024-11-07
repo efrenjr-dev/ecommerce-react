@@ -16,24 +16,24 @@ export default function ProductInventory() {
     const [isLoading, setIsLoading] = useState(false);
     const [isFilled, setIsFilled] = useState(false);
     const [name, setName] = useState(product.name);
-    const [description, setDescription] = useState(product.description);
-    const [price, setPrice] = useState(product.price);
+    const [quantity, setQuantity] = useState(
+        product.Product_Inventory.quantity
+    );
+    const [updateQuantity, setUpdateQuantity] = useState(1);
 
     useEffect(() => {
-        if (name !== "" && description !== "" && price != 0) {
+        if (updateQuantity != ""&&updateQuantity>0) {
             setIsFilled(true);
         } else setIsFilled(false);
-    }, [name, description, price]);
+    }, [updateQuantity]);
 
-    async function updateProduct() {
+    async function updateStock(action) {
         setIsLoading(true);
-        const loadingToast = toast.loading("Updating product details");
+        const loadingToast = toast.loading("Updating inventory...");
         try {
-            console.log(name, description, price);
+            // console.log(name, quantity);
             const response = await fetchWrapper(
-                `${import.meta.env.VITE_API_URL}/products/product/${
-                    product.id
-                }`,
+                `${import.meta.env.VITE_API_URL}/products/${action}`,
                 {
                     method: "PATCH",
                     mode: "cors",
@@ -42,9 +42,8 @@ export default function ProductInventory() {
                         Authorization: `Bearer ${getCookie("accessToken")}`,
                     },
                     body: json.stringify({
-                        name: name,
-                        description: description,
-                        price: parseFloat(price),
+                        productId: product.id,
+                        quantity: parseInt(updateQuantity),
                     }),
                 }
             );
@@ -52,12 +51,13 @@ export default function ProductInventory() {
             const data = json.deserialize(serializedData);
             console.log(data);
             if (data.id) {
-                toast.success("Product has been updated successfully.", {
-                    id: loadingToast,
-                });
-                product.name = name;
-                product.description = description;
-                product.price = price;
+                toast.success(
+                    "Product inventory has been updated successfully.",
+                    {
+                        id: loadingToast,
+                    }
+                );
+                setQuantity(data.Product_Inventory.quantity);
             } else {
                 toast.error(data.message, {
                     id: loadingToast,
@@ -71,27 +71,23 @@ export default function ProductInventory() {
         setIsLoading(false);
     }
 
-    const handleReset = () => {
-        setName(product.name);
-        setDescription(product.description);
-        setPrice(product.price);
-    };
-
-    const handleSubmit = (e) => {
+    const handleSubmit = (e, action) => {
         e.preventDefault();
-        updateProduct();
+        updateStock(action);
     };
 
     const handleCancel = () => {
         setIsLoading(true);
-        navigate(-1);
+        navigate(`/products/${product.id}`);
     };
 
     return (
         <>
             <Row className="justify-content-center">
                 <Col xs md="6">
-                    <h4 className="my-5 text-center">Update Product Inventory</h4>
+                    <h4 className="my-5 text-center">
+                        Update Product Inventory
+                    </h4>
                     <Form
                         onSubmit={(e) => {
                             handleSubmit(e);
@@ -109,40 +105,50 @@ export default function ProductInventory() {
                         <Form.Group className="mb-3">
                             <Form.Label>Product Name:</Form.Label>
                             <Form.Control
+                                disabled
                                 type="text"
                                 value={name}
-                                onChange={(e) => {
-                                    setName(e.target.value);
-                                }}
                                 placeholder="Enter Product Name"
                                 required
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Product Description:</Form.Label>
+                            <Form.Label>Available Stock:</Form.Label>
                             <Form.Control
-                                as="textarea"
-                                rows={3}
+                                disabled
                                 type="text"
-                                value={description}
-                                onChange={(e) => {
-                                    setDescription(e.target.value);
-                                }}
-                                placeholder="Enter Product Description"
+                                value={quantity}
+                                placeholder="0"
                                 required
                             />
                         </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Price:</Form.Label>
+                        <Form.Group className="mb-3 flex-row d-flex align-items-center justify-content-center">
+                            <Button
+                                disabled={!isFilled || isLoading}
+                                variant="danger"
+                                className=""
+                                onClick={(e) => handleSubmit(e, "consume")}
+                            >
+                                Withdraw
+                            </Button>
                             <Form.Control
+                                className="mx-3"
                                 type="number"
-                                value={price}
+                                value={updateQuantity}
                                 onChange={(e) => {
-                                    setPrice(e.target.value);
+                                    setUpdateQuantity(e.target.value);
                                 }}
-                                placeholder="Enter Product Price"
+                                placeholder="0"
                                 required
                             />
+                            <Button
+                                disabled={!isFilled || isLoading}
+                                variant="success"
+                                className=""
+                                onClick={(e) => handleSubmit(e, "replenish")}
+                            >
+                                Replenish
+                            </Button>
                         </Form.Group>
                         {/* <Form.Group className="mb-3">
                             <Form.Label>Active:</Form.Label>
@@ -154,31 +160,16 @@ export default function ProductInventory() {
                                 }}
                             />
                         </Form.Group> */}
-                        <Button
-                            variant="outline-dark"
-                            className="mx-1 mb-2"
-                            onClick={handleCancel}
-                            disabled={isLoading}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            variant="outline-dark"
-                            className="mx-1 mb-2"
-                            type="reset"
-                            disabled={isLoading}
-                            onClick={handleReset}
-                        >
-                            Reset
-                        </Button>
-                        <Button
-                            variant="dark"
-                            className="mx-1 mb-2"
-                            type="submit"
-                            disabled={!isFilled || isLoading}
-                        >
-                            Confirm Update
-                        </Button>
+                        <div className="mt-5 justify-content-center d-flex">
+                            <Button
+                                variant="outline-dark"
+                                className="mx-1 mb-2 "
+                                onClick={handleCancel}
+                                disabled={isLoading}
+                            >
+                                Back
+                            </Button>
+                        </div>
                     </Form>
                 </Col>
             </Row>

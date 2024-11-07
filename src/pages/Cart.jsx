@@ -3,16 +3,47 @@ import CartList from "../components/CartList";
 import { toast } from "react-hot-toast";
 import { Button, Card, Col, Row, Table } from "react-bootstrap";
 import json from "superjson";
-import { useNavigate, useLoaderData, Link } from "react-router-dom";
+import {
+    useNavigate,
+    useLoaderData,
+    Link,
+    useLocation,
+} from "react-router-dom";
 import { getCookie } from "../utils/cookieService";
 import fetchWrapper from "../utils/fetchWrapper";
 
 export default function Cart() {
-    const shoppingCart = useLoaderData();
-    const [cart, setCart] = useState(shoppingCart);
+    // const shoppingCart = useLoaderData();
+    const [cart, setCart] = useState({ Cart_Item: [] });
     const [cartItems, setCartItems] = useState();
-    const [total, setTotal] = useState(shoppingCart.total);
+    const [total, setTotal] = useState(0);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        fetchWrapper(`${import.meta.env.VITE_API_URL}/carts`, {
+            method: "GET",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${getCookie("accessToken")}`,
+            },
+            navigate,
+        })
+            .then((response) => response.json())
+            .then((serializedData) => json.deserialize(serializedData))
+            .then((data) => {
+                setCart(data);
+            });
+    }, []);
+
+    useEffect(() => {
+        let total = 0;
+        cart.Cart_Item.forEach(
+            (cartItem) => (total += cartItem.quantity * cartItem.Product.price)
+        );
+        setTotal(total);
+    }, [cart]);
 
     const handleOrder = async (e) => {
         e.preventDefault;
@@ -29,7 +60,8 @@ export default function Cart() {
                     headers: {
                         Authorization: `Bearer ${getCookie("accessToken")}`,
                     },
-                }
+                },
+                navigate
             );
             const serializedData = await response.json();
             const data = json.deserialize(serializedData);
@@ -52,7 +84,7 @@ export default function Cart() {
 
     const onChangeQuantity = (e, cartItemId, quantity) => {
         e.preventDefault;
-        let loadingToast = toast.loading("Updating cart...");
+        let loadingToast = toast.loading("Updating...");
         if (quantity < 1) {
             fetchWrapper(
                 `${import.meta.env.VITE_API_URL}/carts/item/${cartItemId}`,
@@ -89,7 +121,8 @@ export default function Cart() {
                         Authorization: `Bearer ${getCookie("accessToken")}`,
                     },
                     body: json.stringify(updateBody),
-                }
+                },
+                navigate
             )
                 .then((result) => result.json())
                 .then((serializedData) => json.deserialize(serializedData))
@@ -164,15 +197,15 @@ export default function Cart() {
     );
 }
 
-export const loader = async () => {
-    return await fetchWrapper(`${import.meta.env.VITE_API_URL}/carts`, {
-        method: "GET",
-        mode: "cors",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${getCookie("accessToken")}`,
-        },
-    })
-        .then((response) => response.json())
-        .then((serializedData) => json.deserialize(serializedData));
-};
+// export const loader = async () => {
+//     return await fetchWrapper(`${import.meta.env.VITE_API_URL}/carts`, {
+//         method: "GET",
+//         mode: "cors",
+//         headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${getCookie("accessToken")}`,
+//         },
+//     })
+//         .then((response) => response.json())
+//         .then((serializedData) => json.deserialize(serializedData));
+// };

@@ -3,7 +3,12 @@ import { UserContext } from "../userContext";
 import Container from "react-bootstrap/Container";
 import { Toaster, toast } from "react-hot-toast";
 import AppNavBar from "../components/AppNavBar";
-import { Outlet, useLoaderData, useLocation, useNavigate } from "react-router-dom";
+import {
+    Outlet,
+    useLoaderData,
+    useLocation,
+    useNavigate,
+} from "react-router-dom";
 import json from "superjson";
 import { getCookie, removeCookie } from "../utils/cookieService";
 import fetchWrapper from "../utils/fetchWrapper";
@@ -21,6 +26,7 @@ export default function Root() {
     const unsetUser = () => {
         removeCookie("accessToken");
         removeCookie("refreshToken");
+        setUser({ id: null, role: null });
     };
 
     useEffect(() => {
@@ -33,7 +39,8 @@ export default function Root() {
                     Authorization: `Bearer ${getCookie("accessToken")}`,
                 },
             },
-            navigate,location
+            navigate,
+            location
         )
             .then((response) => response.json())
             .then((serializedData) => json.deserialize(serializedData))
@@ -58,6 +65,11 @@ export default function Root() {
                         // duration: 7000,
                         position: "top-center",
                         reverseOrder: true,
+                        style: {
+                            borderRadius: "10px",
+                            // background: "#333",
+                            // color: "#fff",
+                        },
                     }}
                 />
                 <AppNavBar />

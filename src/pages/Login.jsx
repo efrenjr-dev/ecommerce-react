@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast";
 import { UserContext } from "../userContext";
 import { Link, useNavigate } from "react-router-dom";
 import json from "superjson";
+import { Tab, Tabs } from "react-bootstrap";
 
 export default function Login() {
     const { setUser } = useContext(UserContext);
@@ -122,6 +123,32 @@ export default function Login() {
                         Sign up
                     </Link>
                     <Link to={"/forgot-password"}>Forgot password</Link>
+                </Col>
+            </Row>
+            <Row className="justify-content-center">
+                <Col xs md="6" className="mt-5">
+                    <Tabs
+                        defaultActiveKey="admin"
+                        id="user-credentials"
+                        className="mb-3"
+                    >
+                        <Tab eventKey="admin" title="Admin User">
+                            <h5>Admin Credentials</h5>
+                            <p>
+                                Email: admin@example.com
+                                <br />
+                                Password: admin123
+                            </p>
+                        </Tab>
+                        <Tab eventKey="nonadmin" title="Non-Admin User">
+                            <h5>Non-Admin Credentials</h5>
+                            <p>
+                                Email: nonadmin@example.com
+                                <br />
+                                Password: nonadmin123
+                            </p>
+                        </Tab>
+                    </Tabs>
                 </Col>
             </Row>
         </>

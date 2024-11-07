@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import fetchWrapper from "../utils/fetchWrapper";
 import json from "superjson";
 
-export default function Orders() {
+export default function Orders({ take, title = "Recent Orders" }) {
     const { user } = useContext(UserContext);
     // const [orders, setOrders] = useState([]);
     console.log("User Role: ", user.role);
@@ -17,7 +17,9 @@ export default function Orders() {
             queryKey: ["orders"],
             queryFn: async () =>
                 fetchWrapper(
-                    `${import.meta.env.VITE_API_URL}/orders/all?skip=0&take=10`,
+                    `${
+                        import.meta.env.VITE_API_URL
+                    }/orders/all?skip=0&take=${take}`,
                     {
                         method: "GET",
                         mode: "cors",
@@ -49,17 +51,7 @@ export default function Orders() {
             const orders = data.map((order) => {
                 // console.log("order");
                 let date = new Date(order.createdAt);
-                let strDate =
-                    date.getMonth() +
-                    1 +
-                    "/" +
-                    date.getDate() +
-                    "/" +
-                    date.getFullYear() +
-                    " " +
-                    date.getHours() +
-                    ":" +
-                    date.getMinutes();
+                let strDate = date.toLocaleString();
                 return (
                     <tr key={order.id}>
                         <td>{strDate}</td>
@@ -67,7 +59,7 @@ export default function Orders() {
                         {/* <td>{order.orderStatus}</td> */}
                         <td className="text-center">
                             <Button
-                                variant="outline-dark"
+                                variant="outline-secondary"
                                 as={Link}
                                 to={`/order/${order.id}`}
                                 className="btn-sm"
@@ -83,7 +75,7 @@ export default function Orders() {
                     <Row className="d-flex flex-column align-items-center">
                         <Col xs md="2"></Col>
                         <Col>
-                            <h3 className="text-center my-5">Orders</h3>
+                            <h3 className="text-center my-5">{title}</h3>
                         </Col>
                         <Col md="8">
                             {data.length < 1 ? (
@@ -91,14 +83,14 @@ export default function Orders() {
                                     No orders found.
                                 </h5>
                             ) : (
-                                <Table>
+                                <Table striped hover>
                                     <thead>
                                         <tr>
-                                            <th>Date Ordered</th>
+                                            <th>Order Date</th>
                                             <th className="text-end px-3">
                                                 Total Amount
                                             </th>
-                                            <th className="text-center">
+                                            <th className="text-center text-secondary">
                                                 Actions
                                             </th>
                                         </tr>
@@ -119,7 +111,9 @@ export default function Orders() {
             queryKey: ["orders"],
             queryFn: async () =>
                 fetchWrapper(
-                    `${import.meta.env.VITE_API_URL}/orders/?skip=0&take=10`,
+                    `${
+                        import.meta.env.VITE_API_URL
+                    }/orders/?skip=0&take=${take}`,
                     {
                         method: "GET",
                         mode: "cors",
@@ -134,7 +128,7 @@ export default function Orders() {
 
         if (isPending) {
             return (
-                <div className="text-center">
+                <div className="m-5 text-center">
                     <Spinner role="status">
                         <span className="visually-hidden">Loading...</span>
                     </Spinner>
@@ -151,17 +145,8 @@ export default function Orders() {
             const orders = data.map((order) => {
                 // console.log("order");
                 let date = new Date(order.createdAt);
-                let strDate =
-                    date.getMonth() +
-                    1 +
-                    "/" +
-                    date.getDate() +
-                    "/" +
-                    date.getFullYear() +
-                    " " +
-                    date.getHours() +
-                    ":" +
-                    date.getMinutes();
+                let strDate = date.toLocaleString();
+
                 return (
                     <tr key={order.id}>
                         <td>{strDate}</td>
@@ -169,7 +154,7 @@ export default function Orders() {
                         {/* <td>{order.orderStatus}</td> */}
                         <td className="text-center">
                             <Button
-                                variant="outline-dark"
+                                variant="outline-secondary"
                                 as={Link}
                                 to={`/order/${order.id}`}
                                 className="btn-sm"
@@ -185,7 +170,7 @@ export default function Orders() {
                     <Row className="d-flex flex-column align-items-center">
                         <Col xs md="2"></Col>
                         <Col>
-                            <h3 className="text-center my-5">Orders</h3>
+                            <h3 className="text-center my-5">{title}</h3>
                         </Col>
                         <Col md="8">
                             {data.length < 1 ? (
@@ -193,14 +178,14 @@ export default function Orders() {
                                     You do not have any orders.
                                 </h5>
                             ) : (
-                                <Table>
+                                <Table striped hover>
                                     <thead>
                                         <tr>
-                                            <th>Date Ordered</th>
+                                            <th>Order Date</th>
                                             <th className="text-end px-3">
                                                 Total Amount
                                             </th>
-                                            <th className="text-center">
+                                            <th className="text-center text-secondary">
                                                 Actions
                                             </th>
                                         </tr>

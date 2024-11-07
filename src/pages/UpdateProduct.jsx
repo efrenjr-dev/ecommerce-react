@@ -84,7 +84,7 @@ export default function UpdateProduct() {
 
     const handleCancel = () => {
         setIsLoading(true);
-        navigate(-1);
+        navigate(`/products/${product.id}`);
     };
 
     return (
@@ -154,31 +154,33 @@ export default function UpdateProduct() {
                                 }}
                             />
                         </Form.Group> */}
-                        <Button
-                            variant="outline-dark"
-                            className="mx-1 mb-2"
-                            onClick={handleCancel}
-                            disabled={isLoading}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            variant="outline-dark"
-                            className="mx-1 mb-2"
-                            type="reset"
-                            disabled={isLoading}
-                            onClick={handleReset}
-                        >
-                            Reset
-                        </Button>
-                        <Button
-                            variant="dark"
-                            className="mx-1 mb-2"
-                            type="submit"
-                            disabled={!isFilled || isLoading}
-                        >
-                            Confirm Update
-                        </Button>
+                        <div className="d-flex">
+                            <Button
+                                variant="outline-dark"
+                                className="mx-1"
+                                onClick={handleCancel}
+                                disabled={isLoading}
+                            >
+                                Back
+                            </Button>
+                            <Button
+                                variant="outline-dark"
+                                className="mx-1"
+                                type="reset"
+                                disabled={isLoading}
+                                onClick={handleReset}
+                            >
+                                Reset
+                            </Button>
+                            <Button
+                                variant="dark"
+                                className="me-auto"
+                                type="submit"
+                                disabled={!isFilled || isLoading}
+                            >
+                                Confirm Update
+                            </Button>
+                        </div>
                     </Form>
                 </Col>
             </Row>

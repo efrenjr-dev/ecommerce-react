@@ -1,7 +1,7 @@
 import json from "superjson";
 import { getCookie } from "./cookieService";
 
-const fetchWrapper = async (url, options = {}, navigate) => {
+const fetchWrapper = async (url, options = {}, navigate, location) => {
     const response = await fetch(url, { ...options, credentials: "include" });
 
     const body = { refreshToken: getCookie("refreshToken") };
@@ -35,9 +35,18 @@ const fetchWrapper = async (url, options = {}, navigate) => {
             });
         } else {
             console.log("Refresh token invalid. Redirect to home page");
-            console.log("Pathname", window.location.href.split("/")[3]);
-            if (window.location.href.split("/")[3] !== "reset-password" || window.location.href.split("/")[3] !== "verify-email" )
+            // const pathname = window.location.href.split("/")[3];
+            const pathname = location.pathname.split("/")[1];
+
+            // console.log("Pathname", window.location.href.split("/")[3]);
+            console.log("Pathname", pathname);
+            if (
+                pathname !== "reset-password" &&
+                pathname !== "verify-email" &&
+                pathname !== "products"
+            ) {
                 navigate("/"); // Redirect to home if refresh fails
+            }
         }
     }
 
