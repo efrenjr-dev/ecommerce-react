@@ -53,7 +53,7 @@ export default function ResetPassword() {
 
             const serializedData = await loginResponse.json();
             const data = json.deserialize(serializedData);
-            console.log(data);
+          // console.log(data);
             if (data.message === "Password has been reset.") {
                 toast.success(
                     `Password has been reset. Please log in with new credentials`,
@@ -70,7 +70,7 @@ export default function ResetPassword() {
                 );
             }
         } catch (err) {
-            console.log(err);
+          // console.log(err);
             toast.error(err.toString(), { id: loadingToast });
         }
     }

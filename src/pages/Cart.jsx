@@ -1,24 +1,19 @@
 import { useEffect, useState } from "react";
 import CartList from "../components/CartList";
 import { toast } from "react-hot-toast";
-import { Button, Card, Col, Row, Table } from "react-bootstrap";
+import { Button, Card, Col, Row, Spinner, Table } from "react-bootstrap";
 import json from "superjson";
-import {
-    useNavigate,
-    useLoaderData,
-    Link,
-    useLocation,
-} from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { getCookie } from "../utils/cookieService";
 import fetchWrapper from "../utils/fetchWrapper";
 
 export default function Cart() {
     // const shoppingCart = useLoaderData();
     const [cart, setCart] = useState({ Cart_Item: [] });
-    const [cartItems, setCartItems] = useState();
     const [total, setTotal] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isPending, setIsPending] = useState(true);
     const navigate = useNavigate();
-    const location = useLocation();
 
     useEffect(() => {
         fetchWrapper(`${import.meta.env.VITE_API_URL}/carts`, {
@@ -34,6 +29,7 @@ export default function Cart() {
             .then((serializedData) => json.deserialize(serializedData))
             .then((data) => {
                 setCart(data);
+                setIsPending(false);
             });
     }, []);
 
@@ -47,7 +43,7 @@ export default function Cart() {
 
     const handleOrder = async (e) => {
         e.preventDefault;
-        let loadingToast = toast.loading("Adding order");
+        let loadingToast = toast.loading("Checking out...");
 
         // console.log(order);
         try {
@@ -70,7 +66,7 @@ export default function Cart() {
                     id: loadingToast,
                 });
             } else {
-                toast.success(data.message, {
+                toast.success("Transaction successful!", {
                     id: loadingToast,
                 });
                 navigate(`/order/${data.order.id}`);
@@ -84,7 +80,8 @@ export default function Cart() {
 
     const onChangeQuantity = (e, cartItemId, quantity) => {
         e.preventDefault;
-        let loadingToast = toast.loading("Updating...");
+        setIsLoading(true);
+        // let loadingToast = toast.loading("Updating...");
         if (quantity < 1) {
             fetchWrapper(
                 `${import.meta.env.VITE_API_URL}/carts/item/${cartItemId}`,
@@ -102,7 +99,8 @@ export default function Cart() {
                 .then((data) => {
                     setCart(data.updatedCart);
                     setTotal(data.cartTotal);
-                    toast.dismiss(loadingToast);
+                    // toast.dismiss(loadingToast);
+                    setIsLoading(false);
                 });
         } else {
             const updateBody = {
@@ -129,19 +127,29 @@ export default function Cart() {
                 .then((data) => {
                     setCart(data.updatedCart);
                     setTotal(data.cartTotal);
-                    toast.dismiss(loadingToast);
+                    // toast.dismiss(loadingToast);
+                    setIsLoading(false);
                 });
         }
     };
 
-    useEffect(() => {
-        setCartItems(
-            cart?.hasOwnProperty("Cart_Item") && cart.Cart_Item.length > 0 ? (
+    return (
+        <>
+            <h3 className="text-center my-5">Shopping Cart</h3>
+            {isPending ? (
+                <div className="m-5 text-center">
+                    <Spinner role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                </div>
+            ) : cart?.hasOwnProperty("Cart_Item") &&
+              cart.Cart_Item.length > 0 ? (
                 <Row xs={1} md={2}>
                     <Col md={8}>
                         <CartList
                             cartItems={cart.Cart_Item}
                             onChangeQuantity={onChangeQuantity}
+                            isLoading={isLoading}
                         />
                     </Col>
                     <Col md={4} className="justify-content-center">
@@ -170,6 +178,7 @@ export default function Cart() {
                                     </tbody>
                                 </Table>
                                 <Button
+                                    disabled={isLoading}
                                     variant="warning"
                                     onClick={handleOrder}
                                     className="d-flex ms-auto btn-sm"
@@ -185,14 +194,7 @@ export default function Cart() {
                     Your cart is empty. Please browse our{" "}
                     <Link to="/products">products</Link>.
                 </h6>
-            )
-        );
-    }, [cart]);
-
-    return (
-        <>
-            <h3 className="text-center my-5">Shopping Cart</h3>
-            {cartItems}
+            )}
         </>
     );
 }

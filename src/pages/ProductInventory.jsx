@@ -49,10 +49,10 @@ export default function ProductInventory() {
             );
             const serializedData = await response.json();
             const data = json.deserialize(serializedData);
-            console.log(data);
+          // console.log(data);
             if (data.id) {
                 toast.success(
-                    "Product inventory has been updated successfully.",
+                    "Product inventory updated successfully.",
                     {
                         id: loadingToast,
                     }

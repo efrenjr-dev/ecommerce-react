@@ -43,7 +43,7 @@ export default function ForgotPassword() {
                 throw new Error(data.message);
             }
         } catch (err) {
-            console.log(err);
+          // console.log(err);
         }
     }
 

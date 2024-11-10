@@ -19,7 +19,7 @@ export default function Products({
 }) {
     // const products = useLoaderData();
     const { user } = useContext(UserContext);
-    console.log("User Role: ", user.role);
+  // console.log("User Role: ", user.role);
     if (user.role === "admin") {
         const { isPending, isError, data, error } = useQuery({
             queryKey: ["products"],

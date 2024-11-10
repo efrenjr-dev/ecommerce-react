@@ -3,12 +3,16 @@ import { Button, Col, Form, Image, Row } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import { debounce_leading } from "../utils/debounce";
 
-export default function CartList({ cartItems, onChangeQuantity }) {
+export default function CartList({ cartItems, onChangeQuantity, isLoading }) {
     const [cartList, setCartList] = useState([]);
 
     useEffect(() => {
-        setCartList(
-            cartItems.map((cartItem) => {
+        setCartList();
+    }, [cartItems]);
+
+    return (
+        <>
+            {cartItems.map((cartItem) => {
                 return (
                     <Row key={cartItem.id}>
                         <Col xs={3} md={2}>
@@ -22,9 +26,9 @@ export default function CartList({ cartItems, onChangeQuantity }) {
                             <Card className="mb-5 text-link">
                                 {/* <Card.Header>ID: {productProp.productId}</Card.Header> */}
                                 {/* <Card.Img
-            variant="top"
-            src="https://via.placeholder.com/100x50/222222/FFFFFF?text=Image"
-        /> */}
+        variant="top"
+        src="https://via.placeholder.com/100x50/222222/FFFFFF?text=Image"
+    /> */}
                                 <Card.Body>
                                     <Card.Title>
                                         {cartItem.Product.name}
@@ -36,6 +40,7 @@ export default function CartList({ cartItems, onChangeQuantity }) {
                                                 Quantity
                                             </Form.Label>
                                             <Button
+                                                disabled={isLoading}
                                                 variant="outline-dark"
                                                 className="btn-sm"
                                                 onClick={debounce_leading((e) =>
@@ -62,6 +67,7 @@ export default function CartList({ cartItems, onChangeQuantity }) {
                                                 disabled
                                             />
                                             <Button
+                                                disabled={isLoading}
                                                 variant="outline-dark"
                                                 className="btn-sm"
                                                 onClick={debounce_leading((e) =>
@@ -95,9 +101,7 @@ export default function CartList({ cartItems, onChangeQuantity }) {
                         </Col>
                     </Row>
                 );
-            })
-        );
-    }, [cartItems]);
-
-    return <>{cartList}</>;
+            })}
+        </>
+    );
 }

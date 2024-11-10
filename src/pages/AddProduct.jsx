@@ -13,6 +13,7 @@ export default function AddProduct() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState(0);
+    const [quantity , setQuantity] = useState(0);
 
     useEffect(() => {
         if (name !== "" && description !== "" && price !== 0) {
@@ -24,12 +25,13 @@ export default function AddProduct() {
         setName("");
         setDescription("");
         setPrice(0);
+        setQuantity(0);
     }
 
     async function createProduct() {
         const loadingToast = toast.loading("Adding new product");
         try {
-            console.log(name, description, price);
+            // console.log(name, description, price);
             const productResponse = await fetchWrapper(
                 `${import.meta.env.VITE_API_URL}/products/`,
                 {
@@ -47,13 +49,11 @@ export default function AddProduct() {
                 }
             );
             if (productResponse.ok) {
-                const productData = await productResponse.json();
-                toast.success(
-                    `Item ${productData.productName} has been added`,
-                    {
-                        id: loadingToast,
-                    }
-                );
+                const serializedData = await productResponse.json();
+                const productData = json.deserialize(serializedData);
+                toast.success(`Item ${productData.name} has been added`, {
+                    id: loadingToast,
+                });
             } else {
                 toast.error("Adding product has failed.", { id: loadingToast });
             }
@@ -116,7 +116,24 @@ export default function AddProduct() {
                                 required
                             />
                         </Form.Group>
-                        <Button className="w-100" variant="dark" type="submit" disabled={!isFilled}>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Quantity:</Form.Label>
+                            <Form.Control
+                                type="number"
+                                value={quantity}
+                                onChange={(e) => {
+                                    setQuantity(e.target.value);
+                                }}
+                                placeholder="Enter Quantity"
+                                required
+                            />
+                        </Form.Group>
+                        <Button
+                            className="w-100"
+                            variant="dark"
+                            type="submit"
+                            disabled={!isFilled}
+                        >
                             Submit
                         </Button>
                     </Form>
@@ -125,9 +142,3 @@ export default function AddProduct() {
         </>
     );
 }
-
-// {
-//     "productName": "Uniball",
-//     "description": "ink pen",
-//     "price": 25
-// }

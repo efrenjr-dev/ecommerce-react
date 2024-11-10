@@ -47,7 +47,7 @@ export default function Login() {
             const data = json.deserialize(await loginResponse.json());
 
             if (data.user) {
-                console.log(data.user.role);
+              // console.log(data.user.role);
                 setUser({
                     id: data.user.id,
                     role: data.user.role,
@@ -60,7 +60,7 @@ export default function Login() {
                 throw new Error(data.message);
             }
         } catch (err) {
-            console.log(err);
+          // console.log(err);
             toast.error(err.toString(), { id: loadingToast });
         }
     }

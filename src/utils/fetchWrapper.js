@@ -5,9 +5,9 @@ const fetchWrapper = async (url, options = {}, navigate, location) => {
     const response = await fetch(url, { ...options, credentials: "include" });
 
     const body = { refreshToken: getCookie("refreshToken") };
-    console.log("Fetch Wrapper Response Status:", response.status);
+  // console.log("Fetch Wrapper Response Status:", response.status);
     if (response.status === 401) {
-        console.log("Unauthorized: Refreshing Token");
+      // console.log("Unauthorized: Refreshing Token");
         // Access token expired, try to refresh
         const refreshResponse = await fetch(
             `${import.meta.env.VITE_API_URL}/auth/refresh`,
@@ -34,12 +34,12 @@ const fetchWrapper = async (url, options = {}, navigate, location) => {
                 credentials: "include",
             });
         } else {
-            console.log("Refresh token invalid. Redirect to home page");
+          // console.log("Refresh token invalid. Redirect to home page");
             // const pathname = window.location.href.split("/")[3];
             const pathname = location.pathname.split("/")[1];
 
             // console.log("Pathname", window.location.href.split("/")[3]);
-            console.log("Pathname", pathname);
+          // console.log("Pathname", pathname);
             if (
                 pathname !== "reset-password" &&
                 pathname !== "verify-email" &&

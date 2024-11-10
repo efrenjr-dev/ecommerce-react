@@ -53,7 +53,7 @@ export default function Register() {
             );
             const serializedData = await response.json();
             const data = json.deserialize(serializedData);
-            console.log(data);
+          // console.log(data);
             if (data.user) {
                 toast.success(data.message, {
                     id: loadingToast,

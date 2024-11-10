@@ -275,7 +275,7 @@ export default function ViewProduct() {
 }
 
 export async function loader({ params }) {
-    console.log(params.productId);
+  // console.log(params.productId);
     return await fetch(
         `${import.meta.env.VITE_API_URL}/products/product/${params.productId}`
     )

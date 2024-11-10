@@ -45,14 +45,14 @@ export default function Root() {
             .then((response) => response.json())
             .then((serializedData) => json.deserialize(serializedData))
             .then((data) => {
-                console.log("user role: ", data.role);
+              // console.log("user role: ", data.role);
                 setUser({
                     id: data.id,
                     role: data.role,
                 });
             })
             .catch((err) => {
-                console.log(err.toString());
+              // console.log(err.toString());
                 toast.error(err.toString());
             });
     }, []);
@@ -96,7 +96,7 @@ export default function Root() {
 //         .then((serializedData) => json.deserialize(serializedData))
 //         .catch((err) => {
 //             throw new Error(err);
-//             console.log(err.toString());
+//           // console.log(err.toString());
 //             // toast.error(err.toString());
 //         });
 // };

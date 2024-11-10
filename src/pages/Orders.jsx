@@ -9,8 +9,9 @@ import json from "superjson";
 
 export default function Orders({ take, title = "Recent Orders" }) {
     const { user } = useContext(UserContext);
+    let orders;
     // const [orders, setOrders] = useState([]);
-    console.log("User Role: ", user.role);
+    // console.log("User Role: ", user.role);
 
     if (user.role === "admin") {
         const { isPending, isError, data, error } = useQuery({
@@ -32,23 +33,8 @@ export default function Orders({ take, title = "Recent Orders" }) {
                     .then((serializedData) => json.deserialize(serializedData)),
         });
 
-        if (isPending) {
-            return (
-                <div className="text-center">
-                    <Spinner role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </Spinner>
-                </div>
-            );
-        }
-
-        if (isError) {
-            return <span> ERROR! {error}</span>;
-        }
-
         if (data) {
-            console.log("order data: ", data);
-            const orders = data.map((order) => {
+            orders = data.map((order) => {
                 // console.log("order");
                 let date = new Date(order.createdAt);
                 let strDate = date.toLocaleString();
@@ -70,40 +56,51 @@ export default function Orders({ take, title = "Recent Orders" }) {
                     </tr>
                 );
             });
-            return (
-                <>
-                    <Row className="d-flex flex-column align-items-center">
-                        <Col xs md="2"></Col>
-                        <Col>
-                            <h3 className="text-center my-5">{title}</h3>
-                        </Col>
-                        <Col md="8">
-                            {data.length < 1 ? (
-                                <h5 className="text-center">
-                                    No orders found.
-                                </h5>
-                            ) : (
-                                <Table striped hover>
-                                    <thead>
-                                        <tr>
-                                            <th>Order Date</th>
-                                            <th className="text-end px-3">
-                                                Total Amount
-                                            </th>
-                                            <th className="text-center text-secondary">
-                                                Actions
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>{orders.length > 0 && orders}</tbody>
-                                </Table>
-                            )}
-                        </Col>
-                        <Col xs md="2"></Col>
-                    </Row>
-                </>
-            );
         }
+
+        return (
+            <>
+                <Row className="d-flex flex-column align-items-center">
+                    <Col xs md="2"></Col>
+                    <Col>
+                        <h3 className="text-center my-5">{title}</h3>
+                    </Col>{" "}
+                    <Col md="8">
+                        {isError ? (
+                            <span>Error: {error.message}</span>
+                        ) : isPending ? (
+                            <div className="m-5 text-center">
+                                <Spinner role="status">
+                                    <span className="visually-hidden">
+                                        Loading...
+                                    </span>
+                                </Spinner>
+                            </div>
+                        ) : data.length < 1 ? (
+                            <h5 className="text-center">
+                                You do not have any orders.
+                            </h5>
+                        ) : (
+                            <Table striped hover>
+                                <thead>
+                                    <tr>
+                                        <th>Order Date</th>
+                                        <th className="text-end px-3">
+                                            Total Amount
+                                        </th>
+                                        <th className="text-center text-secondary">
+                                            Actions
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>{orders.length > 0 && orders}</tbody>
+                            </Table>
+                        )}
+                    </Col>
+                    <Col xs md="2"></Col>
+                </Row>
+            </>
+        );
     }
 
     if (user.role === "user") {
@@ -126,27 +123,11 @@ export default function Orders({ take, title = "Recent Orders" }) {
                     .then((serializedData) => json.deserialize(serializedData)),
         });
 
-        if (isPending) {
-            return (
-                <div className="m-5 text-center">
-                    <Spinner role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </Spinner>
-                </div>
-            );
-        }
-
-        if (isError) {
-            return <span> ERROR! {error}</span>;
-        }
-
         if (data) {
-            console.log("order data: ", data);
-            const orders = data.map((order) => {
+            orders = data.map((order) => {
                 // console.log("order");
                 let date = new Date(order.createdAt);
                 let strDate = date.toLocaleString();
-
                 return (
                     <tr key={order.id}>
                         <td>{strDate}</td>
@@ -165,40 +146,51 @@ export default function Orders({ take, title = "Recent Orders" }) {
                     </tr>
                 );
             });
-            return (
-                <>
-                    <Row className="d-flex flex-column align-items-center">
-                        <Col xs md="2"></Col>
-                        <Col>
-                            <h3 className="text-center my-5">{title}</h3>
-                        </Col>
-                        <Col md="8">
-                            {data.length < 1 ? (
-                                <h5 className="text-center">
-                                    You do not have any orders.
-                                </h5>
-                            ) : (
-                                <Table striped hover>
-                                    <thead>
-                                        <tr>
-                                            <th>Order Date</th>
-                                            <th className="text-end px-3">
-                                                Total Amount
-                                            </th>
-                                            <th className="text-center text-secondary">
-                                                Actions
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>{orders.length > 0 && orders}</tbody>
-                                </Table>
-                            )}
-                        </Col>
-                        <Col xs md="2"></Col>
-                    </Row>
-                </>
-            );
         }
+
+        return (
+            <>
+                <Row className="d-flex flex-column align-items-center">
+                    <Col xs md="2"></Col>
+                    <Col>
+                        <h3 className="text-center my-5">{title}</h3>
+                    </Col>{" "}
+                    <Col md="8">
+                        {isError ? (
+                            <span>Error: {error.message}</span>
+                        ) : isPending ? (
+                            <div className="m-5 text-center">
+                                <Spinner role="status">
+                                    <span className="visually-hidden">
+                                        Loading...
+                                    </span>
+                                </Spinner>
+                            </div>
+                        ) : data.length < 1 ? (
+                            <h5 className="text-center">
+                                You do not have any orders.
+                            </h5>
+                        ) : (
+                            <Table striped hover>
+                                <thead>
+                                    <tr>
+                                        <th>Order Date</th>
+                                        <th className="text-end px-3">
+                                            Total Amount
+                                        </th>
+                                        <th className="text-center text-secondary">
+                                            Actions
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>{orders.length > 0 && orders}</tbody>
+                            </Table>
+                        )}
+                    </Col>
+                    <Col xs md="2"></Col>
+                </Row>
+            </>
+        );
     }
 }
 

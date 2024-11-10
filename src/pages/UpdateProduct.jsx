@@ -29,7 +29,7 @@ export default function UpdateProduct() {
         setIsLoading(true);
         const loadingToast = toast.loading("Updating product details");
         try {
-            console.log(name, description, price);
+          // console.log(name, description, price);
             const response = await fetchWrapper(
                 `${import.meta.env.VITE_API_URL}/products/product/${
                     product.id
@@ -50,7 +50,7 @@ export default function UpdateProduct() {
             );
             const serializedData = await response.json();
             const data = json.deserialize(serializedData);
-            console.log(data);
+          // console.log(data);
             if (data.id) {
                 toast.success("Product has been updated successfully.", {
                     id: loadingToast,
