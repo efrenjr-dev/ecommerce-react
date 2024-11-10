@@ -11,9 +11,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../userContext";
 import json from "superjson";
 import Modal from "../components/Modal";
-import "./viewProduct.scss";
 import { getCookie } from "../utils/cookieService";
-import { debounce } from "../utils/debounce";
 
 export default function ViewProduct() {
     const productDetails = useLoaderData();
@@ -100,7 +98,7 @@ export default function ViewProduct() {
     return (
         <>
             <Modal>
-                <main className="details detailsFullMobile">
+                <main>
                     <Row className="justify-content-center align-items-center d-flex px-2 pb-3">
                         <Col>
                             {/* <h1 className="my-5 text-center">
@@ -275,7 +273,7 @@ export default function ViewProduct() {
 }
 
 export async function loader({ params }) {
-  // console.log(params.productId);
+    // console.log(params.productId);
     return await fetch(
         `${import.meta.env.VITE_API_URL}/products/product/${params.productId}`
     )
