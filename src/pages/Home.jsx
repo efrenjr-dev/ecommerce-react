@@ -22,7 +22,7 @@ export default function Home() {
                 </section>
                 <Row className="d-flex flex-column">
                     <Col>
-                        <Orders take={10} title="Recent orders" />
+                        <Orders take={5} title="Recent orders" />
                     </Col>
                     {/* <Col>
                     <Products take={3} title="Suggested products" />
@@ -48,9 +48,15 @@ export default function Home() {
                     <Col>
                         <Products take={4} title="Suggested products" />
                     </Col>
-                    <Col>
-                        <Orders take={5} title="Your recent orders" />
-                    </Col>
+                    {user.role === "user" && (
+                        <Col>
+                            <Orders
+                                take={5}
+                                title="Your recent orders"
+                                user={user}
+                            />
+                        </Col>
+                    )}
                 </Row>
             </>
         );

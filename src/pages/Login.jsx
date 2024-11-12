@@ -8,6 +8,7 @@ import { UserContext } from "../userContext";
 import { Link, useNavigate } from "react-router-dom";
 import json from "superjson";
 import { Tab, Tabs } from "react-bootstrap";
+import { setCookie } from "../utils/cookieService";
 
 export default function Login() {
     const { setUser } = useContext(UserContext);
@@ -18,7 +19,7 @@ export default function Login() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (email !== "" && password !== "") {
+        if (email !== "" && password !== "" && password.length >= 8) {
             setIsFilled(true);
         } else {
             setIsFilled(false);
@@ -33,7 +34,6 @@ export default function Login() {
                 {
                     method: "POST",
                     mode: "cors",
-                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                         Accept: "application/json",
@@ -45,12 +45,18 @@ export default function Login() {
                 }
             );
             const data = json.deserialize(await loginResponse.json());
-
-            if (data.user) {
-              // console.log(data.user.role);
+            // console.log(Object.entries(data));
+            if (loginResponse.ok) {
+                // console.log(data.user.role);
                 setUser({
                     id: data.user.id,
                     role: data.user.role,
+                });
+                setCookie("accessToken", data.tokens.access.token, {
+                    expires: data.tokens.access.expires,
+                });
+                setCookie("refreshToken", data.tokens.refresh.token, {
+                    expires: data.tokens.refresh.expires,
                 });
                 toast.success(`You have been logged in as ${email}`, {
                     id: loadingToast,
@@ -60,7 +66,7 @@ export default function Login() {
                 throw new Error(data.message);
             }
         } catch (err) {
-          // console.log(err);
+            // console.log(err);
             toast.error(err.toString(), { id: loadingToast });
         }
     }

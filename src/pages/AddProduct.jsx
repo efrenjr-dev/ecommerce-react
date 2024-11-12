@@ -7,13 +7,16 @@ import { toast } from "react-hot-toast";
 import { getCookie } from "../utils/cookieService";
 import json from "superjson";
 import fetchWrapper from "../utils/fetchWrapper";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function AddProduct() {
     const [isFilled, setIsFilled] = useState(false);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState(0);
-    const [quantity , setQuantity] = useState(0);
+    const [quantity, setQuantity] = useState(0);
+    const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         if (name !== "" && description !== "" && price !== 0) {
@@ -46,7 +49,9 @@ export default function AddProduct() {
                         description: description,
                         price: parseFloat(price),
                     }),
-                }
+                },
+                navigate,
+                location
             );
             if (productResponse.ok) {
                 const serializedData = await productResponse.json();

@@ -1,5 +1,10 @@
 import { useContext } from "react";
-import { Outlet, useLoaderData } from "react-router-dom";
+import {
+    Outlet,
+    useLoaderData,
+    useLocation,
+    useNavigate,
+} from "react-router-dom";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Product from "../components/Product";
@@ -13,16 +18,18 @@ import fetchWrapper from "../utils/fetchWrapper";
 import ProductLoading from "../components/ProductLoading";
 
 export default function Products({
-    take=20,
+    take = 20,
     title = "All Products",
     adminRoute = "all",
 }) {
     // const products = useLoaderData();
     const { user } = useContext(UserContext);
-  // console.log("User Role: ", user.role);
+    const navigate = useNavigate();
+    const location = useLocation();
+    // console.log("User Role: ", user.role);
     if (user.role === "admin") {
         const { isPending, isError, data, error } = useQuery({
-            queryKey: ["products"],
+            queryKey: ["products",take],
             queryFn: async () =>
                 fetchWrapper(
                     `${
@@ -34,7 +41,9 @@ export default function Products({
                         headers: {
                             Authorization: `Bearer ${getCookie("accessToken")}`,
                         },
-                    }
+                    },
+                    navigate,
+                    location
                 )
                     .then((response) => response.json())
                     .then((serializedData) => json.deserialize(serializedData)),

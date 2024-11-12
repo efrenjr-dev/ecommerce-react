@@ -3,7 +3,7 @@ import CartList from "../components/CartList";
 import { toast } from "react-hot-toast";
 import { Button, Card, Col, Row, Spinner, Table } from "react-bootstrap";
 import json from "superjson";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { getCookie } from "../utils/cookieService";
 import fetchWrapper from "../utils/fetchWrapper";
 
@@ -14,6 +14,7 @@ export default function Cart() {
     const [isLoading, setIsLoading] = useState(false);
     const [isPending, setIsPending] = useState(true);
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         fetchWrapper(`${import.meta.env.VITE_API_URL}/carts`, {
@@ -24,13 +25,15 @@ export default function Cart() {
                 Authorization: `Bearer ${getCookie("accessToken")}`,
             },
             navigate,
+            location,
         })
             .then((response) => response.json())
             .then((serializedData) => json.deserialize(serializedData))
             .then((data) => {
                 setCart(data);
                 setIsPending(false);
-            });
+            })
+            .catch((err) => console.log(err));
     }, []);
 
     useEffect(() => {
@@ -92,6 +95,7 @@ export default function Cart() {
                         Authorization: `Bearer ${getCookie("accessToken")}`,
                     },
                     navigate,
+                    location,
                 }
             )
                 .then((result) => result.json())
@@ -120,7 +124,8 @@ export default function Cart() {
                     },
                     body: json.stringify(updateBody),
                 },
-                navigate
+                navigate,
+                location
             )
                 .then((result) => result.json())
                 .then((serializedData) => json.deserialize(serializedData))

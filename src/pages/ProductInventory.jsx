@@ -3,9 +3,8 @@ import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/esm/Button";
 import { toast } from "react-hot-toast";
-import { useLoaderData, useNavigate, useParams } from "react-router-dom";
-import { useState, useEffect, useContext } from "react";
-import { UserContext } from "../userContext";
+import { useLoaderData, useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 import fetchWrapper from "../utils/fetchWrapper";
 import json from "superjson";
 import { getCookie } from "../utils/cookieService";
@@ -13,6 +12,7 @@ import { getCookie } from "../utils/cookieService";
 export default function ProductInventory() {
     const product = useLoaderData();
     const navigate = useNavigate();
+    const location = useLocation();
     const [isLoading, setIsLoading] = useState(false);
     const [isFilled, setIsFilled] = useState(false);
     const [name, setName] = useState(product.name);
@@ -22,7 +22,7 @@ export default function ProductInventory() {
     const [updateQuantity, setUpdateQuantity] = useState(1);
 
     useEffect(() => {
-        if (updateQuantity != ""&&updateQuantity>0) {
+        if (updateQuantity != "" && updateQuantity > 0) {
             setIsFilled(true);
         } else setIsFilled(false);
     }, [updateQuantity]);
@@ -45,18 +45,17 @@ export default function ProductInventory() {
                         productId: product.id,
                         quantity: parseInt(updateQuantity),
                     }),
-                }
+                },
+                navigate,
+                location
             );
             const serializedData = await response.json();
             const data = json.deserialize(serializedData);
-          // console.log(data);
+            // console.log(data);
             if (data.id) {
-                toast.success(
-                    "Product inventory updated successfully.",
-                    {
-                        id: loadingToast,
-                    }
-                );
+                toast.success("Product inventory updated successfully.", {
+                    id: loadingToast,
+                });
                 setQuantity(data.Product_Inventory.quantity);
             } else {
                 toast.error(data.message, {
