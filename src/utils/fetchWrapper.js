@@ -1,5 +1,5 @@
 import json from "superjson";
-import { getCookie, setCookie } from "./cookieService";
+import { getCookie, removeCookie, setCookie } from "./cookieService";
 import { useContext } from "react";
 import { UserContext } from "../userContext";
 
@@ -29,6 +29,7 @@ const fetchWrapper = async (url, options = {}, navigate, location) => {
         const data = json.deserialize(serializedData);
         // console.log(data);
         if (refreshResponse.ok) {
+            removeCookie("refreshToken");
             setCookie("accessToken", data.tokens.access.token, {
                 expires: data.tokens.access.expires,
             });
