@@ -11,7 +11,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { addProductSchema, validateForm } from "../utils/validation";
 
 export default function AddProduct() {
-    const [isFilled, setIsFilled] = useState(false);
+    const [isFilled, setIsFilled] = useState(true);
     const [formData, setFormData] = useState({
         name: "",
         description: "",
@@ -22,11 +22,11 @@ export default function AddProduct() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    useEffect(() => {
-        if (formData.name !== "" && formData.price !== 0) {
-            setIsFilled(true);
-        } else setIsFilled(false);
-    }, [formData]);
+    // useEffect(() => {
+    //     if (formData.name !== "" && formData.price <= 0) {
+    //         setIsFilled(true);
+    //     } else setIsFilled(false);
+    // }, [formData]);
 
     function resetForm() {
         setFormData({

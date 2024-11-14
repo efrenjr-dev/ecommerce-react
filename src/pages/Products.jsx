@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import {
     Outlet,
     useLoaderData,
@@ -17,123 +17,86 @@ import { getCookie } from "../utils/cookieService";
 import fetchWrapper from "../utils/fetchWrapper";
 import ProductLoading from "../components/ProductLoading";
 
-export default function Products({
-    take = 20,
-    title = "All Products",
-    adminRoute = "all",
-}) {
+export default function Products({ take = 20, title = "All Products" }) {
     // const products = useLoaderData();
     const { user } = useContext(UserContext);
+    const [searchString, setSearchString] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
-    // console.log("User Role: ", user.role);
-    if (user.role === "admin") {
-        const { isPending, isError, data, error } = useQuery({
-            queryKey: ["products",take],
-            queryFn: async () =>
-                fetchWrapper(
-                    `${
-                        import.meta.env.VITE_API_URL
-                    }/products/${adminRoute}?searchString=&skip=0&take=${take}`,
-                    {
-                        method: "GET",
-                        mode: "cors",
-                        headers: {
-                            Authorization: `Bearer ${getCookie("accessToken")}`,
-                        },
-                    },
-                    navigate,
-                    location
-                )
-                    .then((response) => response.json())
-                    .then((serializedData) => json.deserialize(serializedData)),
-        });
 
+    const fetchOrderData = async () => {
+        const url =
+            user.role === "admin"
+                ? `${
+                      import.meta.env.VITE_API_URL
+                  }/products/all?searchString=${searchString}&skip=0&take=${take}`
+                : `${
+                      import.meta.env.VITE_API_URL
+                  }/products/?searchString=${searchString}&skip=0&take=${take}`;
+
+        return await fetchWrapper(
+            url,
+            {
+                method: "GET",
+                mode: "cors",
+                headers: {
+                    Authorization: `Bearer ${getCookie("accessToken")}`,
+                },
+            },
+            navigate,
+            location
+        )
+            .then((response) => response.json())
+            .then((serializedData) => json.deserialize(serializedData))
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
+    const { isPending, isError, data, error } = useQuery({
+        queryKey: ["products", user.role, take],
+        queryFn: fetchOrderData,
+        enabled: !!user.role || user.role === null,
+    });
+
+    if (isError) return <span>Error: {error.message}</span>;
+
+    if (isPending) return <ProductLoading />;
+
+    if (data) {
         return (
             <>
-                {isError ? (
-                    <span>Error: {error.message}</span>
-                ) : isPending ? (
-                    <ProductLoading />
+                <Outlet />
+                <h3 className="my-5 text-center">{title}</h3>
+                {data.length > 1 ? (
+                    <Row xs={1} sm={3} lg={4} className="">
+                        {data.map((product) => {
+                            // console.log(product);
+                            return (
+                                <Col
+                                    className="mb-4 d-flex justify-content-center align-items-stretch"
+                                    key={product.id}
+                                >
+                                    <Product
+                                        productProp={product}
+                                        userRole={user.role}
+                                    />
+                                </Col>
+                            );
+                        })}
+                    </Row>
                 ) : (
-                    <>
-                        <Outlet />
-                        <h3 className="my-5 text-center">{title}</h3>
-                        <Row xs={1} sm={3} lg={4} className="">
-                            {/* {activeProducts} */}
-                            {data.map((product) => {
-                                // console.log(product);
-                                return (
-                                    <Col
-                                        className="mb-4 d-flex justify-content-center align-items-stretch"
-                                        key={product.id}
-                                    >
-                                        <Product
-                                            productProp={product}
-                                            userRole={user.role}
-                                        />
-                                    </Col>
-                                );
-                            })}
-                        </Row>
-                    </>
+                    <Row className="d-flex flex-column align-items-center">
+                        <Col xs md="2"></Col>
+                        <Col md="8">
+                            <h5 className="text-center">No product found.</h5>
+                        </Col>
+                        <Col xs md="2"></Col>
+                    </Row>
                 )}
             </>
         );
     }
-    if (user.role === "user" || user.role == null) {
-        const { isPending, isError, data, error } = useQuery({
-            queryKey: ["products"],
-            queryFn: async () =>
-                fetch(
-                    `${
-                        import.meta.env.VITE_API_URL
-                    }/products/?searchString=&skip=0&take=${take}`,
-                    {
-                        method: "GET",
-                        mode: "cors",
-                        headers: {
-                            Authorization: `Bearer ${getCookie("accessToken")}`,
-                        },
-                    }
-                )
-                    .then((response) => response.json())
-                    .then((serializedData) => json.deserialize(serializedData)),
-        });
-
-        return (
-            <>
-                {isError ? (
-                    <span>Error: {error.message}</span>
-                ) : isPending ? (
-                    <ProductLoading />
-                ) : (
-                    <>
-                        <Outlet />
-                        <h3 className="my-5 text-center">{title}</h3>
-                        <Row xs={1} sm={2} lg={4} className="">
-                            {/* {activeProducts} */}
-                            {data.map((product) => {
-                                // console.log(product);
-                                return (
-                                    <Col
-                                        className="mb-4 d-flex justify-content-center align-items-stretch"
-                                        key={product.id}
-                                    >
-                                        <Product
-                                            productProp={product}
-                                            userRole={user.role}
-                                        />
-                                    </Col>
-                                );
-                            })}
-                        </Row>
-                    </>
-                )}
-            </>
-        );
-    }
-    return null;
 }
 
 // export async function loader() {
