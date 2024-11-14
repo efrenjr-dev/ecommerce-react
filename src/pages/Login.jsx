@@ -7,24 +7,29 @@ import { toast } from "react-hot-toast";
 import { UserContext } from "../userContext";
 import { Link, useNavigate } from "react-router-dom";
 import json from "superjson";
-import { Tab, Tabs } from "react-bootstrap";
+import Tab from "react-bootstrap/Tab";
+import Tabs from "react-bootstrap/Tabs";
 import { setCookie } from "../utils/cookieService";
+import { loginSchema, validateForm } from "../utils/validation";
 
 export default function Login() {
     const { setUser } = useContext(UserContext);
-    const [isFilled, setIsFilled] = useState(false);
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-
     const navigate = useNavigate();
+    const [isFilled, setIsFilled] = useState(false);
+    const [formData, setFormData] = useState({ email: "", password: "" });
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        if (email !== "" && password !== "" && password.length >= 8) {
+        if (
+            formData.email !== "" &&
+            formData.password !== "" &&
+            formData.password.length >= 8
+        ) {
             setIsFilled(true);
         } else {
             setIsFilled(false);
         }
-    }, [email, password]);
+    }, [formData]);
 
     async function loginUser() {
         const loadingToast = toast.loading("Logging in");
@@ -39,8 +44,8 @@ export default function Login() {
                         Accept: "application/json",
                     },
                     body: json.stringify({
-                        email: email,
-                        password: password,
+                        email: formData.email,
+                        password: formData.password,
                     }),
                 }
             );
@@ -58,7 +63,7 @@ export default function Login() {
                 setCookie("refreshToken", data.tokens.refresh.token, {
                     expires: data.tokens.refresh.expires,
                 });
-                toast.success(`You have been logged in as ${email}`, {
+                toast.success(`You have been logged in as ${formData.email}`, {
                     id: loadingToast,
                 });
                 navigate("/");
@@ -71,8 +76,14 @@ export default function Login() {
         }
     }
 
+    const handleChange = (e) => {
+        setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    };
     function handleSubmit(e) {
         e.preventDefault();
+        const validationErrors = validateForm(loginSchema, formData);
+        setErrors(validationErrors || {});
+        if (validationErrors) return;
         loginUser();
     }
 
@@ -95,10 +106,16 @@ export default function Login() {
                             <Form.Label>Email address</Form.Label>
                             <Form.Control
                                 type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                value={formData.email}
+                                name="email"
+                                onChange={handleChange}
                                 placeholder="Enter email address"
+                                isInvalid={!!errors.d}
                             />
+
+                            <Form.Control.Feedback type="invalid">
+                                {errors.username}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group
                             className="mb-3"
@@ -107,10 +124,15 @@ export default function Login() {
                             <Form.Label>Password</Form.Label>
                             <Form.Control
                                 type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
                                 placeholder="Enter password"
+                                isInvalid={!!errors.password}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.password}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <div className="text-center">
                             <Button

@@ -8,27 +8,33 @@ import { getCookie } from "../utils/cookieService";
 import json from "superjson";
 import fetchWrapper from "../utils/fetchWrapper";
 import { useLocation, useNavigate } from "react-router-dom";
+import { addProductSchema, validateForm } from "../utils/validation";
 
 export default function AddProduct() {
     const [isFilled, setIsFilled] = useState(false);
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [price, setPrice] = useState(0);
-    const [quantity, setQuantity] = useState(0);
+    const [formData, setFormData] = useState({
+        name: "",
+        description: "",
+        price: 0,
+        quantity: 0,
+    });
+    const [errors, setErrors] = useState({});
     const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {
-        if (name !== "" && description !== "" && price !== 0) {
+        if (formData.name !== "" && formData.price !== 0) {
             setIsFilled(true);
         } else setIsFilled(false);
-    }, [name, description, price]);
+    }, [formData]);
 
     function resetForm() {
-        setName("");
-        setDescription("");
-        setPrice(0);
-        setQuantity(0);
+        setFormData({
+            name: "",
+            description: "",
+            price: 0,
+            quantity: 0,
+        });
     }
 
     async function createProduct() {
@@ -45,9 +51,9 @@ export default function AddProduct() {
                         Authorization: `Bearer ${getCookie("accessToken")}`,
                     },
                     body: json.stringify({
-                        name: name,
-                        description: description,
-                        price: parseFloat(price),
+                        name: formData.name,
+                        description: formData.description,
+                        price: parseFloat(formData.price),
                     }),
                 },
                 navigate,
@@ -67,8 +73,16 @@ export default function AddProduct() {
         }
     }
 
+    const handleChange = (e) => {
+        setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    };
+
     function handleSubmit(e) {
         e.preventDefault();
+        const validationErrors = validateForm(addProductSchema, formData);
+        setErrors(validationErrors || {});
+        if (validationErrors) return;
+
         createProduct();
         resetForm();
     }
@@ -87,13 +101,16 @@ export default function AddProduct() {
                             <Form.Label>Product Name:</Form.Label>
                             <Form.Control
                                 type="text"
-                                value={name}
-                                onChange={(e) => {
-                                    setName(e.target.value);
-                                }}
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
                                 placeholder="Enter Product Name"
                                 required
+                                isInvalid={!!errors.name}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.name}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Product Description:</Form.Label>
@@ -101,37 +118,45 @@ export default function AddProduct() {
                                 type="text"
                                 as="textarea"
                                 rows={3}
-                                value={description}
-                                onChange={(e) => {
-                                    setDescription(e.target.value);
-                                }}
+                                name="description"
+                                value={formData.description}
+                                onChange={handleChange}
                                 placeholder="Enter Product Description"
-                                required
+                                isInvalid={!!errors.description}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.description}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Price:</Form.Label>
                             <Form.Control
                                 type="number"
-                                value={price}
-                                onChange={(e) => {
-                                    setPrice(e.target.value);
-                                }}
+                                name="price"
+                                value={formData.price}
+                                onChange={handleChange}
                                 placeholder="Enter Product Price"
                                 required
+                                isInvalid={!!errors.price}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.price}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Quantity:</Form.Label>
                             <Form.Control
                                 type="number"
-                                value={quantity}
-                                onChange={(e) => {
-                                    setQuantity(e.target.value);
-                                }}
+                                name="quantity"
+                                value={formData.quantity}
+                                onChange={handleChange}
                                 placeholder="Enter Quantity"
                                 required
+                                isInvalid={!!errors.quantity}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.quantity}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Button
                             className="w-100"

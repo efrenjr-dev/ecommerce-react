@@ -9,27 +9,35 @@ import { UserContext } from "../userContext";
 import fetchWrapper from "../utils/fetchWrapper";
 import json from "superjson";
 import { getCookie } from "../utils/cookieService";
+import { updateProductSchema, validateForm } from "../utils/validation";
 
 export default function UpdateProduct() {
     const product = useLoaderData();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [isFilled, setIsFilled] = useState(false);
-    const [name, setName] = useState(product.name);
-    const [description, setDescription] = useState(product.description);
-    const [price, setPrice] = useState(product.price);
+    const [formData, setFormData] = useState({
+        name: product.name,
+        description: product.description,
+        price: product.price,
+    });
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        if (name !== "" && description !== "" && price != 0) {
+        if (
+            formData.name !== "" &&
+            formData.description !== "" &&
+            formData.price != 0
+        ) {
             setIsFilled(true);
         } else setIsFilled(false);
-    }, [name, description, price]);
+    }, [formData.name, formData.description, formData.price]);
 
     async function updateProduct() {
         setIsLoading(true);
         const loadingToast = toast.loading("Updating product details");
         try {
-          // console.log(name, description, price);
+            // console.log(name, description, price);
             const response = await fetchWrapper(
                 `${import.meta.env.VITE_API_URL}/products/product/${
                     product.id
@@ -42,22 +50,22 @@ export default function UpdateProduct() {
                         Authorization: `Bearer ${getCookie("accessToken")}`,
                     },
                     body: json.stringify({
-                        name: name,
-                        description: description,
-                        price: parseFloat(price),
+                        name: formData.name,
+                        description: formData.description,
+                        price: parseFloat(formData.price),
                     }),
                 }
             );
             const serializedData = await response.json();
             const data = json.deserialize(serializedData);
-          // console.log(data);
+            // console.log(data);
             if (data.id) {
                 toast.success("Product has been updated successfully.", {
                     id: loadingToast,
                 });
-                product.name = name;
-                product.description = description;
-                product.price = price;
+                product.name = formData.name;
+                product.description = formData.description;
+                product.price = formData.price;
             } else {
                 toast.error(data.message, {
                     id: loadingToast,
@@ -72,13 +80,22 @@ export default function UpdateProduct() {
     }
 
     const handleReset = () => {
-        setName(product.name);
-        setDescription(product.description);
-        setPrice(product.price);
+        setFormData({
+            name: product.name,
+            description: product.description,
+            price: product.price,
+        });
+    };
+
+    const handleChange = (e) => {
+        setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const validationErrors = validateForm(updateProductSchema, formData);
+        setErrors(validationErrors || {});
+        if (validationErrors) return;
         updateProduct();
     };
 
@@ -110,13 +127,16 @@ export default function UpdateProduct() {
                             <Form.Label>Product Name:</Form.Label>
                             <Form.Control
                                 type="text"
-                                value={name}
-                                onChange={(e) => {
-                                    setName(e.target.value);
-                                }}
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
                                 placeholder="Enter Product Name"
                                 required
+                                isInvalid={!!errors.name}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.name}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Product Description:</Form.Label>
@@ -124,25 +144,31 @@ export default function UpdateProduct() {
                                 as="textarea"
                                 rows={3}
                                 type="text"
-                                value={description}
-                                onChange={(e) => {
-                                    setDescription(e.target.value);
-                                }}
+                                name="description"
+                                value={formData.description}
+                                onChange={handleChange}
                                 placeholder="Enter Product Description"
                                 required
+                                isInvalid={!!errors.description}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.description}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Price:</Form.Label>
                             <Form.Control
                                 type="number"
-                                value={price}
-                                onChange={(e) => {
-                                    setPrice(e.target.value);
-                                }}
+                                name="price"
+                                value={formData.price}
+                                onChange={handleChange}
                                 placeholder="Enter Product Price"
                                 required
+                                isInvalid={!!errors.price}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.price}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         {/* <Form.Group className="mb-3">
                             <Form.Label>Active:</Form.Label>

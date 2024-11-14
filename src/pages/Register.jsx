@@ -1,44 +1,47 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAsyncError, useNavigate } from "react-router-dom";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import toast from "react-hot-toast";
 import json from "superjson";
+import { registerSchema, validateForm } from "../utils/validation";
 
 export default function Register() {
     const navigate = useNavigate();
 
     // const [status, setStatus] = useState("typing"); // typing || submitting || success || error
     const [isFilled, setIsFilled] = useState(false);
-    const [fullName, setFullName] = useState("");
-    const [email, setEmail] = useState("");
-    // const [mobileNo, setMobileNo] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+    const [formData, setFormData] = useState({
+        fullName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+    });
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         if (
-            fullName !== "" &&
-            email !== "" &&
+            formData.fullName !== "" &&
+            formData.email !== "" &&
             // mobileNo !== "" &&
-            password !== "" &&
-            confirmPassword !== ""
+            formData.password !== "" &&
+            formData.confirmPassword !== ""
         ) {
             setIsFilled(true);
         } else {
             setIsFilled(false);
         }
-    }, [fullName, email, password, confirmPassword]);
+    }, [formData]);
 
     async function registerUser() {
         const loadingToast = toast.loading("Registering new user details");
         try {
             const body = {
-                email: email,
-                password: password,
-                name: fullName,
+                email: formData.email,
+                password: formData.password,
+                name: formData.fullName,
             };
             const response = await fetch(
                 `${import.meta.env.VITE_API_URL}/auth/register`,
@@ -53,7 +56,7 @@ export default function Register() {
             );
             const serializedData = await response.json();
             const data = json.deserialize(serializedData);
-          // console.log(data);
+            // console.log(data);
             if (data.user) {
                 toast.success(data.message, {
                     id: loadingToast,
@@ -72,20 +75,18 @@ export default function Register() {
         }
     }
 
+    const handleChange = (e) => {
+        setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    };
+
     function handleSubmit(e) {
         e.preventDefault();
 
-        if (password !== confirmPassword) {
-            toast.error("Password and Confirm Password fields do not match.", {
-                id: "validator",
-            });
-        } else if (password.length < 8) {
-            toast.error("Password should be at least 8 characters.", {
-                id: "validator",
-            });
-        } else {
-            registerUser();
-        }
+        const validationErrors = validateForm(registerSchema, formData);
+        setErrors(validationErrors || {});
+        if (validationErrors) return;
+
+        registerUser();
     }
 
     return (
@@ -104,25 +105,31 @@ export default function Register() {
                             <Form.Label>Full Name:</Form.Label>
                             <Form.Control
                                 type="text"
-                                value={fullName}
-                                onChange={(e) => {
-                                    setFullName(e.target.value);
-                                }}
+                                name="fullName"
+                                value={formData.fullName}
+                                onChange={handleChange}
                                 placeholder="Enter Full Name"
                                 required
+                                isInvalid={!!errors.fullName}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.fullName}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Email:</Form.Label>
                             <Form.Control
                                 type="email"
-                                value={email}
-                                onChange={(e) => {
-                                    setEmail(e.target.value);
-                                }}
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
                                 placeholder="Enter Email"
                                 required
+                                isInvalid={!!errors.email}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.email}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         {/* <Form.Group className="mb-3">
                             <Form.Label>Mobile Number:</Form.Label>
@@ -140,13 +147,16 @@ export default function Register() {
                             <Form.Label>Password:</Form.Label>
                             <Form.Control
                                 type="password"
-                                value={password}
-                                onChange={(e) => {
-                                    setPassword(e.target.value);
-                                }}
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
                                 placeholder="Enter Password"
                                 required
+                                isInvalid={!!errors.password}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.password}
+                            </Form.Control.Feedback>
                             <Form.Text id="passwordHelpBlock" muted>
                                 Your password must be 8-20 characters long.
                             </Form.Text>
@@ -155,13 +165,16 @@ export default function Register() {
                             <Form.Label>Confirm Password:</Form.Label>
                             <Form.Control
                                 type="password"
-                                value={confirmPassword}
-                                onChange={(e) => {
-                                    setConfirmPassword(e.target.value);
-                                }}
+                                name="confirmPassword"
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
                                 placeholder="Confirm Password"
                                 required
+                                isInvalid={!!errors.confirmPassword}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.confirmPassword}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Button
                             className="w-100"
