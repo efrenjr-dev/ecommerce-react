@@ -12,6 +12,7 @@ import { UserContext } from "../userContext";
 import json from "superjson";
 import Modal from "../components/Modal";
 import { getCookie } from "../utils/cookieService";
+import { Badge } from "react-bootstrap";
 
 export default function ViewProduct() {
     const productDetails = useLoaderData();
@@ -207,8 +208,26 @@ export default function ViewProduct() {
                                     {user.role === "admin" && (
                                         <div>
                                             <Card.Text>
-                                                Available stock:{" "}
-                                                {productInventory}
+                                                <span>
+                                                    Available stock:{" "}
+                                                    {productInventory > 10 ? (
+                                                        productInventory
+                                                    ) : (
+                                                        <Badge pill bg="danger">
+                                                            {productInventory}
+                                                        </Badge>
+                                                    )}
+                                                </span>
+                                                <p>
+                                                    Status:{" "}
+                                                    {productDetails.isActive ? (
+                                                        <span>Active</span>
+                                                    ) : (
+                                                        <span className="text-danger">
+                                                            Inactive
+                                                        </span>
+                                                    )}
+                                                </p>
                                             </Card.Text>
                                             <div className="text-center">
                                                 <Button

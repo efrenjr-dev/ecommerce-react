@@ -1,4 +1,4 @@
-import { Badge } from "react-bootstrap";
+import { Badge, Col, Row } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
 
@@ -29,16 +29,32 @@ export default function Product({ productProp, userRole }) {
 
                 <Card.Text>{productProp.description}</Card.Text>
             </Card.Body>
-            {userRole === "admin" &&
-                (stock > 10 ? (
-                    <Card.Footer className="">
-                        Available stock: {stock}
-                    </Card.Footer>
-                ) : (
-                    <Card.Footer className="text">
-                        Available stock: <Badge pill bg="danger">{stock}</Badge>
-                    </Card.Footer>
-                ))}
+            {userRole === "admin" && (
+                <Card.Footer className="text">
+                    <Row className="d-flex flex-column">
+                        <Col>
+                            {stock > 10 ? (
+                                <span>Available stock: {stock}</span>
+                            ) : (
+                                <span>
+                                    Available stock:{" "}
+                                    <Badge pill bg="danger">
+                                        {stock}
+                                    </Badge>
+                                </span>
+                            )}
+                        </Col>
+                        <Col>
+                            Status:{" "}
+                            {productProp.isActive ? (
+                                <span>Active</span>
+                            ) : (
+                                <span className="text-danger">Inactive</span>
+                            )}
+                        </Col>
+                    </Row>
+                </Card.Footer>
+            )}
         </Card>
     );
 }

@@ -76,4 +76,5 @@ export const updateProductSchema = Joi.object({
     name: Joi.string().label("Product name"),
     price: Joi.number().greater(0).label("Price"),
     description: Joi.string().allow("").label("Product description"),
+    isActive: Joi.boolean().required().label("Product is active"),
 });

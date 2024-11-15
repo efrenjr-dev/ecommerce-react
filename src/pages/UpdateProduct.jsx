@@ -20,6 +20,7 @@ export default function UpdateProduct() {
         name: product.name,
         description: product.description,
         price: product.price,
+        isActive: product.isActive,
     });
     const [errors, setErrors] = useState({});
 
@@ -31,7 +32,7 @@ export default function UpdateProduct() {
         ) {
             setIsFilled(true);
         } else setIsFilled(false);
-    }, [formData.name, formData.description, formData.price]);
+    }, [formData]);
 
     async function updateProduct() {
         setIsLoading(true);
@@ -53,6 +54,7 @@ export default function UpdateProduct() {
                         name: formData.name,
                         description: formData.description,
                         price: parseFloat(formData.price),
+                        isActive: formData.isActive,
                     }),
                 }
             );
@@ -66,6 +68,7 @@ export default function UpdateProduct() {
                 product.name = formData.name;
                 product.description = formData.description;
                 product.price = formData.price;
+                product.isActive = formData.isActive;
             } else {
                 toast.error(data.message, {
                     id: loadingToast,
@@ -84,11 +87,17 @@ export default function UpdateProduct() {
             name: product.name,
             description: product.description,
             price: product.price,
+            isActive: product.isActive,
         });
     };
 
     const handleChange = (e) => {
-        setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+        const { name, type, checked, value } = e.target;
+
+        setFormData((prev) => ({
+            ...prev,
+            [name]: type === "checkbox" ? checked : value,
+        }));
     };
 
     const handleSubmit = (e) => {
@@ -170,16 +179,15 @@ export default function UpdateProduct() {
                                 {errors.price}
                             </Form.Control.Feedback>
                         </Form.Group>
-                        {/* <Form.Group className="mb-3">
+                        <Form.Group className="mb-3">
                             <Form.Label>Active:</Form.Label>
                             <Form.Check
                                 type="switch"
-                                checked={isActive}
-                                onChange={() => {
-                                    setIsActive(!isActive);
-                                }}
+                                name="isActive"
+                                checked={formData.isActive}
+                                onChange={handleChange}
                             />
-                        </Form.Group> */}
+                        </Form.Group>
                         <div className="d-flex">
                             <Button
                                 variant="outline-dark"
