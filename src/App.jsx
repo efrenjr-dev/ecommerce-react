@@ -67,11 +67,11 @@ const router = createBrowserRouter([
             },
             {
                 path: "/orders",
-                element: <Orders take={20} title="Orders" />,
+                element: <Orders take={10} title="Orders" />,
             },
             {
                 path: "/products",
-                element: <Products take={20} />,
+                element: <Products take={8} />,
                 // loader: productsLoader,
                 children: [
                     {

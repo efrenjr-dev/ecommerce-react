@@ -13,7 +13,16 @@ export default function ViewOrder() {
     const order = useLoaderData();
     const { user } = useContext(UserContext);
     const date = order.createdAt;
-    let strDate = date.toLocaleString();
+    let strDate = date.toLocaleString("en-US", {
+        weekday: "long", // For day of the week (e.g., "Monday")
+        year: "numeric", // For year (e.g., "2024")
+        month: "long", // For full month name (e.g., "November")
+        day: "numeric", // For the day of the month (e.g., "15")
+        hour: "2-digit", // For hour (e.g., "3")
+        minute: "2-digit", // For minute (e.g., "45")
+        second: "2-digit", // For seconds (e.g., "00")
+        hour12: true, // Use 12-hour format with AM/PM
+    });
     return (
         <>
             <Row className="d-flex flex-column align-items-center">
@@ -29,12 +38,11 @@ export default function ViewOrder() {
                         <Card.Body>
                             <Card.Title>Order Details</Card.Title>
                             <Card.Text>
-                                Order number: {order.id.toString()}
-                            </Card.Text>
-                            <Card.Text>Order date: {strDate}</Card.Text>
-                            <Card.Text>Total amount: {order.total}</Card.Text>
-                            <Card.Text>
-                                Customer name: {order.User.name}
+                                <p>Order number: {order.id.toString()}</p>
+                                <p>Order date: {strDate}</p>
+                                <p>Total amount: {order.total}</p>
+                                <p>Customer name: {order.User.name}</p>
+                                <p>Customer Id: {order.User.id}</p>
                             </Card.Text>
                         </Card.Body>
                     </Card>
