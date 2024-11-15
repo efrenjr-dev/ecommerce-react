@@ -46,7 +46,7 @@ export default function Home() {
                 </section>
                 <Row className="d-flex flex-column">
                     <Col>
-                        <Products take={4} title="Suggested products" />
+                        <Products take={4} title="Suggested products" productLoading={4}/>
                     </Col>
                     {user.role === "user" && (
                         <Col>

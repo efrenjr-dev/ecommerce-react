@@ -17,7 +17,11 @@ import ProductLoading from "../components/ProductLoading";
 import { Button } from "react-bootstrap";
 import { debounce } from "../utils/debounce";
 
-export default function Products({ take = 20, title = "All Products" }) {
+export default function Products({
+    take = 20,
+    title = "All Products",
+    productLoading = 8,
+}) {
     // const products = useLoaderData();
     const { user } = useContext(UserContext);
     const queryClient = useQueryClient();
@@ -96,7 +100,7 @@ export default function Products({ take = 20, title = "All Products" }) {
                 />
             </div>
 
-            {isLoading && <ProductLoading />}
+            {isLoading && <ProductLoading items={productLoading} />}
             {isError && <p>Error: {error.message}</p>}
 
             {!isLoading &&
