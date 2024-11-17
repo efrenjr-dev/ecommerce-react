@@ -7,6 +7,8 @@ import {
 } from "react-router-dom";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 import Product from "../components/Product";
 import { UserContext } from "../userContext";
 import json from "superjson";
@@ -14,7 +16,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCookie } from "../utils/cookieService";
 import fetchWrapper from "../utils/fetchWrapper";
 import ProductLoading from "../components/ProductLoading";
-import { Button } from "react-bootstrap";
 import { debounce } from "../utils/debounce";
 
 export default function Products({
@@ -88,17 +89,21 @@ export default function Products({
         <>
             <Outlet />
             <h3 className="mt-5 mb-4 text-center">{title}</h3>
-            <div
-                className="text-center mb-3
-            "
-            >
-                <input
-                    type="text"
-                    placeholder="Search items..."
-                    value={searchInput}
-                    onChange={handleSearchChange}
-                />
-            </div>
+            <Row className="mb-3">
+                <Col></Col>
+                <Col xs={12} md={8} lg={4}>
+                    <Form>
+                        <Form.Control
+                            className=""
+                            type="text"
+                            placeholder="Search items..."
+                            value={searchInput}
+                            onChange={handleSearchChange}
+                        />
+                    </Form>
+                </Col>
+                <Col></Col>
+            </Row>
 
             {isLoading && <ProductLoading items={productLoading} />}
             {isError && <p>Error: {error.message}</p>}
