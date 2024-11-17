@@ -1,5 +1,7 @@
 # E-commerce Web-app
 
+Integrated with Ecommerce API https://github.com/efrenjr-dev/ecommerce-sql-api
+
 ## Features
 
 ### Auth
