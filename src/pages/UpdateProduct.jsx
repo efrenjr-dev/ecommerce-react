@@ -190,14 +190,14 @@ export default function UpdateProduct() {
                         <div className="d-flex">
                             <Button
                                 variant="outline-dark"
-                                className="mx-1"
+                                className="me-auto"
                                 onClick={handleCancel}
                                 disabled={isLoading}
                             >
                                 Back
                             </Button>
                             <Button
-                                variant="outline-dark"
+                                variant="dark"
                                 className="mx-1"
                                 type="reset"
                                 disabled={isLoading}
@@ -206,8 +206,8 @@ export default function UpdateProduct() {
                                 Reset
                             </Button>
                             <Button
-                                variant="dark"
-                                className="me-auto"
+                                variant="danger"
+                                className="ms-1"
                                 type="submit"
                                 disabled={!isFilled || isLoading}
                             >

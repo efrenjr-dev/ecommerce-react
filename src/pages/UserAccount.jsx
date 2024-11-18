@@ -40,9 +40,6 @@ export default function UserAccount() {
                     },
                     body: json.stringify({
                         name: formData.name,
-                        email: formData.email,
-                        role: formData.role,
-                        isActive: formData.isActive,
                     }),
                 },
                 navigate,
@@ -73,6 +70,37 @@ export default function UserAccount() {
         setIsLoading(false);
     }
 
+    async function forgotPassword() {
+        setIsLoading(true);
+        try {
+            const loginResponse = await fetch(
+                `${import.meta.env.VITE_API_URL}/auth/forgot-password`,
+                {
+                    method: "POST",
+                    mode: "cors",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                    },
+                    body: json.stringify({
+                        email: userData.email,
+                    }),
+                }
+            );
+
+            if (loginResponse.status === 204) {
+                toast.success(
+                    "Please check your email to reset your password."
+                );
+            } else {
+                throw new Error(data.message);
+            }
+        } catch (err) {
+            console.log(err.toString());
+        }
+        setIsLoading(false);
+    }
+
     const handleReset = () => {
         setFormData({
             name: userData.name,
@@ -91,9 +119,14 @@ export default function UserAccount() {
         }));
     };
 
+    function handlePassword(e) {
+        e.preventDefault();
+        forgotPassword();
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        const validationErrors = validateForm(schema.updateProduct, formData);
+        const validationErrors = validateForm(schema.updateUser, formData);
         setErrors(validationErrors || {});
         if (validationErrors) return;
         updateProduct();
@@ -205,24 +238,24 @@ export default function UserAccount() {
                         )}
                         <div className="d-flex">
                             <Button
-                                variant="outline-dark"
-                                className="mx-1"
-                                onClick={handleCancel}
+                                variant="outline-danger"
+                                className=""
+                                onClick={handlePassword}
                                 disabled={isLoading}
                             >
-                                Back
-                            </Button>
-                            <Button
-                                variant="outline-dark"
-                                className="mx-1"
-                                disabled={isLoading}
-                                onClick={handleReset}
-                            >
-                                Reset
+                                Reset Password
                             </Button>
                             <Button
                                 variant="dark"
-                                className="me-auto"
+                                className="ms-auto mx-1"
+                                disabled={isLoading}
+                                onClick={handleReset}
+                            >
+                                Reset Form
+                            </Button>
+                            <Button
+                                variant="danger"
+                                className=""
                                 type="submit"
                                 disabled={isLoading}
                             >

@@ -204,23 +204,23 @@ export default function UpdateUser() {
                         <div className="d-flex">
                             <Button
                                 variant="outline-dark"
-                                className="mx-1"
+                                className=""
                                 onClick={handleCancel}
                                 disabled={isLoading}
                             >
                                 Back
                             </Button>
                             <Button
-                                variant="outline-dark"
-                                className="mx-1"
+                                variant="dark"
+                                className="ms-auto mx-1"
                                 disabled={isLoading}
                                 onClick={handleReset}
                             >
                                 Reset
                             </Button>
                             <Button
-                                variant="dark"
-                                className="me-auto"
+                                variant="danger"
+                                className="ms-1"
                                 type="submit"
                                 disabled={isLoading}
                             >

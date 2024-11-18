@@ -176,7 +176,7 @@ export default function ViewProduct() {
                                             <div className="text-center">
                                                 <Button
                                                     variant="outline-dark"
-                                                    className="mx-1 mb-2 btn-sm"
+                                                    className="mx-1 mb-2"
                                                     onClick={() => {
                                                         navigate("/products");
                                                     }}
@@ -186,7 +186,7 @@ export default function ViewProduct() {
                                                 </Button>
                                                 <Button
                                                     variant="warning"
-                                                    className="mx-1 mb-2 btn-sm"
+                                                    className="mx-1 mb-2"
                                                     onClick={addToCart}
                                                     disabled={isPending}
                                                 >
@@ -219,7 +219,7 @@ export default function ViewProduct() {
                                             <div className="text-center">
                                                 <Button
                                                     variant="outline-dark"
-                                                    className="mx-1 mb-2 btn-sm"
+                                                    className="mx-1 mb-2"
                                                     onClick={() => {
                                                         navigate("/products");
                                                     }}
@@ -229,14 +229,14 @@ export default function ViewProduct() {
                                                 </Button>
                                                 <Button
                                                     variant="dark"
-                                                    className="mx-1 mb-2 btn-sm"
+                                                    className="mx-1 mb-2"
                                                     onClick={handleInventory}
                                                 >
                                                     Inventory
                                                 </Button>
                                                 <Button
                                                     variant="dark"
-                                                    className="mx-1 mb-2 btn-sm"
+                                                    className="mx-1 mb-2"
                                                     onClick={handleUpdate}
                                                 >
                                                     Edit details
@@ -248,7 +248,7 @@ export default function ViewProduct() {
                                         <div className="text-center">
                                             <Button
                                                 variant="outline-dark"
-                                                className="mx-1 mb-2 btn-sm"
+                                                className="mx-1 mb-2"
                                                 onClick={() => {
                                                     navigate("/products");
                                                 }}
@@ -258,7 +258,7 @@ export default function ViewProduct() {
                                             </Button>
                                             <Button
                                                 variant="warning"
-                                                className="mx-1 mb-2 btn-sm"
+                                                className="mx-1 mb-2"
                                                 onClick={() => {
                                                     navigate("/login");
                                                 }}
