@@ -6,7 +6,7 @@ import Button from "react-bootstrap/esm/Button";
 import Carousel from "react-bootstrap/Carousel";
 import { toast } from "react-hot-toast";
 
-import { Link, useNavigate, useLoaderData } from "react-router-dom";
+import { useNavigate, useLoaderData } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../userContext";
 import json from "superjson";
@@ -17,8 +17,6 @@ import { Badge } from "react-bootstrap";
 export default function ViewProduct() {
     const productDetails = useLoaderData();
     const productInventory = productDetails.Product_Inventory.quantity;
-    // console.log("productDetails: ", productDetails);
-    // console.log(productDetails.Product_Inventory.quantity);
     const navigate = useNavigate();
     const { user } = useContext(UserContext);
     const [isPending, setIsPending] = useState(false);
@@ -55,10 +53,8 @@ export default function ViewProduct() {
         if (type === "input") {
             setProductQuantity(e.target.value);
         } else if (type === "+") {
-            // console.log(productQuantity);
             setProductQuantity(Number(productQuantity) + 1);
         } else if (type === "-") {
-            // console.log(productQuantity);
             setProductQuantity(productQuantity - 1);
         }
     };
@@ -67,7 +63,6 @@ export default function ViewProduct() {
         setIsPending(true);
         e.preventDefault;
 
-        // setProductQuantity(1);
         const updateBody = {
             productId: productDetails.id,
             quantity: productQuantity,
@@ -102,11 +97,6 @@ export default function ViewProduct() {
                 <main>
                     <Row className="justify-content-center align-items-center d-flex px-2 pb-3">
                         <Col>
-                            {/* <h1 className="my-5 text-center">
-                        {productDetails.productName}
-                    </h1> */}
-                            {/* <p>{productId}</p> */}
-                            {/* <p>{JSON.stringify(productDetails)}</p> */}
                             <Card className="text-link border-0">
                                 <Carousel data-bs-theme="dark">
                                     <Carousel.Item>
@@ -208,26 +198,23 @@ export default function ViewProduct() {
                                     {user.role === "admin" && (
                                         <div>
                                             <Card.Text>
-                                                <span>
-                                                    Available stock:{" "}
-                                                    {productInventory > 10 ? (
-                                                        productInventory
-                                                    ) : (
-                                                        <Badge pill bg="danger">
-                                                            {productInventory}
-                                                        </Badge>
-                                                    )}
-                                                </span>
-                                                <p>
-                                                    Status:{" "}
-                                                    {productDetails.isActive ? (
-                                                        <span>Active</span>
-                                                    ) : (
-                                                        <span className="text-danger">
-                                                            Inactive
-                                                        </span>
-                                                    )}
-                                                </p>
+                                                Available stock:{" "}
+                                                {productInventory > 10 ? (
+                                                    productInventory
+                                                ) : (
+                                                    <Badge pill bg="danger">
+                                                        {productInventory}
+                                                    </Badge>
+                                                )}
+                                                <br />
+                                                Status:{" "}
+                                                {productDetails.isActive ? (
+                                                    <span>Active</span>
+                                                ) : (
+                                                    <span className="text-danger">
+                                                        Inactive
+                                                    </span>
+                                                )}
                                             </Card.Text>
                                             <div className="text-center">
                                                 <Button
@@ -292,11 +279,15 @@ export default function ViewProduct() {
 }
 
 export async function loader({ params }) {
-    // console.log(params.productId);
     return await fetch(
         `${import.meta.env.VITE_API_URL}/products/product/${params.productId}`
     )
-        .then((result) => result.json())
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then((serializedData) => json.deserialize(serializedData))
         .catch((error) => error);
 }

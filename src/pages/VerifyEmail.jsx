@@ -28,7 +28,6 @@ export default function VerifyEmail() {
 }
 
 export const loader = async ({ params }) => {
-  // console.log("Token: ", params.token);
     const response = await fetch(
         `${import.meta.env.VITE_API_URL}/auth/verify-email?token=${
             params.token

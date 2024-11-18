@@ -37,13 +37,13 @@ export default function ForgotPassword() {
                 }
             );
 
-            if (loginResponse.status===204) {
+            if (loginResponse.status === 204) {
                 setIsSubmitted(true);
             } else {
                 throw new Error(data.message);
             }
         } catch (err) {
-          // console.log(err);
+            console.log(err.toString());
         }
     }
 
@@ -102,8 +102,3 @@ export default function ForgotPassword() {
         </>
     );
 }
-
-// {
-//     "email": "goodgirl@mail.com",
-//     "password": "goodgirl"
-// }

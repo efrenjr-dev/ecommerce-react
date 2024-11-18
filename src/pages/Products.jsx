@@ -1,10 +1,5 @@
 import { useContext, useMemo, useState } from "react";
-import {
-    Outlet,
-    useLoaderData,
-    useLocation,
-    useNavigate,
-} from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
@@ -12,7 +7,7 @@ import Form from "react-bootstrap/Form";
 import Product from "../components/Product";
 import { UserContext } from "../userContext";
 import json from "superjson";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getCookie } from "../utils/cookieService";
 import fetchWrapper from "../utils/fetchWrapper";
 import ProductLoading from "../components/ProductLoading";
@@ -23,9 +18,7 @@ export default function Products({
     title = "All Products",
     productLoading = 8,
 }) {
-    // const products = useLoaderData();
     const { user } = useContext(UserContext);
-    const queryClient = useQueryClient();
     const [searchInput, setSearchInput] = useState("");
     const [searchString, setSearchString] = useState("");
     const [page, setPage] = useState(1);
@@ -55,11 +48,13 @@ export default function Products({
             navigate,
             location
         )
-            .then((response) => response.json())
-            .then((serializedData) => json.deserialize(serializedData))
-            .catch((err) => {
-                console.log(err);
-            });
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((serializedData) => json.deserialize(serializedData));
     };
 
     const { isLoading, isError, data, error } = useQuery({
@@ -114,7 +109,6 @@ export default function Products({
                     <>
                         <Row xs={1} sm={3} lg={4} className="">
                             {data.products.map((product) => {
-                                // console.log(product);
                                 return (
                                     <Col
                                         className="mb-4 d-flex justify-content-center align-items-stretch"
@@ -143,7 +137,7 @@ export default function Products({
                             <Button
                                 variant="dark"
                                 className="btn-sm"
-                                disabled={!data.hasMore} // Disable if there are no more items
+                                disabled={!data.hasMore}
                                 onClick={() => setPage((prev) => prev + 1)}
                             >
                                 Next
@@ -162,24 +156,3 @@ export default function Products({
         </>
     );
 }
-
-// export async function loader() {
-//     const response = await fetch(
-//         `${
-//             import.meta.env.VITE_API_URL
-//         }/products/?searchString=&skip=0&take=10`,
-//         {
-//             method: "GET",
-//             mode: "cors",
-//             headers: {
-//                 "Content-Type": "application/json",
-//                 Authorization: `Bearer ${localStorage.getItem(
-//                     "ecommercetoken"
-//                 )}`,
-//             },
-//         }
-//     );
-//     const serializedData = await response.json();
-//     const data = await json.deserialize(serializedData);
-//     return data;
-// }

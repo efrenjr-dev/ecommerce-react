@@ -24,11 +24,6 @@ export default function CartList({ cartItems, onChangeQuantity, isLoading }) {
                         </Col>
                         <Col className="">
                             <Card className="mb-5 text-link">
-                                {/* <Card.Header>ID: {productProp.productId}</Card.Header> */}
-                                {/* <Card.Img
-        variant="top"
-        src="https://via.placeholder.com/100x50/222222/FFFFFF?text=Image"
-    /> */}
                                 <Card.Body>
                                     <Card.Title>
                                         {cartItem.Product.name}

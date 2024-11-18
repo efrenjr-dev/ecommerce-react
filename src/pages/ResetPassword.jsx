@@ -7,30 +7,26 @@ import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import json from "superjson";
 import { UserContext } from "../userContext";
-import { removeCookie } from "../utils/cookieService";
+import { schema, validateForm } from "../utils/validation";
 
 export default function ResetPassword() {
-    const { unsetUser, setUser } = useContext(UserContext);
+    const { unsetUser } = useContext(UserContext);
+    const [isLoading, setIsLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        password: "",
+        confirmPassword: "",
+    });
+    const [errors, setErrors] = useState({});
     const { token } = useParams();
-    const [isFilled, setIsFilled] = useState(false);
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [password, setPassword] = useState("");
-
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (
-            password !== "" &&
-            password.length >= 8 &&
-            confirmPassword !== "" &&
-            confirmPassword.length >= 8
-        ) {
-            setIsFilled(true);
-        } else {
-            setIsFilled(false);
-        }
-    }, [password, confirmPassword]);
+    const resetForm = () => {
+        setFormData({
+            password: "",
+            confirmPassword: "",
+        });
+    };
 
     async function resetPassword() {
         const loadingToast = toast.loading("Resetting password");
@@ -46,14 +42,13 @@ export default function ResetPassword() {
                         "Content-Type": "application/json",
                     },
                     body: json.stringify({
-                        password: password,
+                        password: formData.password,
                     }),
                 }
             );
 
             const serializedData = await loginResponse.json();
             const data = json.deserialize(serializedData);
-          // console.log(data);
             if (data.message === "Password has been reset.") {
                 toast.success(
                     `Password has been reset. Please log in with new credentials`,
@@ -65,29 +60,33 @@ export default function ResetPassword() {
                 navigate("/login");
             } else {
                 toast.error(
-                    "Reset password has failed. Please submit new reset password request.",
+                    "Reset password has failed. Please try again with new request.",
                     { id: loadingToast }
                 );
             }
         } catch (err) {
-          // console.log(err);
             toast.error(err.toString(), { id: loadingToast });
         }
     }
 
+    const handleChange = (e) => {
+        setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    };
+
     function handleSubmit(e) {
         e.preventDefault();
-        if (password !== confirmPassword) {
-            toast.error("Password and Confirm Password fields do not match.", {
-                id: "validator",
-            });
-        } else if (password.length < 8) {
-            toast.error("Password should be at least 8 characters.", {
-                id: "validator",
-            });
-        } else {
-            resetPassword();
+        setIsLoading(true);
+        const validationErrors = validateForm(schema.resetPassword, formData);
+        setErrors(validationErrors || {});
+
+        if (validationErrors) {
+            setIsLoading(false);
+            return;
         }
+
+        resetPassword();
+        setIsLoading(false);
+        resetForm();
     }
 
     return (
@@ -106,13 +105,16 @@ export default function ResetPassword() {
                             <Form.Label>Password:</Form.Label>
                             <Form.Control
                                 type="password"
-                                value={password}
-                                onChange={(e) => {
-                                    setPassword(e.target.value);
-                                }}
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
                                 placeholder="Enter Password"
                                 required
+                                isInvalid={!!errors.password}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.password}
+                            </Form.Control.Feedback>
                             <Form.Text id="passwordHelpBlock" muted>
                                 Your password must be 8-20 characters long.
                             </Form.Text>
@@ -121,19 +123,22 @@ export default function ResetPassword() {
                             <Form.Label>Confirm Password:</Form.Label>
                             <Form.Control
                                 type="password"
-                                value={confirmPassword}
-                                onChange={(e) => {
-                                    setConfirmPassword(e.target.value);
-                                }}
+                                name="confirmPassword"
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
                                 placeholder="Confirm Password"
                                 required
+                                isInvalid={!!errors.confirmPassword}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.confirmPassword}
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <Button
                             className="w-100"
                             variant="dark"
                             type="submit"
-                            disabled={!isFilled}
+                            disabled={isLoading}
                         >
                             Submit
                         </Button>

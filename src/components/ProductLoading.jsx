@@ -7,7 +7,7 @@ export default function ProductLoading({ items = 8 }) {
     const placeholders = [];
     for (let i = 0; i < items; i++) {
         placeholders.push(
-            <Col className="mb-4">
+            <Col className="mb-4" key={i}>
                 <Card className="w-100">
                     <Card.Body>
                         <Placeholder as={Card.Title} animation="glow">

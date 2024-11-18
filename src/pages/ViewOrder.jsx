@@ -8,20 +8,21 @@ import { getCookie } from "../utils/cookieService";
 import { useContext } from "react";
 import { UserContext } from "../userContext";
 import { Button } from "react-bootstrap";
+import fetchWrapper from "../utils/fetchWrapper";
 
 export default function ViewOrder() {
     const order = useLoaderData();
     const { user } = useContext(UserContext);
     const date = order.createdAt;
     let strDate = date.toLocaleString("en-US", {
-        weekday: "long", // For day of the week (e.g., "Monday")
-        year: "numeric", // For year (e.g., "2024")
-        month: "long", // For full month name (e.g., "November")
-        day: "numeric", // For the day of the month (e.g., "15")
-        hour: "2-digit", // For hour (e.g., "3")
-        minute: "2-digit", // For minute (e.g., "45")
-        second: "2-digit", // For seconds (e.g., "00")
-        hour12: true, // Use 12-hour format with AM/PM
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
     });
     return (
         <>
@@ -38,11 +39,15 @@ export default function ViewOrder() {
                         <Card.Body>
                             <Card.Title>Order Details</Card.Title>
                             <Card.Text>
-                                <p>Order number: {order.id.toString()}</p>
-                                <p>Order date: {strDate}</p>
-                                <p>Total amount: {order.total}</p>
-                                <p>Customer name: {order.User.name}</p>
-                                <p>Customer Id: {order.User.id}</p>
+                                Order number: {order.id.toString()}
+                                <br />
+                                Order date: {strDate}
+                                <br />
+                                Total amount: {order.total}
+                                <br />
+                                Customer name: {order.User.name}
+                                <br />
+                                Customer Id: {order.User.id}
                             </Card.Text>
                         </Card.Body>
                     </Card>
@@ -61,7 +66,7 @@ export default function ViewOrder() {
 }
 
 export const loader = async ({ params }) => {
-    return fetch(
+    return await fetchWrapper(
         `${import.meta.env.VITE_API_URL}/orders/order/${params.orderId}`,
         {
             method: "GET",
@@ -71,6 +76,12 @@ export const loader = async ({ params }) => {
             },
         }
     )
-        .then((result) => result.json())
-        .then((serializedData) => json.deserialize(serializedData));
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((serializedData) => json.deserialize(serializedData))
+        .catch((error) => error);
 };

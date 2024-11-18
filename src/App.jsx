@@ -28,13 +28,16 @@ import ResetPassword from "./pages/ResetPassword";
 import ProductInventory, {
     loader as productInventoryLoader,
 } from "./pages/ProductInventory";
+import Users from "./pages/Users";
+import AddUser from "./pages/AddUser";
+import UpdateUser, { loader as updateUserLoader } from "./pages/UpdateUser";
+import UserAccount, { loader as userAccountLoader } from "./pages/UserAccount";
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <Root />,
         errorElement: <ErrorPage />,
-        // loader: rootLoader,
         children: [
             {
                 path: "/",
@@ -43,7 +46,6 @@ const router = createBrowserRouter([
             {
                 path: "/cart",
                 element: <Cart />,
-                // loader: cartLoader,
             },
             {
                 path: "/forgot-password",
@@ -72,7 +74,6 @@ const router = createBrowserRouter([
             {
                 path: "/products",
                 element: <Products take={8} />,
-                // loader: productsLoader,
                 children: [
                     {
                         path: "/products/:productId",
@@ -105,12 +106,29 @@ const router = createBrowserRouter([
                 element: <VerifyEmail />,
                 loader: verifyEmailLoader,
             },
+            {
+                path: "/users",
+                element: <Users />,
+            },
+            {
+                path: "/adduser",
+                element: <AddUser />,
+            },
+            {
+                path: "/updateuser/:userId",
+                element: <UpdateUser />,
+                loader: updateUserLoader,
+            },
+            {
+                path: "/account",
+                element: <UserAccount />,
+                loader: userAccountLoader,
+            },
         ],
     },
 ]);
 
 export default function App() {
-    // console.log("API URL", import.meta.env.VITE_API_URL);
     return (
         <QueryClientProvider client={queryClient}>
             <RouterProvider router={router} />

@@ -31,7 +31,6 @@ export default function ProductInventory() {
         setIsLoading(true);
         const loadingToast = toast.loading("Updating inventory...");
         try {
-            // console.log(name, quantity);
             const response = await fetchWrapper(
                 `${import.meta.env.VITE_API_URL}/products/${action}`,
                 {
@@ -51,7 +50,6 @@ export default function ProductInventory() {
             );
             const serializedData = await response.json();
             const data = json.deserialize(serializedData);
-            // console.log(data);
             if (data.id) {
                 toast.success("Product inventory updated successfully.", {
                     id: loadingToast,

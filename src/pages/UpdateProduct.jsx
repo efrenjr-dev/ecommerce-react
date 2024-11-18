@@ -3,13 +3,12 @@ import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/esm/Button";
 import { toast } from "react-hot-toast";
-import { useLoaderData, useNavigate, useParams } from "react-router-dom";
-import { useState, useEffect, useContext } from "react";
-import { UserContext } from "../userContext";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import fetchWrapper from "../utils/fetchWrapper";
 import json from "superjson";
 import { getCookie } from "../utils/cookieService";
-import { updateProductSchema, validateForm } from "../utils/validation";
+import { schema, validateForm } from "../utils/validation";
 
 export default function UpdateProduct() {
     const product = useLoaderData();
@@ -38,7 +37,6 @@ export default function UpdateProduct() {
         setIsLoading(true);
         const loadingToast = toast.loading("Updating product details");
         try {
-            // console.log(name, description, price);
             const response = await fetchWrapper(
                 `${import.meta.env.VITE_API_URL}/products/product/${
                     product.id
@@ -56,11 +54,12 @@ export default function UpdateProduct() {
                         price: parseFloat(formData.price),
                         isActive: formData.isActive,
                     }),
-                }
+                },
+                navigate,
+                location
             );
             const serializedData = await response.json();
             const data = json.deserialize(serializedData);
-            // console.log(data);
             if (data.id) {
                 toast.success("Product has been updated successfully.", {
                     id: loadingToast,
@@ -102,7 +101,7 @@ export default function UpdateProduct() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const validationErrors = validateForm(updateProductSchema, formData);
+        const validationErrors = validateForm(schema.updateProduct, formData);
         setErrors(validationErrors || {});
         if (validationErrors) return;
         updateProduct();
@@ -212,7 +211,7 @@ export default function UpdateProduct() {
                                 type="submit"
                                 disabled={!isFilled || isLoading}
                             >
-                                Confirm Update
+                                Save Changes
                             </Button>
                         </div>
                     </Form>

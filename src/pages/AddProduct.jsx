@@ -8,10 +8,9 @@ import { getCookie } from "../utils/cookieService";
 import json from "superjson";
 import fetchWrapper from "../utils/fetchWrapper";
 import { useLocation, useNavigate } from "react-router-dom";
-import { addProductSchema, validateForm } from "../utils/validation";
+import { schema, validateForm } from "../utils/validation";
 
 export default function AddProduct() {
-    const [isFilled, setIsFilled] = useState(true);
     const [formData, setFormData] = useState({
         name: "",
         description: "",
@@ -21,12 +20,6 @@ export default function AddProduct() {
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
     const location = useLocation();
-
-    // useEffect(() => {
-    //     if (formData.name !== "" && formData.price <= 0) {
-    //         setIsFilled(true);
-    //     } else setIsFilled(false);
-    // }, [formData]);
 
     function resetForm() {
         setFormData({
@@ -40,7 +33,6 @@ export default function AddProduct() {
     async function createProduct() {
         const loadingToast = toast.loading("Adding new product");
         try {
-            // console.log(name, description, price);
             const productResponse = await fetchWrapper(
                 `${import.meta.env.VITE_API_URL}/products/`,
                 {
@@ -79,7 +71,7 @@ export default function AddProduct() {
 
     function handleSubmit(e) {
         e.preventDefault();
-        const validationErrors = validateForm(addProductSchema, formData);
+        const validationErrors = validateForm(schema.addProduct, formData);
         setErrors(validationErrors || {});
         if (validationErrors) return;
 
@@ -162,7 +154,6 @@ export default function AddProduct() {
                             className="w-100"
                             variant="dark"
                             type="submit"
-                            disabled={!isFilled}
                         >
                             Submit
                         </Button>

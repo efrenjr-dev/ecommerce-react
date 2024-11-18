@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { UserContext } from "../userContext";
 import Container from "react-bootstrap/Container";
-import { Toaster, toast } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import AppNavBar from "../components/AppNavBar";
 import {
     Outlet,
-    useLoaderData,
     useLocation,
     useNavigate,
 } from "react-router-dom";
@@ -14,7 +13,6 @@ import { getCookie, removeCookie } from "../utils/cookieService";
 import fetchWrapper from "../utils/fetchWrapper";
 
 export default function Root() {
-    // const data = useLoaderData();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -42,10 +40,16 @@ export default function Root() {
             navigate,
             location
         )
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(
+                        `No user credentials found. Status: ${response.status}`
+                    );
+                }
+                return response.json();
+            })
             .then((serializedData) => json.deserialize(serializedData))
             .then((data) => {
-                // console.log("user role: ", data.role);
                 setUser({
                     id: data.id,
                     role: data.role,
@@ -53,7 +57,6 @@ export default function Root() {
             })
             .catch((err) => {
                 console.log(err.toString());
-                // toast.error(err.toString());
             });
     }, []);
 
@@ -80,23 +83,3 @@ export default function Root() {
         </>
     );
 }
-
-// export const loader = async ({ params }) => {
-//     return fetchWrapper(
-//         `${import.meta.env.VITE_API_URL}/users`,
-//         {
-//             method: "GET",
-//             mode: "cors",
-//             headers: {
-//                 Authorization: `Bearer ${getCookie("accessToken")}`,
-//             },
-//         },
-//     )
-//         .then((response) => response.json())
-//         .then((serializedData) => json.deserialize(serializedData))
-//         .catch((err) => {
-//             throw new Error(err);
-//           // console.log(err.toString());
-//             // toast.error(err.toString());
-//         });
-// };

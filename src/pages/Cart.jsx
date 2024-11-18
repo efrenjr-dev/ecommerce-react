@@ -8,7 +8,6 @@ import { getCookie } from "../utils/cookieService";
 import fetchWrapper from "../utils/fetchWrapper";
 
 export default function Cart() {
-    // const shoppingCart = useLoaderData();
     const [cart, setCart] = useState({ Cart_Item: [] });
     const [total, setTotal] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
@@ -27,13 +26,17 @@ export default function Cart() {
             navigate,
             location,
         })
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then((serializedData) => json.deserialize(serializedData))
             .then((data) => {
                 setCart(data);
                 setIsPending(false);
             })
-            .catch((err) => console.log(err));
     }, []);
 
     useEffect(() => {
@@ -47,8 +50,7 @@ export default function Cart() {
     const handleOrder = async (e) => {
         e.preventDefault;
         let loadingToast = toast.loading("Checking out...");
-
-        // console.log(order);
+;
         try {
             const response = await fetchWrapper(
                 `${import.meta.env.VITE_API_URL}/carts/checkout`,
@@ -84,7 +86,6 @@ export default function Cart() {
     const onChangeQuantity = (e, cartItemId, quantity) => {
         e.preventDefault;
         setIsLoading(true);
-        // let loadingToast = toast.loading("Updating...");
         if (quantity < 1) {
             fetchWrapper(
                 `${import.meta.env.VITE_API_URL}/carts/item/${cartItemId}`,
@@ -103,15 +104,12 @@ export default function Cart() {
                 .then((data) => {
                     setCart(data.updatedCart);
                     setTotal(data.cartTotal);
-                    // toast.dismiss(loadingToast);
                     setIsLoading(false);
                 });
         } else {
             const updateBody = {
                 quantity: quantity,
             };
-
-            // setProductQuantity(1);
 
             fetchWrapper(
                 `${import.meta.env.VITE_API_URL}/carts/item/${cartItemId}`,
@@ -132,7 +130,6 @@ export default function Cart() {
                 .then((data) => {
                     setCart(data.updatedCart);
                     setTotal(data.cartTotal);
-                    // toast.dismiss(loadingToast);
                     setIsLoading(false);
                 });
         }
@@ -203,16 +200,3 @@ export default function Cart() {
         </>
     );
 }
-
-// export const loader = async () => {
-//     return await fetchWrapper(`${import.meta.env.VITE_API_URL}/carts`, {
-//         method: "GET",
-//         mode: "cors",
-//         headers: {
-//             "Content-Type": "application/json",
-//             Authorization: `Bearer ${getCookie("accessToken")}`,
-//         },
-//     })
-//         .then((response) => response.json())
-//         .then((serializedData) => json.deserialize(serializedData));
-// };

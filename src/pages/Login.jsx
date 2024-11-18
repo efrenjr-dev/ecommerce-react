@@ -10,26 +10,13 @@ import json from "superjson";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import { setCookie } from "../utils/cookieService";
-import { loginSchema, validateForm } from "../utils/validation";
+import { schema, validateForm } from "../utils/validation";
 
 export default function Login() {
     const { setUser } = useContext(UserContext);
     const navigate = useNavigate();
-    const [isFilled, setIsFilled] = useState(false);
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [errors, setErrors] = useState({});
-
-    useEffect(() => {
-        if (
-            formData.email !== "" &&
-            formData.password !== "" &&
-            formData.password.length >= 8
-        ) {
-            setIsFilled(true);
-        } else {
-            setIsFilled(false);
-        }
-    }, [formData]);
 
     async function loginUser() {
         const loadingToast = toast.loading("Logging in");
@@ -50,9 +37,7 @@ export default function Login() {
                 }
             );
             const data = json.deserialize(await loginResponse.json());
-            // console.log(Object.entries(data));
             if (loginResponse.ok) {
-                // console.log(data.user.role);
                 setUser({
                     id: data.user.id,
                     role: data.user.role,
@@ -71,7 +56,6 @@ export default function Login() {
                 throw new Error(data.message);
             }
         } catch (err) {
-            // console.log(err);
             toast.error(err.toString(), { id: loadingToast });
         }
     }
@@ -81,7 +65,7 @@ export default function Login() {
     };
     function handleSubmit(e) {
         e.preventDefault();
-        const validationErrors = validateForm(loginSchema, formData);
+        const validationErrors = validateForm(schema.login, formData);
         setErrors(validationErrors || {});
         if (validationErrors) return;
         loginUser();
@@ -109,6 +93,7 @@ export default function Login() {
                                 value={formData.email}
                                 name="email"
                                 onChange={handleChange}
+                                required
                                 placeholder="Enter email address"
                                 isInvalid={!!errors.d}
                             />
@@ -127,6 +112,7 @@ export default function Login() {
                                 name="password"
                                 value={formData.password}
                                 onChange={handleChange}
+                                required
                                 placeholder="Enter password"
                                 isInvalid={!!errors.password}
                             />
@@ -139,7 +125,6 @@ export default function Login() {
                                 className="w-100"
                                 variant="dark"
                                 type="submit"
-                                disabled={!isFilled}
                             >
                                 Submit
                             </Button>
@@ -182,8 +167,3 @@ export default function Login() {
         </>
     );
 }
-
-// {
-//     "email": "goodgirl@mail.com",
-//     "password": "goodgirl"
-// }

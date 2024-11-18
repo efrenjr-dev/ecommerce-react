@@ -1,28 +1,32 @@
-import { useContext, useState } from "react";
-import { Button, Col, Row, Spinner, Table } from "react-bootstrap";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { UserContext } from "../userContext";
-import { getCookie } from "../utils/cookieService";
-import { useQuery } from "@tanstack/react-query";
-import fetchWrapper from "../utils/fetchWrapper";
+import { useMemo, useState, useContext } from "react";
+import { useLocation, useNavigate, Link } from "react-router-dom";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import Spinner from "react-bootstrap/Spinner";
+import Table from "react-bootstrap/Table";
 import json from "superjson";
+import { useQuery } from "@tanstack/react-query";
+import { getCookie } from "../utils/cookieService";
+import fetchWrapper from "../utils/fetchWrapper";
+import { debounce } from "../utils/debounce";
+import { UserContext } from "../userContext";
 
-export default function Orders({ take = 5, title = "Recent Orders" }) {
+export default function Users() {
     const { user } = useContext(UserContext);
+    const [searchInput, setSearchInput] = useState("");
+    const [searchString, setSearchString] = useState("");
     const [page, setPage] = useState(1);
+    const take = 10;
     const skip = (page - 1) * take;
     const navigate = useNavigate();
     const location = useLocation();
 
-    const fetchOrderData = async () => {
-        const url =
-            user.role === "admin"
-                ? `${
-                      import.meta.env.VITE_API_URL
-                  }/orders/all?skip=${skip}&take=${take}`
-                : `${
-                      import.meta.env.VITE_API_URL
-                  }/orders/?skip=${skip}&take=${take}`;
+    const fetchUsersData = async () => {
+        const url = `${
+            import.meta.env.VITE_API_URL
+        }/users/all?searchString=${searchString}&skip=${skip}&take=${take}`;
 
         return await fetchWrapper(
             url,
@@ -46,12 +50,27 @@ export default function Orders({ take = 5, title = "Recent Orders" }) {
     };
 
     const { isLoading, isError, data, error } = useQuery({
-        queryKey: ["orders", user?.role, take, page],
-        queryFn: fetchOrderData,
+        queryKey: ["users", user.role, searchString, take, page],
+        queryFn: fetchUsersData,
         keepPreviousData: true,
-        enabled: !!user,
         staleTime: 0,
+        enabled: !!user,
     });
+
+    const debouncedSetSearchString = useMemo(
+        () =>
+            debounce((value) => {
+                setSearchString(value);
+                setPage(1);
+            }, 500),
+        []
+    );
+
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchInput(value);
+        debouncedSetSearchString(value);
+    };
 
     const handleRowClick = (path) => {
         navigate(path);
@@ -59,7 +78,22 @@ export default function Orders({ take = 5, title = "Recent Orders" }) {
 
     return (
         <>
-            <h3 className="mt-5 mb-4 text-center">{title}</h3>
+            <h3 className="mt-5 mb-4 text-center">Users</h3>
+            <Row className="mb-3">
+                <Col></Col>
+                <Col xs={12} md={8} lg={4}>
+                    <Form>
+                        <Form.Control
+                            className=""
+                            type="text"
+                            placeholder="Search items..."
+                            value={searchInput}
+                            onChange={handleSearchChange}
+                        />
+                    </Form>
+                </Col>
+                <Col></Col>
+            </Row>
             {isLoading && (
                 <div className="m-5 text-center">
                     <Spinner role="status">
@@ -68,15 +102,14 @@ export default function Orders({ take = 5, title = "Recent Orders" }) {
                 </div>
             )}
             {isError && <p>Error: {error.message}</p>}
+
             {!isLoading &&
                 data &&
-                (data.ordersCount < 1 ? (
+                (data.users < 1 ? (
                     <Row className="d-flex flex-column align-items-center">
                         <Col xs md="2"></Col>
                         <Col md="8">
-                            <h5 className="text-center">
-                                You do not have any orders.
-                            </h5>
+                            <h5 className="text-center">No user found.</h5>
                         </Col>
                         <Col xs md="2"></Col>
                     </Row>
@@ -85,58 +118,45 @@ export default function Orders({ take = 5, title = "Recent Orders" }) {
                         <Row className="d-flex flex-column align-items-center">
                             <Col></Col>
                             <Col xs lg="10">
-                                <Table striped hover>
+                                <Table striped hover responsive="md">
                                     <thead>
                                         <tr>
-                                            <th>Order Date</th>
-                                            <th className="text-end px-3">
-                                                Total Amount
-                                            </th>
-                                            <th className="text-center">
+                                            <th className="px-3">Email</th>
+                                            <th className="px-3">Name</th>
+                                            <th className="px-3">Role</th>
+                                            <th className="px-3 text-center">
                                                 Actions
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {data.orders.map((order) => {
-                                            let date = new Date(
-                                                order.createdAt
-                                            );
-                                            let strDate = date.toLocaleString(
-                                                "en-US",
-                                                {
-                                                    weekday: "short",
-                                                    year: "numeric",
-                                                    month: "short",
-                                                    day: "numeric",
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                    second: "2-digit",
-                                                    hour12: true,
-                                                }
-                                            );
+                                        {data.users.map((userData) => {
                                             return (
                                                 <tr
                                                     onClick={() =>
                                                         handleRowClick(
-                                                            `/order/${order.id}`
+                                                            `/updateuser/${userData.id}`
                                                         )
                                                     }
-                                                    key={order.id}
+                                                    key={userData.id}
                                                 >
-                                                    <td>{strDate}</td>
-                                                    <td className="text-end px-3">
-                                                        {order.total}
+                                                    <td className="px-3">
+                                                        {userData.email}
                                                     </td>
-                                                    {/* <td>{order.orderStatus}</td> */}
+                                                    <td className="px-3">
+                                                        {userData.name}
+                                                    </td>
+                                                    <td className="px-3">
+                                                        {userData.role==="admin"?"Administrator":userData.role==="user"&&"User"}
+                                                    </td>
                                                     <td className="text-center">
                                                         <Button
                                                             variant="outline-dark"
                                                             as={Link}
-                                                            to={`/order/${order.id}`}
+                                                            to={`/updateuser/${userData.id}`}
                                                             className="btn-sm"
                                                         >
-                                                            View details
+                                                            Edit details
                                                         </Button>
                                                     </td>
                                                 </tr>

@@ -1,59 +1,70 @@
-import { useEffect, useState } from "react";
-import { useAsyncError, useNavigate } from "react-router-dom";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import toast from "react-hot-toast";
+import { useState } from "react";
+import Button from "react-bootstrap/esm/Button";
+import Col from "react-bootstrap/esm/Col";
+import Row from "react-bootstrap/esm/Row";
+import { Form } from "react-bootstrap";
+import { toast } from "react-hot-toast";
+import { getCookie } from "../utils/cookieService";
 import json from "superjson";
+import fetchWrapper from "../utils/fetchWrapper";
+import { useLocation, useNavigate } from "react-router-dom";
 import { schema, validateForm } from "../utils/validation";
 
-export default function Register() {
-    const navigate = useNavigate();
+export default function AddUser() {
     const [formData, setFormData] = useState({
-        fullName: "",
+        name: "",
         email: "",
         password: "",
         confirmPassword: "",
+        role: "user",
     });
     const [errors, setErrors] = useState({});
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    async function registerUser() {
-        const loadingToast = toast.loading("Registering new user details");
+    function resetForm() {
+        setFormData({
+            name: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            role: "user",
+        });
+    }
+
+    async function createUser() {
+        const loadingToast = toast.loading("Creating new user");
         try {
-            const body = {
-                email: formData.email,
-                password: formData.password,
-                name: formData.fullName,
-            };
-            const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/auth/register`,
+            const userResponse = await fetchWrapper(
+                `${import.meta.env.VITE_API_URL}/users/`,
                 {
                     method: "POST",
                     mode: "cors",
                     headers: {
                         "Content-Type": "application/json",
+                        Authorization: `Bearer ${getCookie("accessToken")}`,
                     },
-                    body: json.stringify(body),
-                }
+                    body: json.stringify({
+                        name: formData.name,
+                        email: formData.email,
+                        password: formData.password,
+                        role: formData.role,
+                    }),
+                },
+                navigate,
+                location
             );
-            const serializedData = await response.json();
-            const data = json.deserialize(serializedData);
-            if (data.user) {
-                toast.success(data.message, {
+            if (userResponse.ok) {
+                const serializedData = await userResponse.json();
+                const userData = json.deserialize(serializedData);
+                toast.success(`New user ${userData.email} has been created`, {
                     id: loadingToast,
                 });
-                navigate("/login");
-                toast("Please check your email to verify.");
             } else {
-                toast.error(data.message, {
-                    id: loadingToast,
-                });
+                toast.error("Creating user has failed.", { id: loadingToast });
             }
         } catch (err) {
-            toast.error(err.toString(), {
-                id: loadingToast,
-            });
+            toast.error(err.toString(), { id: loadingToast });
         }
     }
 
@@ -63,21 +74,19 @@ export default function Register() {
 
     function handleSubmit(e) {
         e.preventDefault();
-
-        const validationErrors = validateForm(schema.register, formData);
+        const validationErrors = validateForm(schema.addUser, formData);
         setErrors(validationErrors || {});
         if (validationErrors) return;
 
-        registerUser();
+        createUser();
+        resetForm();
     }
 
     return (
         <>
-            <Row className="pb-5 mb-5 justify-content-center">
+            <Row className="justify-content-center">
                 <Col xs md="6">
-                    <h5 className="mt-5 mb-4 text-center">
-                        Enter details to create an account.
-                    </h5>
+                    <h4 className="my-5 text-center">Create New User</h4>
                     <Form
                         onSubmit={(e) => {
                             handleSubmit(e);
@@ -87,15 +96,15 @@ export default function Register() {
                             <Form.Label>Full Name:</Form.Label>
                             <Form.Control
                                 type="text"
-                                name="fullName"
-                                value={formData.fullName}
+                                name="name"
+                                value={formData.name}
                                 onChange={handleChange}
-                                placeholder="Enter Full Name"
+                                placeholder="Enter user's name"
                                 required
-                                isInvalid={!!errors.fullName}
+                                isInvalid={!!errors.name}
                             />
                             <Form.Control.Feedback type="invalid">
-                                {errors.fullName}
+                                {errors.name}
                             </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group className="mb-3">
@@ -105,7 +114,7 @@ export default function Register() {
                                 name="email"
                                 value={formData.email}
                                 onChange={handleChange}
-                                placeholder="Enter Email"
+                                placeholder="Enter email"
                                 required
                                 isInvalid={!!errors.email}
                             />
@@ -113,18 +122,6 @@ export default function Register() {
                                 {errors.email}
                             </Form.Control.Feedback>
                         </Form.Group>
-                        {/* <Form.Group className="mb-3">
-                            <Form.Label>Mobile Number:</Form.Label>
-                            <Form.Control
-                                type="number"
-                                value={mobileNo}
-                                onChange={(e) => {
-                                    setMobileNo(e.target.value);
-                                }}
-                                placeholder="Enter Mobile Number"
-                                required
-                            />
-                        </Form.Group> */}
                         <Form.Group className="mb-3">
                             <Form.Label>Password:</Form.Label>
                             <Form.Control
@@ -132,16 +129,13 @@ export default function Register() {
                                 name="password"
                                 value={formData.password}
                                 onChange={handleChange}
-                                placeholder="Enter Password"
+                                placeholder="Enter password"
                                 required
                                 isInvalid={!!errors.password}
                             />
                             <Form.Control.Feedback type="invalid">
                                 {errors.password}
                             </Form.Control.Feedback>
-                            <Form.Text id="passwordHelpBlock" muted>
-                                Your password must be 8-20 characters long.
-                            </Form.Text>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Confirm Password:</Form.Label>
@@ -150,7 +144,7 @@ export default function Register() {
                                 name="confirmPassword"
                                 value={formData.confirmPassword}
                                 onChange={handleChange}
-                                placeholder="Confirm Password"
+                                placeholder="Confirm password"
                                 required
                                 isInvalid={!!errors.confirmPassword}
                             />
@@ -158,7 +152,28 @@ export default function Register() {
                                 {errors.confirmPassword}
                             </Form.Control.Feedback>
                         </Form.Group>
-                        <Button className="w-100" variant="dark" type="submit">
+                        <Form.Group className="mb-3">
+                            <Form.Label>Role:</Form.Label>
+                            <Form.Select
+                                aria-label="Select user role"
+                                name="role"
+                                value={formData.role}
+                                onChange={handleChange}
+                                isInvalid={!!errors.role}
+                            >
+                                <option>Select user role</option>
+                                <option value="user">User</option>
+                                <option value="admin">Administrator</option>
+                            </Form.Select>
+                            <Form.Control.Feedback type="invalid">
+                                {errors.role}
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                        <Button
+                            className="w-100"
+                            variant="dark"
+                            type="submit"
+                        >
                             Submit
                         </Button>
                     </Form>
@@ -167,3 +182,4 @@ export default function Register() {
         </>
     );
 }
+
