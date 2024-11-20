@@ -9,15 +9,20 @@ import json from "superjson";
 import fetchWrapper from "../utils/fetchWrapper";
 import { useLocation, useNavigate } from "react-router-dom";
 import { schema, validateForm } from "../utils/validation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
 
 export default function AddProduct() {
+    const MAX_IMAGES = 5;
     const [formData, setFormData] = useState({
         name: "",
         description: "",
         price: 0,
         quantity: 0,
+        images: [],
     });
     const [errors, setErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -27,26 +32,40 @@ export default function AddProduct() {
             description: "",
             price: 0,
             quantity: 0,
+            images: [],
         });
     }
 
     async function createProduct() {
+        setIsLoading(true);
         const loadingToast = toast.loading("Adding new product");
         try {
+            const formDataToSubmit = new FormData();
+
+            formDataToSubmit.append("name", formData.name);
+            formDataToSubmit.append("description", formData.description);
+            formDataToSubmit.append("price", formData.price);
+            formDataToSubmit.append("quantity", formData.quantity);
+
+            formData.images.forEach((image) => {
+                formDataToSubmit.append("images", image);
+            });
+
             const productResponse = await fetchWrapper(
                 `${import.meta.env.VITE_API_URL}/products/`,
                 {
                     method: "POST",
                     mode: "cors",
                     headers: {
-                        "Content-Type": "application/json",
+                        // "Content-Type": "application/json",
                         Authorization: `Bearer ${getCookie("accessToken")}`,
                     },
-                    body: json.stringify({
-                        name: formData.name,
-                        description: formData.description,
-                        price: parseFloat(formData.price),
-                    }),
+                    body: formDataToSubmit,
+                    // body: json.stringify({
+                    //     name: formData.name,
+                    //     description: formData.description,
+                    //     price: parseFloat(formData.price),
+                    // }),
                 },
                 navigate,
                 location
@@ -54,19 +73,48 @@ export default function AddProduct() {
             if (productResponse.ok) {
                 const serializedData = await productResponse.json();
                 const productData = json.deserialize(serializedData);
-                toast.success(`Item ${productData.name} has been added`, {
+                toast.success(`Product ${productData.name} has been added successfully`, {
                     id: loadingToast,
                 });
+                resetForm();
             } else {
                 toast.error("Adding product has failed.", { id: loadingToast });
             }
         } catch (err) {
             toast.error(err.toString(), { id: loadingToast });
         }
+        setIsLoading(false);
     }
 
     const handleChange = (e) => {
         setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    };
+
+    const handleImageChange = (e) => {
+        if (!e.target.files || e.target.files.length === 0) {
+            return;
+        }
+        const selectedFiles = Array.from(e.target.files);
+
+        if (selectedFiles.length + formData.images.length > MAX_IMAGES) {
+            toast.error(`You can only upload up to ${MAX_IMAGES} images.`);
+            return; // Don't update state if limit exceeded
+        }
+        setFormData((prev) => ({
+            ...prev,
+            images: [...prev.images, ...selectedFiles],
+        }));
+    };
+
+    const handleRemoveImage = (index) => {
+        setFormData((prev) => {
+            const updatedImages = [...prev.images];
+            updatedImages.splice(index, 1); // Remove the image at the specified index
+            return {
+                ...prev,
+                images: updatedImages,
+            };
+        });
     };
 
     function handleSubmit(e) {
@@ -76,7 +124,6 @@ export default function AddProduct() {
         if (validationErrors) return;
 
         createProduct();
-        resetForm();
     }
 
     return (
@@ -150,10 +197,52 @@ export default function AddProduct() {
                                 {errors.quantity}
                             </Form.Control.Feedback>
                         </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Product Images:</Form.Label>
+                            <Form.Control
+                                type="file"
+                                name="images"
+                                multiple
+                                onChange={handleImageChange}
+                                accept="image/*"
+                                isInvalid={errors.images}
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.images}
+                            </Form.Control.Feedback>
+                            {formData.images.length > 0 && (
+                                <div className="mt-2 mt-3">
+                                    <Form.Label>{`Selected Images (${formData.images.length}):`}</Form.Label>
+                                    <ul>
+                                        {formData.images.map((image, index) => {
+                                            return (
+                                                <li key={index}>
+                                                    {image.name}
+                                                    <Button
+                                                        variant="outline-danger"
+                                                        className="btn-sm ms-2"
+                                                        onClick={() =>
+                                                            handleRemoveImage(
+                                                                index
+                                                            )
+                                                        }
+                                                    >
+                                                        <FontAwesomeIcon
+                                                            icon={faXmark}
+                                                        />
+                                                    </Button>
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                </div>
+                            )}
+                        </Form.Group>
                         <Button
                             className="w-100"
                             variant="dark"
                             type="submit"
+                            disabled={isLoading}
                         >
                             Submit
                         </Button>

@@ -95,22 +95,27 @@ export default function ViewProduct() {
         <>
             <Modal>
                 <main>
-                    <Row className="justify-content-center align-items-center d-flex px-2 pb-3">
+                    <Row className="justify-content-center align-items-center d-flex pb-3">
                         <Col>
                             <Card className="text-link border-0">
-                                <Carousel data-bs-theme="dark">
-                                    <Carousel.Item>
-                                        <Card.Img
-                                            variant="top"
-                                            src="https://prd.place/350?padding=50"
-                                        />
-                                    </Carousel.Item>
-                                    <Carousel.Item>
-                                        <Card.Img
-                                            variant="top"
-                                            src="https://prd.place/350?padding=50"
-                                        />
-                                    </Carousel.Item>
+                                <Carousel data-bs-theme="light">
+                                    {productDetails.Image.map((image) => {
+                                        return (
+                                            <Carousel.Item
+                                                key={productDetails.id}
+                                            >
+                                                <Card.Img
+                                                    variant="top"
+                                                    src={image.url}
+                                                    className="img-fluid" // Ensures the image is responsive
+                                                    style={{
+                                                        height: "400px",
+                                                        objectFit: "cover",
+                                                    }} // Fix height and scale the image
+                                                />
+                                            </Carousel.Item>
+                                        );
+                                    })}
                                 </Carousel>
                                 <Card.Body className="border-top">
                                     <Card.Title>

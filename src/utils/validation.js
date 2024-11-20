@@ -82,6 +82,26 @@ const addProduct = Joi.object({
     price: Joi.number().greater(0).required().label("Price"),
     description: Joi.string().allow("").label("Product description"),
     quantity: Joi.number().label("Product quantity"),
+    images: Joi.array()
+        .items(
+            Joi.object({
+                name: Joi.string().required(),
+                type: Joi.string()
+                    .valid("image/jpeg", "image/png", "image/gif")
+                    .required(),
+                size: Joi.number()
+                    .max(5 * 1024 * 1024)
+                    .required(),
+            })
+        )
+        .min(1) // At least one image
+        .max(5) // Maximum 5 images
+        .required()
+        .messages({
+            "array.min": "At least one image is required.",
+            "array.max": "You can upload a maximum of 5 images.",
+            "any.required": "Images field is required.",
+        }),
 });
 
 const updateProduct = Joi.object({
@@ -143,9 +163,23 @@ export const schema = {
 };
 
 export const validateForm = (schema, formData) => {
-    const options = { abortEarly: false };
-    const { error } = schema.validate(formData, options);
+    // console.log("formData before transform:", formData);
 
+    // Transform `formData.images` to match the schema requirements
+    const transformedData = {
+        ...formData,
+        images: formData.images.map((file) => ({
+            name: file.name,
+            type: file.type,
+            size: file.size,
+        })),
+    };
+
+    // console.log("formData after transform:", transformedData);
+
+    const options = { abortEarly: false };
+    const { error } = schema.validate(transformedData, options);
+    console.log("Validation error:", error);
     if (!error) return null;
 
     const validationErrors = {};
