@@ -183,7 +183,7 @@ export default function Cart() {
                                     disabled={isLoading}
                                     variant="warning"
                                     onClick={handleOrder}
-                                    className="d-flex ms-auto btn-lg"
+                                    className="d-flex ms-auto"
                                 >
                                     Checkout
                                 </Button>
