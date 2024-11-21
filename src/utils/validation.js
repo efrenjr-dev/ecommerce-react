@@ -213,8 +213,6 @@ export const validateForm = (schema, formData) => {
                 size: file.size,
             })),
         };
-    } else {
-        transformedData = formData;
     }
 
     if (formData.newImages) {
@@ -226,8 +224,6 @@ export const validateForm = (schema, formData) => {
                 size: file.size,
             })),
         };
-    } else {
-        transformedData = formData;
     }
 
     const options = { abortEarly: false };

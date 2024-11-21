@@ -6,6 +6,7 @@ import json from "superjson";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { getCookie } from "../utils/cookieService";
 import fetchWrapper from "../utils/fetchWrapper";
+import formatPrice from "../utils/formatPrice";
 
 export default function Cart() {
     const [cart, setCart] = useState({ Cart_Item: [] });
@@ -36,7 +37,7 @@ export default function Cart() {
             .then((data) => {
                 setCart(data);
                 setIsPending(false);
-            })
+            });
     }, []);
 
     useEffect(() => {
@@ -50,7 +51,6 @@ export default function Cart() {
     const handleOrder = async (e) => {
         e.preventDefault;
         let loadingToast = toast.loading("Checking out...");
-;
         try {
             const response = await fetchWrapper(
                 `${import.meta.env.VITE_API_URL}/carts/checkout`,
@@ -162,19 +162,19 @@ export default function Cart() {
                                         <tr>
                                             <td>Gross Amount</td>
                                             <td className="text-end">
-                                                {(total * 0.88).toFixed(2)}
+                                                {formatPrice(total * 0.88)}
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>VAT (12%)</td>
                                             <td className="text-end">
-                                                {(total * 0.12).toFixed(2)}
+                                                {formatPrice(total * 0.12)}
                                             </td>
                                         </tr>
                                         <tr className="fw-bold border-top">
                                             <td>Total Amount</td>
                                             <td className="text-end">
-                                                Php {total.toFixed(2)}
+                                                {formatPrice(total)}
                                             </td>
                                         </tr>
                                     </tbody>

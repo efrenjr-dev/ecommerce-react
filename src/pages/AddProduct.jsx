@@ -23,6 +23,7 @@ export default function AddProduct() {
     });
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const fileInputRef = useRef(null);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -34,6 +35,7 @@ export default function AddProduct() {
             quantity: 0,
             images: [],
         });
+        fileInputRef.current.value = "";
     }
 
     async function createProduct() {
@@ -73,9 +75,12 @@ export default function AddProduct() {
             if (productResponse.ok) {
                 const serializedData = await productResponse.json();
                 const productData = json.deserialize(serializedData);
-                toast.success(`Product ${productData.name} has been added successfully`, {
-                    id: loadingToast,
-                });
+                toast.success(
+                    `Product ${productData.name} has been added successfully`,
+                    {
+                        id: loadingToast,
+                    }
+                );
                 resetForm();
             } else {
                 toast.error("Adding product has failed.", { id: loadingToast });
@@ -209,6 +214,7 @@ export default function AddProduct() {
                                 multiple
                                 onChange={handleImageChange}
                                 accept="image/*"
+                                ref={fileInputRef}
                                 disabled={isLoading}
                                 isInvalid={errors.images}
                             />

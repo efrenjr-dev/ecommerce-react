@@ -1,6 +1,7 @@
 import { Badge, Col, Row } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
+import formatPrice from "../utils/formatPrice";
 
 export default function Product({ productProp, userRole }) {
     let productURL = `/products/${productProp.id}`;
@@ -13,15 +14,21 @@ export default function Product({ productProp, userRole }) {
             to={productURL}
             className=" text-link border-0 shadow-sm m-2 w-100"
         >
-            <Card.Img variant="top" src="https://prd.place/350?padding=50" />
+            <Card.Img
+                variant="top"
+                className="img-fluid"
+                style={{
+                    height: "200px" /* Fixed height */,
+                    objectFit: "cover" /* Maintain aspect ratio */,
+                }}
+                src={productProp.Image[0]?.url}
+            />
             <Card.Body className="border-top">
                 <Card.Title>{productProp.name}</Card.Title>
 
-                <Card.Subtitle>
-                    Php {productProp.price.toFixed(2).toString()}
-                </Card.Subtitle>
+                <Card.Subtitle>{formatPrice(productProp.price)}</Card.Subtitle>
 
-                <Card.Text>{productProp.description}</Card.Text>
+                {/* <Card.Text>{productProp.description}</Card.Text> */}
             </Card.Body>
             {userRole === "admin" && (
                 <Card.Footer className="text">

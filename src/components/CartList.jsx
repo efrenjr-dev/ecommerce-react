@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Col, Form, Image, Row } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import { debounce_leading } from "../utils/debounce";
+import formatPrice from "../utils/formatPrice";
 
 export default function CartList({ cartItems, onChangeQuantity, isLoading }) {
     const [cartList, setCartList] = useState([]);
@@ -17,7 +18,10 @@ export default function CartList({ cartItems, onChangeQuantity, isLoading }) {
                     <Row key={cartItem.id}>
                         <Col xs={3} md={2}>
                             <Image
-                                src="https://prd.place/200"
+                                src={cartItem.Product.Image[0]?.url}
+                                style={{
+                                    objectFit: "cover",
+                                }}
                                 rounded
                                 fluid
                             ></Image>
@@ -78,19 +82,15 @@ export default function CartList({ cartItems, onChangeQuantity, isLoading }) {
                                         </Form.Group>
                                     </Form>
                                     <Card.Text>
-                                        {" "}
-                                        PHP{" "}
-                                        {cartItem.Product.price
-                                            .toFixed(2)
-                                            .toString()}{" "}
+                                        {formatPrice(cartItem.Product.price)}
                                     </Card.Text>
                                 </Card.Body>
                                 <Card.Footer>
                                     Subtotal:{" "}
-                                    {(
+                                    {formatPrice(
                                         cartItem.quantity *
-                                        cartItem.Product.price
-                                    ).toFixed(2)}
+                                            cartItem.Product.price
+                                    )}
                                 </Card.Footer>
                             </Card>
                         </Col>

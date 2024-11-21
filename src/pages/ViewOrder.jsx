@@ -9,6 +9,7 @@ import { useContext } from "react";
 import { UserContext } from "../userContext";
 import { Button } from "react-bootstrap";
 import fetchWrapper from "../utils/fetchWrapper";
+import formatPrice from "../utils/formatPrice";
 
 export default function ViewOrder() {
     const order = useLoaderData();
@@ -43,7 +44,7 @@ export default function ViewOrder() {
                                 <br />
                                 Order date: {strDate}
                                 <br />
-                                Total amount: {order.total}
+                                Total amount: {formatPrice(order.total)}
                                 <br />
                                 Customer name: {order.User.name}
                                 <br />

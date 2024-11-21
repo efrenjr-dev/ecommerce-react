@@ -10,7 +10,7 @@ export default function Home() {
     if (user.role === "admin") {
         return (
             <>
-                <section className=" text-center">
+                {/* <section className=" text-center">
                     <h1 className="mt-5 pt-5">
                         <Badge bg="warning" className="shadow-sm">
                             E-Commerce App
@@ -19,7 +19,7 @@ export default function Home() {
                     <h6 className="mb-5 text-dark">
                         A one-stop ecommerce website for all of your needs.
                     </h6>
-                </section>
+                </section> */}
                 <Row className="d-flex flex-column">
                     <Col>
                         <Orders take={5} title="Recent orders" />
@@ -34,7 +34,7 @@ export default function Home() {
     if (user.role === "user" || user.role == null) {
         return (
             <>
-                <section className=" text-center">
+                {/* <section className=" text-center">
                     <h1 className="mt-5 pt-5">
                         <Badge bg="warning" className="shadow-sm">
                             E-Commerce App
@@ -43,7 +43,7 @@ export default function Home() {
                     <h6 className="mb-5 text-dark">
                         A one-stop ecommerce website for all of your needs.
                     </h6>
-                </section>
+                </section> */}
                 <Row className="d-flex flex-column">
                     <Col>
                         <Products take={4} title="Suggested products" productLoading={4}/>

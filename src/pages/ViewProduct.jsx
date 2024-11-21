@@ -13,6 +13,7 @@ import json from "superjson";
 import Modal from "../components/Modal";
 import { getCookie } from "../utils/cookieService";
 import { Badge } from "react-bootstrap";
+import formatPrice from "../utils/formatPrice";
 
 export default function ViewProduct() {
     const productDetails = useLoaderData();
@@ -115,12 +116,12 @@ export default function ViewProduct() {
                                         );
                                     })}
                                 </Carousel>
-                                <Card.Body className="border-top">
+                                <Card.Body className="border-top mx-2">
                                     <Card.Title>
                                         {productDetails.name}
                                     </Card.Title>
                                     <Card.Subtitle>
-                                        Php {productDetails.price}
+                                        {formatPrice(productDetails.price)}
                                     </Card.Subtitle>
                                     <Card.Text>
                                         {productDetails.description}
@@ -174,7 +175,7 @@ export default function ViewProduct() {
                                                 Subtotal (Php)
                                             </Card.Subtitle>
                                             <Card.Text>
-                                                {subtotal.toFixed(2)}
+                                                {formatPrice(subtotal)}
                                             </Card.Text>
                                             <div className="text-center">
                                                 <Button

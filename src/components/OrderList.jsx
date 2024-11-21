@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Col, Image, Row } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
-import { Link } from "react-router-dom";
+import formatPrice from "../utils/formatPrice";
 
 export default function OrderList({ orderProp }) {
     const [orderList, setOrderList] = useState([]);
-    
+
     useEffect(() => {
         if (orderProp) {
             setOrderList(
@@ -14,7 +14,7 @@ export default function OrderList({ orderProp }) {
                         <Row key={order.Product.id}>
                             <Col xs={3} md={2}>
                                 <Image
-                                    src="https://prd.place/200"
+                                    src={order.Product.Image[0]?.url}
                                     rounded
                                     fluid
                                 ></Image>
@@ -27,18 +27,21 @@ export default function OrderList({ orderProp }) {
                 src="https://via.placeholder.com/100x50/222222/FFFFFF?text=Image"
             /> */}
                                     <Card.Body>
-                                        <Card.Title>{order.Product.name}</Card.Title>
+                                        <Card.Title>
+                                            {order.Product.name}
+                                        </Card.Title>
                                         <Card.Text>
                                             Quantity: {order.quantity}
                                         </Card.Text>
                                         <Card.Text>
-                                            Php{" "}
-                                            {order.Product.price.toFixed(2).toString()}
+                                            {formatPrice(order.Product.price)}
                                         </Card.Text>
                                     </Card.Body>
                                     <Card.Footer>
                                         Subtotal:{" "}
-                                        {(order.quantity * order.Product.price).toFixed(2)}
+                                        {(
+                                            order.quantity * order.Product.price
+                                        ).toFixed(2)}
                                     </Card.Footer>
                                 </Card>
                             </Col>

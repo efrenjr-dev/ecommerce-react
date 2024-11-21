@@ -6,6 +6,7 @@ import { getCookie } from "../utils/cookieService";
 import { useQuery } from "@tanstack/react-query";
 import fetchWrapper from "../utils/fetchWrapper";
 import json from "superjson";
+import formatPrice from "../utils/formatPrice";
 
 export default function Orders({ take = 5, title = "Recent Orders" }) {
     const { user } = useContext(UserContext);
@@ -126,7 +127,9 @@ export default function Orders({ take = 5, title = "Recent Orders" }) {
                                                 >
                                                     <td>{strDate}</td>
                                                     <td className="text-end px-3">
-                                                        {order.total}
+                                                        {formatPrice(
+                                                            order.total
+                                                        )}
                                                     </td>
                                                     {/* <td>{order.orderStatus}</td> */}
                                                     <td className="text-center">
