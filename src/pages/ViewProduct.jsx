@@ -101,15 +101,13 @@ export default function ViewProduct() {
                                 <Carousel data-bs-theme="light">
                                     {productDetails.Image.map((image) => {
                                         return (
-                                            <Carousel.Item
-                                                key={productDetails.id}
-                                            >
+                                            <Carousel.Item key={image.id}>
                                                 <Card.Img
                                                     variant="top"
                                                     src={image.url}
                                                     className="img-fluid" // Ensures the image is responsive
                                                     style={{
-                                                        height: "400px",
+                                                        height: "50vh",
                                                         objectFit: "cover",
                                                     }} // Fix height and scale the image
                                                 />

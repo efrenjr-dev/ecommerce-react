@@ -4,14 +4,17 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/esm/Button";
 import { toast } from "react-hot-toast";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import fetchWrapper from "../utils/fetchWrapper";
 import json from "superjson";
 import { getCookie } from "../utils/cookieService";
 import { schema, validateForm } from "../utils/validation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
 
 export default function UpdateProduct() {
     const product = useLoaderData();
+    const MAX_IMAGES = 5;
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [isFilled, setIsFilled] = useState(false);
@@ -20,14 +23,17 @@ export default function UpdateProduct() {
         description: product.description,
         price: product.price,
         isActive: product.isActive,
+        existingImages: product.Image || [],
+        newImages: [],
     });
     const [errors, setErrors] = useState({});
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         if (
             formData.name !== "" &&
             formData.description !== "" &&
-            formData.price != 0
+            formData.price >= 0
         ) {
             setIsFilled(true);
         } else setIsFilled(false);
@@ -35,8 +41,23 @@ export default function UpdateProduct() {
 
     async function updateProduct() {
         setIsLoading(true);
-        const loadingToast = toast.loading("Updating product details");
+        const loadingToast = toast.loading("Updating product details...");
         try {
+            const formDataToSubmit = new FormData();
+            formDataToSubmit.append("name", formData.name);
+            formDataToSubmit.append("description", formData.description);
+            formDataToSubmit.append("price", formData.price);
+            formDataToSubmit.append("isActive", formData.isActive);
+
+            formDataToSubmit.append(
+                "existingImages",
+                json.stringify(formData.existingImages)
+            );
+
+            formData.newImages.forEach((image) => {
+                formDataToSubmit.append("newImages", image);
+            });
+
             const response = await fetchWrapper(
                 `${import.meta.env.VITE_API_URL}/products/product/${
                     product.id
@@ -45,31 +66,36 @@ export default function UpdateProduct() {
                     method: "PATCH",
                     mode: "cors",
                     headers: {
-                        "Content-Type": "application/json",
+                        // "Content-Type": "application/json",
                         Authorization: `Bearer ${getCookie("accessToken")}`,
                     },
-                    body: json.stringify({
-                        name: formData.name,
-                        description: formData.description,
-                        price: parseFloat(formData.price),
-                        isActive: formData.isActive,
-                    }),
+                    body: formDataToSubmit,
+                    // body: json.stringify({
+                    //     name: formData.name,
+                    //     description: formData.description,
+                    //     price: parseFloat(formData.price),
+                    //     isActive: formData.isActive,
+                    // }),
                 },
                 navigate,
                 location
             );
-            const serializedData = await response.json();
-            const data = json.deserialize(serializedData);
-            if (data.id) {
+
+            if (response.ok) {
+                const serializedData = await response.json();
+                const data = json.deserialize(serializedData);
                 toast.success("Product has been updated successfully.", {
                     id: loadingToast,
                 });
-                product.name = formData.name;
-                product.description = formData.description;
-                product.price = formData.price;
-                product.isActive = formData.isActive;
+                product.name = data.name;
+                product.description = data.description;
+                product.price = data.price;
+                product.isActive = data.isActive;
+                product.Image = data.Image || [];
+
+                resetForm();
             } else {
-                toast.error(data.message, {
+                toast.error("Failed to update product.", {
                     id: loadingToast,
                 });
             }
@@ -81,13 +107,19 @@ export default function UpdateProduct() {
         setIsLoading(false);
     }
 
-    const handleReset = () => {
+    const resetForm = () => {
         setFormData({
             name: product.name,
             description: product.description,
             price: product.price,
             isActive: product.isActive,
+            existingImages: product.Image || [],
+            newImages: [],
         });
+        fileInputRef.current.value = "";
+    };
+    const handleReset = () => {
+        resetForm();
     };
 
     const handleChange = (e) => {
@@ -99,8 +131,40 @@ export default function UpdateProduct() {
         }));
     };
 
+    const handleNewImageChange = (e) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+        const selectedFiles = Array.from(e.target.files);
+
+        if (formData.newImages.length + selectedFiles.length > MAX_IMAGES) {
+            toast.error(`You can only upload up to ${MAX_IMAGES} images.`);
+            return;
+        }
+
+        setFormData((prev) => ({
+            ...prev,
+            newImages: [...prev.newImages, ...selectedFiles],
+        }));
+    };
+
+    const handleRemoveExistingImage = (index) => {
+        setFormData((prev) => {
+            const updatedExistingImages = [...prev.existingImages];
+            updatedExistingImages.splice(index, 1);
+            return { ...prev, existingImages: updatedExistingImages };
+        });
+    };
+
+    const handleRemoveNewImage = (index) => {
+        setFormData((prev) => {
+            const updatedNewImages = [...prev.newImages];
+            updatedNewImages.splice(index, 1);
+            return { ...prev, newImages: updatedNewImages };
+        });
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log(formData);
         const validationErrors = validateForm(schema.updateProduct, formData);
         setErrors(validationErrors || {});
         if (validationErrors) return;
@@ -139,6 +203,7 @@ export default function UpdateProduct() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 placeholder="Enter Product Name"
+                                disabled={isLoading}
                                 required
                                 isInvalid={!!errors.name}
                             />
@@ -156,6 +221,7 @@ export default function UpdateProduct() {
                                 value={formData.description}
                                 onChange={handleChange}
                                 placeholder="Enter Product Description"
+                                disabled={isLoading}
                                 required
                                 isInvalid={!!errors.description}
                             />
@@ -171,6 +237,7 @@ export default function UpdateProduct() {
                                 value={formData.price}
                                 onChange={handleChange}
                                 placeholder="Enter Product Price"
+                                disabled={isLoading}
                                 required
                                 isInvalid={!!errors.price}
                             />
@@ -185,8 +252,80 @@ export default function UpdateProduct() {
                                 name="isActive"
                                 checked={formData.isActive}
                                 onChange={handleChange}
+                                disabled={isLoading}
                             />
                         </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Product Images:</Form.Label>
+                            {formData.existingImages.length > 0 && (
+                                <div className="mb-2">
+                                    <Form.Label>Existing Images:</Form.Label>
+                                    <ul>
+                                        {formData.existingImages.map(
+                                            (image, index) => (
+                                                <li key={image.id}>
+                                                    {`...${image.url.slice(
+                                                        image.url.length - 40 ||
+                                                            0
+                                                    )}` || image.name}
+                                                    <Button
+                                                        variant="outline-danger"
+                                                        size="sm"
+                                                        className="ms-2"
+                                                        onClick={() =>
+                                                            handleRemoveExistingImage(
+                                                                index
+                                                            )
+                                                        }
+                                                        disabled={isLoading}
+                                                    >
+                                                        <FontAwesomeIcon
+                                                            icon={faXmark}
+                                                        />
+                                                    </Button>
+                                                </li>
+                                            )
+                                        )}
+                                    </ul>
+                                </div>
+                            )}
+                            <Form.Control
+                                type="file"
+                                multiple
+                                onChange={handleNewImageChange}
+                                accept="image/*"
+                                ref={fileInputRef}
+                                isInvalid={!!errors.newImages}
+                                disabled={isLoading}
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.newImages}
+                            </Form.Control.Feedback>
+                            {formData.newImages.length > 0 && (
+                                <ul className="mt-2">
+                                    {formData.newImages.map((image, index) => (
+                                        <li key={index}>
+                                            {image.name}
+                                            <Button
+                                                variant="outline-danger"
+                                                size="sm"
+                                                className="ms-2"
+                                                onClick={() =>
+                                                    handleRemoveNewImage(index)
+                                                }
+                                                disabled={isLoading}
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faXmark}
+                                                />
+                                            </Button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </Form.Group>
+
                         <div className="d-flex">
                             <Button
                                 variant="outline-dark"

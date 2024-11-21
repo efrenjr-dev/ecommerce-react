@@ -144,6 +144,7 @@ export default function AddProduct() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 placeholder="Enter Product Name"
+                                disabled={isLoading}
                                 required
                                 isInvalid={!!errors.name}
                             />
@@ -161,6 +162,7 @@ export default function AddProduct() {
                                 value={formData.description}
                                 onChange={handleChange}
                                 placeholder="Enter Product Description"
+                                disabled={isLoading}
                                 isInvalid={!!errors.description}
                             />
                             <Form.Control.Feedback type="invalid">
@@ -175,6 +177,7 @@ export default function AddProduct() {
                                 value={formData.price}
                                 onChange={handleChange}
                                 placeholder="Enter Product Price"
+                                disabled={isLoading}
                                 required
                                 isInvalid={!!errors.price}
                             />
@@ -190,6 +193,7 @@ export default function AddProduct() {
                                 value={formData.quantity}
                                 onChange={handleChange}
                                 placeholder="Enter Quantity"
+                                disabled={isLoading}
                                 required
                                 isInvalid={!!errors.quantity}
                             />
@@ -205,6 +209,7 @@ export default function AddProduct() {
                                 multiple
                                 onChange={handleImageChange}
                                 accept="image/*"
+                                disabled={isLoading}
                                 isInvalid={errors.images}
                             />
                             <Form.Control.Feedback type="invalid">

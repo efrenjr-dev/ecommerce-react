@@ -1,6 +1,9 @@
 import Joi from "joi";
 import { tlds } from "@hapi/tlds";
 
+const BIGINT_MIN = BigInt("-9223372036854775808");
+const BIGINT_MAX = BigInt("9223372036854775807");
+
 const login = Joi.object({
     email: Joi.string()
         .email({ tlds: { allow: tlds } })
@@ -105,10 +108,47 @@ const addProduct = Joi.object({
 });
 
 const updateProduct = Joi.object({
-    name: Joi.string().label("Product name"),
-    price: Joi.number().greater(0).label("Price"),
-    description: Joi.string().allow("").label("Product description"),
+    name: Joi.string().min(1).required(),
+    description: Joi.string().allow("").optional(),
+    price: Joi.number().greater(0).required(),
     isActive: Joi.boolean().required(),
+    existingImages: Joi.array()
+        .items(
+            Joi.object({
+                id: Joi.any()
+                    .custom((value, helpers) => {
+                        if (typeof value !== "bigint") {
+                            return helpers.error("any.invalid", {
+                                message: "Value must be a BigInt",
+                            });
+                        }
+                        if (value < BIGINT_MIN || value > BIGINT_MAX) {
+                            return helpers.error("any.invalid", {
+                                message: "Value is out of 64-bit range",
+                            });
+                        }
+                        return value;
+                    }, "64-bit BigInt validation")
+                    .required(),
+                url: Joi.string().uri().required(),
+                created_at: Joi.date().optional(),
+                productId: Joi.string().uuid().optional(),
+            })
+        )
+        .optional(),
+    newImages: Joi.array()
+        .items(
+            Joi.object({
+                name: Joi.string().required(),
+                size: Joi.number()
+                    .max(5 * 1024 * 1024)
+                    .required(), // Limit to 5MB max size
+                type: Joi.string()
+                    .valid("image/jpeg", "image/png", "image/gif")
+                    .required(), // Allow specific types
+            })
+        )
+        .optional(),
 });
 
 const addUser = Joi.object({
@@ -163,19 +203,32 @@ export const schema = {
 };
 
 export const validateForm = (schema, formData) => {
-    // console.log("formData before transform:", formData);
+    let transformedData = { ...formData };
+    if (formData.images) {
+        transformedData = {
+            ...formData,
+            images: formData.images.map((file) => ({
+                name: file.name,
+                type: file.type,
+                size: file.size,
+            })),
+        };
+    } else {
+        transformedData = formData;
+    }
 
-    // Transform `formData.images` to match the schema requirements
-    const transformedData = {
-        ...formData,
-        images: formData.images.map((file) => ({
-            name: file.name,
-            type: file.type,
-            size: file.size,
-        })),
-    };
-
-    // console.log("formData after transform:", transformedData);
+    if (formData.newImages) {
+        transformedData = {
+            ...formData,
+            newImages: formData.newImages.map((file) => ({
+                name: file.name,
+                type: file.type,
+                size: file.size,
+            })),
+        };
+    } else {
+        transformedData = formData;
+    }
 
     const options = { abortEarly: false };
     const { error } = schema.validate(transformedData, options);
