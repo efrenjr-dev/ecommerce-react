@@ -14,9 +14,8 @@ import ProductLoading from "../components/ProductLoading";
 import { debounce } from "../utils/debounce";
 
 export default function Products({
-    take = 20,
+    take = 8,
     title = "All Products",
-    productLoading = 8,
 }) {
     const { user } = useContext(UserContext);
     const [searchInput, setSearchInput] = useState("");
@@ -100,7 +99,7 @@ export default function Products({
                 <Col></Col>
             </Row>
 
-            {isLoading && <ProductLoading items={productLoading} />}
+            {isLoading && <ProductLoading items={take} />}
             {isError && <p>Error: {error.message}</p>}
 
             {!isLoading &&

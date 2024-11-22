@@ -73,7 +73,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "/products",
-                element: <Products take={8} />,
+                element: <Products take={16} />,
                 children: [
                     {
                         path: "/products/:productId",

@@ -150,15 +150,18 @@ export default function UserAccount() {
                             handleSubmit(e);
                         }}
                     >
-                        <Form.Group className="mb-3">
-                            <Form.Label>User ID:</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder={userData.id}
-                                required
-                                disabled
-                            />
-                        </Form.Group>
+                        {user.role === "admin" && (
+                            <Form.Group className="mb-3">
+                                <Form.Label>User ID:</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    placeholder={userData.id}
+                                    required
+                                    disabled
+                                />
+                            </Form.Group>
+                        )}
+
                         <Form.Group className="mb-3">
                             <Form.Label>Full Name:</Form.Label>
                             <Form.Control
