@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import CartList from "../components/CartList";
 import { toast } from "react-hot-toast";
-import { Button, Card, Col, Row, Spinner, Table } from "react-bootstrap";
+import Container from "react-bootstrap/Container";
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
+import Table from "react-bootstrap/Table";
+import Spinner from "react-bootstrap/Spinner";
+import Card from "react-bootstrap/Card";
 import json from "superjson";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { getCookie } from "../utils/cookieService";
@@ -136,7 +142,7 @@ export default function Cart() {
     };
 
     return (
-        <>
+        <Container>
             <h3 className="text-center my-5">Shopping Cart</h3>
             {isPending ? (
                 <div className="m-5 text-center">
@@ -197,6 +203,6 @@ export default function Cart() {
                     <Link to="/products">products</Link>.
                 </h6>
             )}
-        </>
+        </Container>
     );
 }

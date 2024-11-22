@@ -1,0 +1,12 @@
+.background-hero {
+    height: 70vh;
+    background: url("https://ecommerceappproject.s3.ap-southeast-2.amazonaws.com/pexels-polina-tankilevitch-4440791.jpg")
+        center/cover no-repeat;
+}
+
+.text-container {
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3));
+    color: white;
+    padding: 1rem;
+    border-radius: 1rem;
+}

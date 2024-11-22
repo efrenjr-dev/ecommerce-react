@@ -1,16 +1,13 @@
 import { useState, useEffect } from "react";
 import { UserContext } from "../userContext";
-import Container from "react-bootstrap/Container";
 import { Toaster } from "react-hot-toast";
 import AppNavBar from "../components/AppNavBar";
-import {
-    Outlet,
-    useLocation,
-    useNavigate,
-} from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import json from "superjson";
 import { getCookie, removeCookie } from "../utils/cookieService";
 import fetchWrapper from "../utils/fetchWrapper";
+import Footer from "../components/Footer";
+import { Container } from "react-bootstrap";
 
 export default function Root() {
     const navigate = useNavigate();
@@ -76,9 +73,12 @@ export default function Root() {
                     }}
                 />
                 <AppNavBar />
-                <Container className="mb-5">
-                    <Outlet />
-                </Container>
+                <body className="d-flex flex-column min-vh-100">
+                    <main className="flex-grow-1 min-vh-75 mb-5">
+                        <Outlet />
+                    </main>
+                    <Footer />
+                </body>
             </UserContext.Provider>
         </>
     );

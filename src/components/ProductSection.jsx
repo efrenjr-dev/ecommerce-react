@@ -4,22 +4,22 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import Container from "react-bootstrap/Container";
-import Product from "../components/Product";
+import Product from "./Product";
 import { UserContext } from "../userContext";
 import json from "superjson";
 import { useQuery } from "@tanstack/react-query";
 import { getCookie } from "../utils/cookieService";
 import fetchWrapper from "../utils/fetchWrapper";
-import ProductLoading from "../components/ProductLoading";
+import ProductLoading from "./ProductLoading";
 import { debounce } from "../utils/debounce";
+import { Container } from "react-bootstrap";
 
-export default function Products({ take = 8, title = "All Products" }) {
+export default function ProductSection({
+    take = 4,
+    title = "Suggested Products",
+}) {
     const { user } = useContext(UserContext);
-    const [searchInput, setSearchInput] = useState("");
-    const [searchString, setSearchString] = useState("");
-    const [page, setPage] = useState(1);
-    const skip = (page - 1) * take;
+    const skip = (Math.floor(Math.random() * 5) + 1) * take;
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -28,10 +28,10 @@ export default function Products({ take = 8, title = "All Products" }) {
             user.role === "admin"
                 ? `${
                       import.meta.env.VITE_API_URL
-                  }/products/all?searchString=${searchString}&skip=${skip}&take=${take}`
+                  }/products/all?searchString=&skip=${skip}&take=${take}`
                 : `${
                       import.meta.env.VITE_API_URL
-                  }/products/?searchString=${searchString}&skip=${skip}&take=${take}`;
+                  }/products/?searchString=&skip=${skip}&take=${take}`;
 
         return await fetchWrapper(
             url,
@@ -55,51 +55,19 @@ export default function Products({ take = 8, title = "All Products" }) {
     };
 
     const { isLoading, isError, data, error } = useQuery({
-        queryKey: ["products", user?.role, searchString, take, page],
+        queryKey: ["products", user?.role, take],
         queryFn: fetchOrderData,
         keepPreviousData: true,
         enabled: !!user,
         staleTime: 0,
     });
 
-    const debouncedSetSearchString = useMemo(
-        () =>
-            debounce((value) => {
-                setSearchString(value);
-                setPage(1);
-            }, 500),
-        []
-    );
-
-    const handleSearchChange = (e) => {
-        const value = e.target.value;
-        setSearchInput(value);
-        debouncedSetSearchString(value);
-    };
-
     return (
-        <Container fluid>
+        <Container fluid className="mt-3">
             <Outlet />
             <h3 className="mt-5 mb-4 text-center">{title}</h3>
-            <Row className="mb-3">
-                <Col></Col>
-                <Col xs={12} md={8} lg={4}>
-                    <Form>
-                        <Form.Control
-                            className=""
-                            type="text"
-                            placeholder="Search items..."
-                            value={searchInput}
-                            onChange={handleSearchChange}
-                        />
-                    </Form>
-                </Col>
-                <Col></Col>
-            </Row>
-
             {isLoading && <ProductLoading items={take} />}
             {isError && <p>Error: {error.message}</p>}
-
             {!isLoading &&
                 data &&
                 (data.productsCount > 0 ? (
@@ -114,32 +82,12 @@ export default function Products({ take = 8, title = "All Products" }) {
                                         <Product
                                             productProp={product}
                                             userRole={user.role}
+                                            productURL={`/product/${product.id}`}
                                         />
                                     </Col>
                                 );
                             })}
                         </Row>
-                        <div className="text-center">
-                            <Button
-                                variant="dark"
-                                className="btn-sm"
-                                disabled={page === 1}
-                                onClick={() =>
-                                    setPage((prev) => Math.max(prev - 1, 1))
-                                }
-                            >
-                                Previous
-                            </Button>
-                            <span className="mx-3">Page {page}</span>
-                            <Button
-                                variant="dark"
-                                className="btn-sm"
-                                disabled={!data.hasMore}
-                                onClick={() => setPage((prev) => prev + 1)}
-                            >
-                                Next
-                            </Button>
-                        </div>
                     </>
                 ) : (
                     <Row className="d-flex flex-column align-items-center">

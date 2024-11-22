@@ -11,6 +11,7 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import { setCookie } from "../utils/cookieService";
 import { schema, validateForm } from "../utils/validation";
+import Container from "react-bootstrap/Container";
 
 export default function Login() {
     const { setUser } = useContext(UserContext);
@@ -72,7 +73,7 @@ export default function Login() {
     }
 
     return (
-        <>
+        <Container>
             <Row className="d-flex flex-column align-items-center">
                 <Col xs md="6">
                     <h5 className="mt-5 mb-3 text-center">
@@ -164,6 +165,6 @@ export default function Login() {
                     </Tabs>
                 </Col>
             </Row>
-        </>
+        </Container>
     );
 }

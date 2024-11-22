@@ -32,6 +32,9 @@ import Users from "./pages/Users";
 import AddUser from "./pages/AddUser";
 import UpdateUser, { loader as updateUserLoader } from "./pages/UpdateUser";
 import UserAccount, { loader as userAccountLoader } from "./pages/UserAccount";
+import ViewProductHome, {
+    loader as viewProductLoader,
+} from "./pages/ViewProductHome";
 
 const router = createBrowserRouter([
     {
@@ -42,6 +45,13 @@ const router = createBrowserRouter([
             {
                 path: "/",
                 element: <Home />,
+                children: [
+                    {
+                        path: "/product/:productId",
+                        element: <ViewProductHome />,
+                        loader: viewProductLoader,
+                    },
+                ],
             },
             {
                 path: "/cart",

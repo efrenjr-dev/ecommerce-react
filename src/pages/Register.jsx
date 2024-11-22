@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
-import { useAsyncError, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
 import toast from "react-hot-toast";
 import json from "superjson";
 import { schema, validateForm } from "../utils/validation";
@@ -72,7 +73,7 @@ export default function Register() {
     }
 
     return (
-        <>
+        <Container>
             <Row className="pb-5 mb-5 justify-content-center">
                 <Col xs md="6">
                     <h5 className="mt-5 mb-4 text-center">
@@ -164,6 +165,6 @@ export default function Register() {
                     </Form>
                 </Col>
             </Row>
-        </>
+        </Container>
     );
 }

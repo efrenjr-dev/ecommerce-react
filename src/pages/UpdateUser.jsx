@@ -5,6 +5,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
 import { useContext, useState } from "react";
 import { UserContext } from "../userContext";
 import { schema, validateForm } from "../utils/validation";
@@ -108,7 +109,7 @@ export default function UpdateUser() {
     };
 
     return (
-        <>
+        <Container>
             <Row className="justify-content-center">
                 <Col xs md="6">
                     <h4 className="my-5 text-center">Edit User Details</h4>
@@ -230,7 +231,7 @@ export default function UpdateUser() {
                     </Form>
                 </Col>
             </Row>
-        </>
+        </Container>
     );
 }
 

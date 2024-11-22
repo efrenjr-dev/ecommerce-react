@@ -3,6 +3,7 @@
     top: 0;
     left: 0;
     width: 100%;
+    height: -webkit-fill-available; /* Safari fallback for viewport height */
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.6);
     z-index: 1;
@@ -14,7 +15,7 @@
     top: 3rem;
     border: none;
     width: 33vw;
-    // max-height:90vh;
+    /* max-height:90vh; */ /* Use proper CSS comment syntax */
     border-radius: 6px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     padding: 0;
@@ -22,21 +23,20 @@
     z-index: 1;
 }
 
-
-
 @media (min-width: 1441px) {
     .modalDialog {
         margin: 0;
-        width:25vw
+        width: 25vw;
     }
-
 }
+
 @media (max-width: 1016px) and (min-width: 576px) {
     .modalDialog {
         margin: 0;
     }
     .modalFullMobile {
         width: 50vw;
+        max-height: -webkit-fill-available; /* Safari fallback */
         max-height: 100vh;
         overflow-y: auto;
     }
@@ -49,6 +49,7 @@
     .modalFullMobile {
         top: 0;
         left: 0;
+        height: -webkit-fill-available; /* Safari fallback */
         height: 100vh;
         overflow-y: auto;
         width: 100vw;

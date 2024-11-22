@@ -4,7 +4,6 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import Spinner from "react-bootstrap/Spinner";
 import Table from "react-bootstrap/Table";
 import json from "superjson";
 import { useQuery } from "@tanstack/react-query";
@@ -12,6 +11,7 @@ import { getCookie } from "../utils/cookieService";
 import fetchWrapper from "../utils/fetchWrapper";
 import { debounce } from "../utils/debounce";
 import { UserContext } from "../userContext";
+import TableLoading from "../components/TableLoading";
 
 export default function Users() {
     const { user } = useContext(UserContext);
@@ -95,11 +95,9 @@ export default function Users() {
                 <Col></Col>
             </Row>
             {isLoading && (
-                <div className="m-5 text-center">
-                    <Spinner role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </Spinner>
-                </div>
+                <>
+                    <TableLoading />
+                </>
             )}
             {isError && <p>Error: {error.message}</p>}
 
@@ -147,7 +145,12 @@ export default function Users() {
                                                         {userData.name}
                                                     </td>
                                                     <td className="px-3">
-                                                        {userData.role==="admin"?"Administrator":userData.role==="user"&&"User"}
+                                                        {userData.role ===
+                                                        "admin"
+                                                            ? "Administrator"
+                                                            : userData.role ===
+                                                                  "user" &&
+                                                              "User"}
                                                     </td>
                                                     <td className="text-center">
                                                         <Button

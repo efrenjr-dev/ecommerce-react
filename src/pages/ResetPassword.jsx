@@ -1,8 +1,9 @@
-import { useState, useEffect, useContext } from "react";
-import Button from "react-bootstrap/esm/Button";
-import Col from "react-bootstrap/esm/Col";
-import Row from "react-bootstrap/esm/Row";
+import { useState, useContext } from "react";
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
+import Container from "react-bootstrap/Container";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import json from "superjson";
@@ -90,7 +91,7 @@ export default function ResetPassword() {
     }
 
     return (
-        <>
+        <Container>
             <Row className="pb-5 mb-5 justify-content-center">
                 <Col xs md="6">
                     <h5 className="mt-5 mb-4 text-center">
@@ -145,6 +146,6 @@ export default function ResetPassword() {
                     </Form>
                 </Col>
             </Row>
-        </>
+        </Container>
     );
 }

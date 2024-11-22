@@ -1,7 +1,8 @@
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/esm/Button";
+import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
 import { toast } from "react-hot-toast";
 import { useLoaderData, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -79,7 +80,7 @@ export default function ProductInventory() {
     };
 
     return (
-        <>
+        <Container>
             <Row className="justify-content-center">
                 <Col xs md="6">
                     <h4 className="my-5 text-center">
@@ -170,7 +171,7 @@ export default function ProductInventory() {
                     </Form>
                 </Col>
             </Row>
-        </>
+        </Container>
     );
 }
 

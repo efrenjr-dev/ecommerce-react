@@ -1,5 +1,9 @@
 import { useContext, useState } from "react";
-import { Button, Col, Row, Spinner, Table } from "react-bootstrap";
+import Container from "react-bootstrap/Container";
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
+import Table from "react-bootstrap/Table";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { UserContext } from "../userContext";
 import { getCookie } from "../utils/cookieService";
@@ -7,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import fetchWrapper from "../utils/fetchWrapper";
 import json from "superjson";
 import formatPrice from "../utils/formatPrice";
+import TableLoading from "../components/TableLoading";
 
 export default function Orders({ take = 5, title = "Recent Orders" }) {
     const { user } = useContext(UserContext);
@@ -59,14 +64,12 @@ export default function Orders({ take = 5, title = "Recent Orders" }) {
     };
 
     return (
-        <>
+        <main>
             <h3 className="mt-5 mb-4 text-center">{title}</h3>
             {isLoading && (
-                <div className="m-5 text-center">
-                    <Spinner role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </Spinner>
-                </div>
+                <>
+                    <TableLoading />
+                </>
             )}
             {isError && <p>Error: {error.message}</p>}
             {!isLoading &&
@@ -90,6 +93,11 @@ export default function Orders({ take = 5, title = "Recent Orders" }) {
                                     <thead>
                                         <tr>
                                             <th>Order Date</th>
+                                            {user.role === "admin" && (
+                                                <th className="px-3">
+                                                    Customer Name
+                                                </th>
+                                            )}
                                             <th className="text-end px-3">
                                                 Total Amount
                                             </th>
@@ -126,6 +134,11 @@ export default function Orders({ take = 5, title = "Recent Orders" }) {
                                                     key={order.id}
                                                 >
                                                     <td>{strDate}</td>
+                                                    {user.role === "admin" && (
+                                                        <td className="px-3">
+                                                            {order.User?.name}
+                                                        </td>
+                                                    )}
                                                     <td className="text-end px-3">
                                                         {formatPrice(
                                                             order.total
@@ -173,6 +186,6 @@ export default function Orders({ take = 5, title = "Recent Orders" }) {
                         </div>
                     </>
                 ))}
-        </>
+        </main>
     );
 }

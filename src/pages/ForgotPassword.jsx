@@ -1,9 +1,9 @@
-import { useState, useEffect, useContext } from "react";
-import Button from "react-bootstrap/esm/Button";
-import Col from "react-bootstrap/esm/Col";
-import Row from "react-bootstrap/esm/Row";
+import { useState, useEffect } from "react";
+import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
-import { toast } from "react-hot-toast";
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 import json from "superjson";
 
 export default function ForgotPassword() {
@@ -53,7 +53,7 @@ export default function ForgotPassword() {
     }
 
     return (
-        <>
+        <Container>
             <Row className="d-flex flex-column align-items-center">
                 <Col xs md="6">
                     {isSubmitted ? (
@@ -99,6 +99,6 @@ export default function ForgotPassword() {
                     )}
                 </Col>
             </Row>
-        </>
+        </Container>
     );
 }

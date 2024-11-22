@@ -3,11 +3,12 @@ import OrderList from "../components/OrderList";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
+import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
 import json from "superjson";
 import { getCookie } from "../utils/cookieService";
 import { useContext } from "react";
 import { UserContext } from "../userContext";
-import { Button } from "react-bootstrap";
 import fetchWrapper from "../utils/fetchWrapper";
 import formatPrice from "../utils/formatPrice";
 
@@ -26,7 +27,7 @@ export default function ViewOrder() {
         hour12: true,
     });
     return (
-        <>
+        <Container>
             <Row className="d-flex flex-column align-items-center">
                 <Col>
                     <h4 className="text-center my-5">
@@ -48,7 +49,9 @@ export default function ViewOrder() {
                                 <br />
                                 Customer name: {order.User.name}
                                 <br />
-                                Customer Id: {order.User.id}
+                                {user.role === "admin" && (
+                                    <>Customer Id: {order.User.id}</>
+                                )}
                             </Card.Text>
                         </Card.Body>
                     </Card>
@@ -62,7 +65,7 @@ export default function ViewOrder() {
                     </Link>
                 </Col>
             </Row>
-        </>
+        </Container>
     );
 }
 

@@ -1,6 +1,4 @@
 import { useContext, useEffect } from "react";
-import Col from "react-bootstrap/esm/Col";
-import Row from "react-bootstrap/esm/Row";
 import { toast } from "react-hot-toast";
 import { UserContext } from "../userContext";
 import { useNavigate } from "react-router-dom";

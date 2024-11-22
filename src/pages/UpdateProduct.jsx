@@ -1,7 +1,8 @@
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/esm/Button";
+import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
 import { toast } from "react-hot-toast";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
@@ -177,7 +178,7 @@ export default function UpdateProduct() {
     };
 
     return (
-        <>
+        <Container>
             <Row className="justify-content-center">
                 <Col xs md="6">
                     <h4 className="my-5 text-center">Edit Product Details</h4>
@@ -356,7 +357,7 @@ export default function UpdateProduct() {
                     </Form>
                 </Col>
             </Row>
-        </>
+        </Container>
     );
 }
 

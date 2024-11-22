@@ -3,8 +3,11 @@ import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
 import formatPrice from "../utils/formatPrice";
 
-export default function Product({ productProp, userRole }) {
-    let productURL = `/products/${productProp.id}`;
+export default function Product({
+    productProp,
+    userRole,
+    productURL = `/products/${productProp.id}`,
+}) {
     const stock = productProp.Product_Inventory.quantity;
 
     return (

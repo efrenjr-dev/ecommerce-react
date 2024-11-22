@@ -1,8 +1,9 @@
 import { useState } from "react";
-import Button from "react-bootstrap/esm/Button";
-import Col from "react-bootstrap/esm/Col";
-import Row from "react-bootstrap/esm/Row";
-import { Form } from "react-bootstrap";
+import Container from "react-bootstrap/Container";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 import { toast } from "react-hot-toast";
 import { getCookie } from "../utils/cookieService";
 import json from "superjson";
@@ -83,7 +84,7 @@ export default function AddUser() {
     }
 
     return (
-        <>
+        <Container>
             <Row className="justify-content-center">
                 <Col xs md="6">
                     <h4 className="my-5 text-center">Create New User</h4>
@@ -169,17 +170,12 @@ export default function AddUser() {
                                 {errors.role}
                             </Form.Control.Feedback>
                         </Form.Group>
-                        <Button
-                            className="w-100"
-                            variant="dark"
-                            type="submit"
-                        >
+                        <Button className="w-100" variant="dark" type="submit">
                             Submit
                         </Button>
                     </Form>
                 </Col>
             </Row>
-        </>
+        </Container>
     );
 }
-
