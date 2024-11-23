@@ -26,12 +26,12 @@ export default function UserAccount() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    async function updateProduct() {
+    async function updateProfile() {
         setIsLoading(true);
-        const loadingToast = toast.loading("Account Settings");
+        const loadingToast = toast.loading("Updating user account...");
         try {
             const response = await fetchWrapper(
-                `${import.meta.env.VITE_API_URL}/users/${userData.id}`,
+                `${import.meta.env.VITE_API_URL}/users/profile`,
                 {
                     method: "PATCH",
                     mode: "cors",
@@ -130,7 +130,7 @@ export default function UserAccount() {
         const validationErrors = validateForm(schema.updateUser, formData);
         setErrors(validationErrors || {});
         if (validationErrors) return;
-        updateProduct();
+        updateProfile();
     };
     const handleCancel = () => {
         setIsLoading(true);

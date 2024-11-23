@@ -28,7 +28,7 @@ export default function UpdateUser() {
 
     async function updateProduct() {
         setIsLoading(true);
-        const loadingToast = toast.loading("Updating user details");
+        const loadingToast = toast.loading("Updating user details...");
         try {
             const response = await fetchWrapper(
                 `${import.meta.env.VITE_API_URL}/users/${userData.id}`,
