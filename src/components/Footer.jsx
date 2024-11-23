@@ -11,7 +11,7 @@ const Footer = () => {
         <footer className="bg-dark text-light py-4 mt-auto">
             <Container>
                 <Row>
-                    <Col md={3} className="mb-3">
+                    <Col md={8} className="mb-4 ms-auto">
                         <h5>About Us</h5>
                         <p>
                             We are a trusted online store providing the best
@@ -19,15 +19,9 @@ const Footer = () => {
                             confidence!
                         </p>
                     </Col>
-                    <Col md={3} className="mb-3">
+                    <Col md={4} className="mb-4">
                         <h5>Quick Links</h5>
                         <Nav className="flex-column">
-                            <Nav.Link as={Link} to="/" className="text-light">
-                                About Us
-                            </Nav.Link>
-                            <Nav.Link as={Link} to="/" className="text-light">
-                                Contact Us
-                            </Nav.Link>
                             <Nav.Link as={Link} to="/" className="text-light">
                                 FAQs
                             </Nav.Link>
@@ -39,8 +33,8 @@ const Footer = () => {
                             </Nav.Link>
                         </Nav>
                     </Col>
-                    <Col md={3} className="mb-3"></Col>
-                    <Col md={3} className="mb-3">
+
+                    {/* <Col md={3} className="mb-3">
                         <h5>Contact Us</h5>
                         <p>
                             <strong>Address:</strong> 1234 E-Commerce St,
@@ -52,7 +46,7 @@ const Footer = () => {
                         <p>
                             <strong>Email:</strong> support@ecommerce.com
                         </p>
-                    </Col>
+                    </Col> */}
                 </Row>
                 <Row className="mt-4 border-top pt-3">
                     <Col md={6} className="text-center text-md-start">
@@ -61,16 +55,10 @@ const Footer = () => {
                     </Col>
                     <Col md={6} className="text-center text-md-end">
                         <Nav className="justify-content-center justify-content-md-end">
-                            <Nav.Link
-                                href="#"
-                                className="text-light"
-                            >
+                            <Nav.Link href="#" className="text-light">
                                 Facebook
                             </Nav.Link>
-                            <Nav.Link
-                                href="#"
-                                className="text-light"
-                            >
+                            <Nav.Link href="#" className="text-light">
                                 Instagram
                             </Nav.Link>
                         </Nav>

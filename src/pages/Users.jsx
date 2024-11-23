@@ -5,6 +5,7 @@ import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
+import Container from "react-bootstrap/Container";
 import json from "superjson";
 import { useQuery } from "@tanstack/react-query";
 import { getCookie } from "../utils/cookieService";
@@ -77,7 +78,7 @@ export default function Users() {
     };
 
     return (
-        <>
+        <Container>
             <h3 className="mt-5 mb-4 text-center">Users</h3>
             <Row className="mb-3">
                 <Col></Col>
@@ -170,7 +171,7 @@ export default function Users() {
                             </Col>
                             <Col></Col>
                         </Row>
-                        <div className="text-center">
+                        <div className="text-center mt-3">
                             <Button
                                 variant="dark"
                                 className="btn-sm"
@@ -193,6 +194,6 @@ export default function Users() {
                         </div>
                     </>
                 ))}
-        </>
+        </Container>
     );
 }

@@ -64,7 +64,7 @@ export default function Orders({ take = 5, title = "Recent Orders" }) {
     };
 
     return (
-        <main>
+        <Container>
             <h3 className="mt-5 mb-4 text-center">{title}</h3>
             {isLoading && (
                 <>
@@ -89,7 +89,7 @@ export default function Orders({ take = 5, title = "Recent Orders" }) {
                         <Row className="d-flex flex-column align-items-center">
                             <Col></Col>
                             <Col xs lg="10">
-                                <Table striped hover>
+                                <Table striped hover responsive="md">
                                     <thead>
                                         <tr>
                                             <th>Order Date</th>
@@ -163,7 +163,7 @@ export default function Orders({ take = 5, title = "Recent Orders" }) {
                             </Col>
                             <Col></Col>
                         </Row>
-                        <div className="text-center">
+                        <div className="text-center mt-3">
                             <Button
                                 variant="dark"
                                 className="btn-sm"
@@ -186,6 +186,6 @@ export default function Orders({ take = 5, title = "Recent Orders" }) {
                         </div>
                     </>
                 ))}
-        </main>
+        </Container>
     );
 }
