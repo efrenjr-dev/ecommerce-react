@@ -12,7 +12,7 @@ import { schema, validateForm } from "../utils/validation";
 export default function Register() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        fullName: "",
+        name: "",
         email: "",
         password: "",
         confirmPassword: "",
@@ -25,7 +25,7 @@ export default function Register() {
             const body = {
                 email: formData.email,
                 password: formData.password,
-                name: formData.fullName,
+                name: formData.name,
             };
             const response = await fetch(
                 `${import.meta.env.VITE_API_URL}/auth/register`,
@@ -88,15 +88,15 @@ export default function Register() {
                             <Form.Label>Full Name:</Form.Label>
                             <Form.Control
                                 type="text"
-                                name="fullName"
-                                value={formData.fullName}
+                                name="name"
+                                value={formData.name}
                                 onChange={handleChange}
                                 placeholder="Enter Full Name"
                                 required
-                                isInvalid={!!errors.fullName}
+                                isInvalid={!!errors.name}
                             />
                             <Form.Control.Feedback type="invalid">
-                                {errors.fullName}
+                                {errors.name}
                             </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group className="mb-3">
